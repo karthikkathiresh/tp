@@ -1,21 +1,34 @@
 package seedu.pharmatracker;
 
-import java.util.Scanner;
+import seedu.pharmatracker.data.Inventory;
+import seedu.pharmatracker.parser.Parser;
+import seedu.pharmatracker.ui.Ui;
 
 public class PharmaTracker {
+
+    private Ui ui;
+    private Parser parser;
+    private Inventory inventory;
+
+    public PharmaTracker() {
+        ui = new Ui();
+        parser = new Parser();
+        inventory = new Inventory();
+    }
+
+    public void run() {
+        ui.printWelcomeMessage();
+        while (true) {
+            String fullCommand = ui.readCommand();
+            parser.parseCommand(fullCommand);
+
+        }
+    }
+
     /**
      * Main entry-point for the PharmaTracker application.
      */
     public static void main(String[] args) {
-        String logo = " ____        _        \n"
-                + "|  _ \\ _   _| | _____ \n"
-                + "| | | | | | | |/ / _ \\\n"
-                + "| |_| | |_| |   <  __/\n"
-                + "|____/ \\__,_|_|\\_\\___|\n";
-        System.out.println("Hello from\n" + logo);
-        System.out.println("What is your name?");
-
-        Scanner in = new Scanner(System.in);
-        System.out.println("Hello " + in.nextLine());
+        new PharmaTracker().run();
     }
 }
