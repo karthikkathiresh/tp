@@ -1,10 +1,10 @@
-package seedu.duke;
+package seedu.pharmatracker;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DukeTest {
+public class PharmaTrackerTest {
 
     @Test
     public void logo_hasCorrectLineCount() {
