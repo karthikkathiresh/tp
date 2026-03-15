@@ -41,6 +41,6 @@ public class Medication {
 
     @Override
     public String toString() {
-        return null;
+        return "Name: " + name + " | Dosage: " + dosage + " | Qty: " + quantity + " | Exp: " + expiryDate + " | Tag: " + tag;
     }
 }
