@@ -6,6 +6,7 @@ import seedu.pharmatracker.command.ListCommand;
 import seedu.pharmatracker.command.SortCommand;
 import seedu.pharmatracker.command.FindCommand;
 import seedu.pharmatracker.command.ViewCommand;
+import seedu.pharmatracker.command.DispenseCommand;
 import seedu.pharmatracker.data.Inventory;
 
 public class Parser {
@@ -121,10 +122,6 @@ public class Parser {
             System.out.println("Delete command triggered.");
             break;
 
-        case "dispense":
-            System.out.println("Dispense command triggered.");
-            break;
-
         case "list":
             System.out.println("List command triggered.");
             return new ListCommand();
@@ -148,6 +145,22 @@ public class Parser {
                 return new ViewCommand(index);
             } catch (NumberFormatException e) {
                 System.out.println("Invalid index. Please enter a valid number.");
+                break;
+            }
+
+        case "dispense":
+            System.out.println("Dispense command triggered.");
+            if (description.isEmpty()) {
+                System.out.println("Please provide an index and quantity.");
+                break;
+            }
+            try {
+                String[] parts = description.trim().split("q/");
+                int dispenseIndex = Integer.parseInt(parts[0].trim());
+                int dispenseQuantity = Integer.parseInt(parts[1].trim());
+                return new DispenseCommand(dispenseIndex, dispenseQuantity);
+            } catch (Exception e) {
+                System.out.println("Invalid format. Use: dispense INDEX q/QUANTITY");
                 break;
             }
 
