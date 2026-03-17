@@ -24,16 +24,12 @@ public class PharmaTracker {
         ui.printWelcomeMessage();
 
         while (true) {
-            try {
-                String fullCommand = ui.readCommand();
-                Command c = parse(fullCommand);
-                if (c != null) {
-                    c.execute(inventory);
-                }
-                // logger.log(Level.INFO, "Command received: " + fullCommand);
-            } catch (Exception e) {
-                System.out.println("Error: Invalid command. Please try again.");
+            String fullCommand = ui.readCommand();
+            Command c = parse(fullCommand);
+            if (c != null) {
+                c.execute(inventory);
             }
+            // logger.log(Level.INFO, "Command received: " + fullCommand);
         }
     }
 
