@@ -26,9 +26,13 @@ public class PharmaTracker {
 
         while (true) {
             String fullCommand = ui.readCommand();
-            Command c = parse(fullCommand);
-            if (c != null) {
-                c.execute(inventory, ui);
+            try {
+                Command c = parse(fullCommand);
+                if (c != null) {
+                    c.execute(inventory, ui);
+                }
+            } catch (PharmaTrackerException e) {
+                ui.printMessage(e.getMessage());
             }
             // logger.log(Level.INFO, "Command received: " + fullCommand);
         }
