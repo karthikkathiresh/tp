@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import seedu.pharmatracker.data.Inventory;
 import seedu.pharmatracker.data.Medication;
+import seedu.pharmatracker.ui.Ui;
 
 public class AddCommand extends Command {
 
@@ -47,7 +48,7 @@ public class AddCommand extends Command {
     }
 
     @Override
-    public void execute(Inventory inventory) {
+    public void execute(Inventory inventory, Ui ui) {
         Medication med = new Medication(name, dosage, quantity, expiryDate, tag);
         if (!dosageForm.isEmpty()) {
             med.setDosageForm(dosageForm);

@@ -2,6 +2,7 @@ package seedu.pharmatracker.parser;
 
 import seedu.pharmatracker.command.AddCommand;
 import seedu.pharmatracker.command.Command;
+import seedu.pharmatracker.command.DeleteCommand;
 import seedu.pharmatracker.command.ListCommand;
 import seedu.pharmatracker.command.SortCommand;
 import seedu.pharmatracker.command.FindCommand;
@@ -120,7 +121,7 @@ public class Parser {
 
         case "delete":
             System.out.println("Delete command triggered.");
-            break;
+            return new DeleteCommand(description);
 
         case "list":
             System.out.println("List command triggered.");

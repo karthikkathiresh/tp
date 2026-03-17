@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 import seedu.pharmatracker.data.Inventory;
 import seedu.pharmatracker.data.Medication;
+import seedu.pharmatracker.ui.Ui;
 
 public class DispenseCommand extends Command {
     public static final String COMMAND_WORD = "dispense";
@@ -19,7 +20,7 @@ public class DispenseCommand extends Command {
     }
 
     @Override
-    public void execute(Inventory inventory) {
+    public void execute(Inventory inventory, Ui ui) {
         logger.log(Level.INFO, "Executing DispenseCommand: index={0}, quantity={1}",
                 new Object[]{index, quantity});
         if (index < 1 || index > inventory.getMedications().size()) {

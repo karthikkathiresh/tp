@@ -8,19 +8,21 @@ import java.util.ArrayList;
 
 import seedu.pharmatracker.data.Inventory;
 import seedu.pharmatracker.data.Medication;
+import seedu.pharmatracker.ui.Ui;
 
 public class AddCommandTest {
 
     @Test
     public void execute_mandatoryFieldsOnly_addsToInventory() {
         Inventory inventory = new Inventory();
+        Ui ui = new Ui();
         ArrayList<String> emptyWarnings = new ArrayList<>();
 
         AddCommand addCommand = new AddCommand(
                 "Paracetamol", "500mg", 100, "2026-12-31", "painkiller", // Mandatory
                 "", "", "", "", "", "", emptyWarnings                    // Optional
         );
-        addCommand.execute(inventory);
+        addCommand.execute(inventory, ui);
         assertEquals(1, inventory.getMedications().size());
 
         Medication addedMed = inventory.getMedication(0);
@@ -38,6 +40,7 @@ public class AddCommandTest {
     @Test
     public void execute_allFieldsPresent_addsSuccessfully() {
         Inventory inventory = new Inventory();
+        Ui ui = new Ui();
         ArrayList<String> warnings = new ArrayList<>();
         warnings.add("May cause drowsiness");
         warnings.add("Do not take with alcohol");
@@ -48,7 +51,7 @@ public class AddCommandTest {
                 "Twice daily", "Oral", "1000mg", warnings
         );
 
-        addCommand.execute(inventory);
+        addCommand.execute(inventory, ui);
 
         assertEquals(1, inventory.getMedications().size());
 
@@ -79,6 +82,7 @@ public class AddCommandTest {
 
     private static Inventory getInventory() {
         Inventory inventory = new Inventory();
+        Ui ui = new Ui();
         ArrayList<String> emptyWarnings = new ArrayList<>();
 
         AddCommand command1 = new AddCommand(
@@ -90,8 +94,8 @@ public class AddCommandTest {
                 "Tablet", "Moderna", "", "", "", "", emptyWarnings
         );
 
-        command1.execute(inventory);
-        command2.execute(inventory);
+        command1.execute(inventory, ui);
+        command2.execute(inventory, ui);
         return inventory;
     }
 }

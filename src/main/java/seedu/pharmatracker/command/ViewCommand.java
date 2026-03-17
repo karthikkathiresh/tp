@@ -15,8 +15,7 @@ public class ViewCommand extends Command {
     }
 
     @Override
-    public void execute(Inventory inventory) {
-        Ui ui = new Ui();
+    public void execute(Inventory inventory, Ui ui) {
         if (inventory.getMedications().isEmpty()) {
             System.out.println("Inventory is empty.");
             return;

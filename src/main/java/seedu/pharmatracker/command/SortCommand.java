@@ -8,11 +8,12 @@ import java.util.Comparator;
 
 import seedu.pharmatracker.data.Inventory;
 import seedu.pharmatracker.data.Medication;
+import seedu.pharmatracker.ui.Ui;
 
 public class SortCommand extends Command {
 
     @Override
-    public void execute(Inventory inventory) {
+    public void execute(Inventory inventory, Ui ui) {
         ArrayList<Medication> medicationList = inventory.getMedications();
         if (medicationList.isEmpty()) {
             System.out.println("Inventory is empty.");

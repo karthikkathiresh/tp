@@ -2,6 +2,7 @@ package seedu.pharmatracker.ui;
 
 import java.util.Scanner;
 
+import seedu.pharmatracker.data.Inventory;
 import seedu.pharmatracker.data.Medication;
 
 public class Ui {
@@ -42,6 +43,14 @@ public class Ui {
         printLineDivider();
         System.out.println(message);
         printLineDivider();
+    }
+
+    public void printDeletedMessage(Medication med, Inventory inventory) {
+        System.out.println("You have deleted the following medication: ");
+        System.out.println(med.toString());
+        int count = inventory.getMedicationCount();
+        System.out.println("You now have " + count + " medications in your inventory!");
+        System.out.println(DETAIL_DIVIDER);
     }
 
     public void printMedicationDetails(Medication med) {

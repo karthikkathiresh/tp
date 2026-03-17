@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import seedu.pharmatracker.data.Inventory;
 import seedu.pharmatracker.data.Medication;
+import seedu.pharmatracker.ui.Ui;
 
 public class FindCommand extends Command {
 
@@ -16,7 +17,7 @@ public class FindCommand extends Command {
     }
 
     @Override
-    public void execute(Inventory inventory) {
+    public void execute(Inventory inventory, Ui ui) {
         ArrayList<Medication> medicationList = inventory.getMedications();
         ArrayList<Medication> matchingMedications = new ArrayList<>();
 
