@@ -27,7 +27,7 @@ public class PharmaTracker {
             String fullCommand = ui.readCommand();
             Command c = parse(fullCommand);
             if (c != null) {
-                c.execute(inventory);
+                c.execute(inventory, ui);
             }
             // logger.log(Level.INFO, "Command received: " + fullCommand);
         }

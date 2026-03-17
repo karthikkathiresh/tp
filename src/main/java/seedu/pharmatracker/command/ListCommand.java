@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import seedu.pharmatracker.data.Inventory;
 import seedu.pharmatracker.data.Medication;
+import seedu.pharmatracker.ui.Ui;
 
 public class ListCommand extends Command {
     private static final int LOW_STOCK_THRESHOLD = 10;
@@ -13,7 +14,7 @@ public class ListCommand extends Command {
     private static final Logger logger = Logger.getLogger(ListCommand.class.getName());
 
     @Override
-    public void execute(Inventory inventory) {
+    public void execute(Inventory inventory, Ui ui) {
         logger.log(Level.INFO, "Executing ListCommand");
         ArrayList<Medication> medicationList = inventory.getMedications();
         if (medicationList.isEmpty()) {
