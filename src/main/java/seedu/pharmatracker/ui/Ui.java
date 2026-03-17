@@ -1,28 +1,40 @@
 package seedu.pharmatracker.ui;
 
+import java.io.PrintStream;
 import java.util.Scanner;
 
 import seedu.pharmatracker.data.Inventory;
 import seedu.pharmatracker.data.Medication;
 
 public class Ui {
+    public static final String LOGO = "  _____  _                               _______              _\n" +
+            " |  __ \\| |                             |__   __|            | |\n" +
+            " | |__) | |__   __ _ _ __ _ __ ___   __ _  | | _ __ __ _  ___| | _____ _ __\n" +
+            " |  ___/| '_ \\ / _` | '__| '_ ` _ \\ / _` | | || '__/ _` |/ __| |/ / _ \\ '__|\n" +
+            " | |    | | | | (_| | |  | | | | | | (_| | | || | | (_| | (__|   <  __/ |\n" +
+            " |_|    |_| |_|\\__,_|_|  |_| |_| |_|\\__,_| |_||_|  \\__,_|\\___|_|\\_\\___|_|\n";
+
     private static final String DIVIDER = "____________________________________________________________";
     private static final String DETAIL_DIVIDER = "----------------------------------------";
     private static final String DETAIL_BORDER = "========================================";
-    private Scanner in;
+    public static final String INDENT = "  ";
+    public static final String MESSAGE_ADDED = "You have added the following medication:";
+    public static final String MESSAGE_DELETED = "You have deleted the following medication:";
+
+    private final Scanner in;
 
     public Ui() {
         this.in = new Scanner(System.in);
     }
 
+    public void printToScreen(String... message) {
+        for (String m : message) {
+            System.out.println(m);
+        }
+    }
+
     public void printWelcomeMessage() {
-        String logo =
-                "  _____  _                               _______              _\n" +
-                        " |  __ \\| |                             |__   __|            | |\n" +
-                        " | |__) | |__   __ _ _ __ _ __ ___   __ _  | | _ __ __ _  ___| | _____ _ __\n" +
-                        " |  ___/| '_ \\ / _` | '__| '_ ` _ \\ / _` | | || '__/ _` |/ __| |/ / _ \\ '__|\n" +
-                        " | |    | | | | (_| | |  | | | | | | (_| | | || | | (_| | (__|   <  __/ |\n" +
-                        " |_|    |_| |_|\\__,_|_|  |_| |_| |_|\\__,_| |_||_|  \\__,_|\\___|_|\\_\\___|_|\n";
+        String logo = LOGO;
         System.out.println("Hello from\n" + logo);
         printLineDivider();
         System.out.println("Welcome to Pharma Tracker!");
@@ -46,19 +58,25 @@ public class Ui {
     }
 
     public void printAddedMessage(Medication med, Inventory inventory) {
-        System.out.println("You have added the following medication: ");
-        System.out.println(med.toString());
         int count = inventory.getMedicationCount();
-        System.out.println("You now have " + count + " medications in your inventory!");
-        System.out.println(DETAIL_DIVIDER);
+        printToScreen(
+                DIVIDER,
+                MESSAGE_ADDED,
+                INDENT + med.toString(),
+                "You now have " + count + " medications in your inventory!",
+                DIVIDER
+        );
     }
 
     public void printDeletedMessage(Medication med, Inventory inventory) {
-        System.out.println("You have deleted the following medication: ");
-        System.out.println(med.toString());
         int count = inventory.getMedicationCount();
-        System.out.println("You now have " + count + " medications in your inventory!");
-        System.out.println(DETAIL_DIVIDER);
+        printToScreen(
+                DIVIDER,
+                MESSAGE_DELETED,
+                INDENT + med.toString(),
+                "You now have " + count + " medications in your inventory!",
+                DIVIDER
+        );
     }
 
     public void printMedicationDetails(Medication med) {
