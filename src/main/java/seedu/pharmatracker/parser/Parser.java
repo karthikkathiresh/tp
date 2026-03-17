@@ -26,7 +26,11 @@ public class Parser {
         this.inventory = inventory;
     }
 
-    private static int findNextFlagIndex(String description, int afterIndex) {
+    private static int findNextFlagIndex(String description, int afterIndex) throws PharmaTrackerException {
+        if (afterIndex < 0 || afterIndex > description.length()) {
+            throw new PharmaTrackerException("Error parsing command flags: Invalid search index.");
+        }
+
         int earliest = description.length();
         for (String flag : ALL_FLAGS) {
             int idx = description.indexOf(flag, afterIndex);
@@ -37,45 +41,107 @@ public class Parser {
         return earliest;
     }
 
-    private static String extractFlag(String description, String flag) {
+    private static String extractFlag(String description, String flag) throws PharmaTrackerException {
         int flagIndex = description.indexOf(flag);
         if (flagIndex == -1) {
             return "";
         }
+
         int valueStart = flagIndex + flag.length();
+        if (valueStart >= description.length()) {
+            throw new PharmaTrackerException("Value for '" + flag + "' cannot be empty!");
+        }
+
         int valueEnd = findNextFlagIndex(description, valueStart);
-        return description.substring(valueStart, valueEnd).trim();
+        String extractedValue = description.substring(valueStart, valueEnd).trim();
+
+        if (extractedValue.isEmpty()) {
+            throw new PharmaTrackerException("Value for '" + flag + "' cannot be empty!");
+        }
+
+        return extractedValue;
     }
 
-    public static String extractName(String description) {
+    public static String extractName(String description) throws PharmaTrackerException {
         int nameIndex = description.indexOf("/n");
         int dosageIndex = description.indexOf("/d");
-        return description.substring(nameIndex + 2, dosageIndex).trim();
+
+        if (nameIndex == -1 || dosageIndex == -1 || nameIndex >= dosageIndex) {
+            throw new PharmaTrackerException("Invalid format! Please ensure you include '/n' followed by '/d'.");
+        }
+
+        String name = description.substring(nameIndex + 2, dosageIndex).trim();
+        if (name.isEmpty()) {
+            throw new PharmaTrackerException("Medication name cannot be empty!");
+        }
+
+        return name;
     }
 
-    public static String extractDosage(String description) {
+    public static String extractDosage(String description) throws PharmaTrackerException {
         int dosageIndex = description.indexOf("/d");
         int quantityIndex = description.indexOf("/q");
-        return description.substring(dosageIndex + 2, quantityIndex).trim();
+
+        if (dosageIndex == -1 || quantityIndex == -1 || dosageIndex > quantityIndex) {
+            throw new PharmaTrackerException("Invalid format! Please ensure you include '/d' followed by '/q'.");
+        }
+
+        String dosage = description.substring(dosageIndex + 2, quantityIndex).trim();
+        if (dosage.isEmpty()) {
+            throw new PharmaTrackerException("Dosage cannot be empty!");
+        }
+
+        return dosage;
     }
 
-    public static int extractQuantity(String description) {
+    public static int extractQuantity(String description) throws PharmaTrackerException {
         int quantityIndex = description.indexOf("/q");
         int expiryIndex = description.indexOf("/e");
-        return Integer.parseInt(description.substring(quantityIndex + 2, expiryIndex).trim());
-    }
 
-    public static String extractExpiryDate(String description) {
-        int expiryIndex = description.indexOf("/e");
-        int tagIndex = description.indexOf("/t");
-        if (tagIndex == -1) {
-            return description.substring(expiryIndex + 2).trim();
+        if (quantityIndex == -1 || expiryIndex == -1 || quantityIndex > expiryIndex) {
+            throw new PharmaTrackerException("Invalid format! Please ensure you include '/q' followed by '/e'.");
         }
-        return description.substring(expiryIndex + 2, tagIndex).trim();
+
+        String quantityString = description.substring(quantityIndex + 2, expiryIndex).trim();
+        if (quantityString.isEmpty()) {
+            throw new PharmaTrackerException("Quantity cannot be empty.");
+        }
+
+        try {
+            int quantity = Integer.parseInt(quantityString);
+            if (quantity < 0) {
+                throw new PharmaTrackerException("Quantity cannot be negative!");
+            }
+            return quantity;
+        } catch (NumberFormatException e) {
+            throw new PharmaTrackerException("Invalid quantity! Please enter a valid whole number.");
+        }
     }
 
-    private static java.util.ArrayList<String> extractWarnings(String description) {
-        java.util.ArrayList<String> warnings = new java.util.ArrayList<>();
+    public static String extractExpiryDate(String description) throws PharmaTrackerException {
+        int expiryIndex = description.indexOf("/e");
+        if (expiryIndex == -1) {
+            throw new PharmaTrackerException("Invalid format! Please ensure you include the '/e' flag.");
+        }
+
+        int valueStart = expiryIndex + 2;
+        int valueEnd = findNextFlagIndex(description, valueStart);
+
+        if (valueStart > description.length()) {
+            throw new PharmaTrackerException("Expiry date cannot be empty!");
+        }
+
+        String expiryDate = description.substring(valueStart, valueEnd);
+
+        if (expiryDate.isEmpty()) {
+            throw new PharmaTrackerException("Expiry date cannot be empty!");
+        }
+
+        return expiryDate;
+    }
+
+    private static ArrayList<String> extractWarnings(String description) throws PharmaTrackerException {
+        ArrayList<String> warnings = new ArrayList<>();
         int searchFrom = 0;
         while (true) {
             int idx = description.indexOf("/warn", searchFrom);
