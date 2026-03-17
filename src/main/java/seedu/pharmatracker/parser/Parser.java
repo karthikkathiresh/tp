@@ -1,5 +1,7 @@
 package seedu.pharmatracker.parser;
 
+import java.util.ArrayList;
+
 import seedu.pharmatracker.command.AddCommand;
 import seedu.pharmatracker.command.Command;
 import seedu.pharmatracker.command.DeleteCommand;
@@ -103,7 +105,6 @@ public class Parser {
 
         switch (commandWord) {
         case "add":
-            System.out.println("Add command triggered.");
             String name = extractName(description);
             String dosage = extractDosage(description);
             int quantity = extractQuantity(description);
@@ -115,7 +116,7 @@ public class Parser {
             String frequency = extractFlag(description, "/freq");
             String route = extractFlag(description, "/route");
             String maxDailyDose = extractFlag(description, "/max");
-            java.util.ArrayList<String> warnings = extractWarnings(description);
+            ArrayList<String> warnings = extractWarnings(description);
             return new AddCommand(name, dosage, quantity, expiryDate, tag,
                     dosageForm, manufacturer, directions, frequency, route,
                     maxDailyDose, warnings);

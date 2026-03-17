@@ -33,6 +33,7 @@ public class AddCommand extends Command {
                       String dosageForm, String manufacturer, String directions,
                       String frequency, String route, String maxDailyDose,
                       ArrayList<String> warnings) {
+
         this.name = name;
         this.dosage = dosage;
         this.quantity = quantity;
@@ -72,6 +73,7 @@ public class AddCommand extends Command {
             med.addWarning(warning);
         }
         inventory.addMedication(med);
+        ui.printAddedMessage(med, inventory);
     }
 
 }

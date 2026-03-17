@@ -45,6 +45,14 @@ public class Ui {
         printLineDivider();
     }
 
+    public void printAddedMessage(Medication med, Inventory inventory) {
+        System.out.println("You have added the following medication: ");
+        System.out.println(med.toString());
+        int count = inventory.getMedicationCount();
+        System.out.println("You now have " + count + " medications in your inventory!");
+        System.out.println(DETAIL_DIVIDER);
+    }
+
     public void printDeletedMessage(Medication med, Inventory inventory) {
         System.out.println("You have deleted the following medication: ");
         System.out.println(med.toString());
