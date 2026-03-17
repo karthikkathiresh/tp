@@ -74,11 +74,6 @@ public class Parser {
         return description.substring(expiryIndex + 2, tagIndex).trim();
     }
 
-    public static String extractTag(String description) {
-        int tagIndex = description.indexOf("/t");
-        return (tagIndex == -1) ? "" : description.substring(tagIndex + 2).trim();
-    }
-
     private static java.util.ArrayList<String> extractWarnings(String description) {
         java.util.ArrayList<String> warnings = new java.util.ArrayList<>();
         int searchFrom = 0;
@@ -109,7 +104,7 @@ public class Parser {
             String dosage = extractDosage(description);
             int quantity = extractQuantity(description);
             String expiryDate = extractExpiryDate(description);
-            String tag = extractTag(description);
+            String tag = extractFlag(description, "/t");
             String dosageForm = extractFlag(description, "/df");
             String manufacturer = extractFlag(description, "/mfr");
             String directions = extractFlag(description, "/dir");
