@@ -10,5 +10,16 @@ ____________________________________________________________
 Welcome to Pharma Tracker!
 What can I do for you today?
 ____________________________________________________________
-Enter command: Help command triggered.
-Enter command: Exit command triggered.
+Enter command: Here are the possible features of the chatbot:
+1. Add Medication (add /n NAME /d DOSAGE /q QUANTITY /e EXPIRY /t TAG)
+2. Delete Medication (delete INDEX)
+3. Dispense Medication (dispense INDEX q/QUANTITY)
+4. List Inventory (list)
+5. Find / Search Medication (find KEYWORD)
+6. View Medication Details (view INDEX)
+7. Sort by Expiry Date (sort)
+8. Print Description Label (label INDEX)
+9. Viewing Help (help)
+10. Exiting the Program (exit)
+Enter command: Exiting Application
+Stay Healthy!
