@@ -12,8 +12,11 @@ public class Inventory {
     }
 
     public void addMedication(Medication medication) {
+        assert medication != null : "Cannot add a null medication to the inventory.";
+        int initialCount = this.medicationCount;
         medications.add(medication);
         medicationCount++;
+        assert this.medicationCount == initialCount + 1 : "Inventory count did not increment correctly!";
     }
 
     public void removeMedication(Medication medication) {
