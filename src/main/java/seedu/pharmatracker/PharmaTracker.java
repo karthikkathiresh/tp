@@ -4,7 +4,7 @@ import static seedu.pharmatracker.parser.Parser.parse;
 
 import seedu.pharmatracker.command.Command;
 import seedu.pharmatracker.data.Inventory;
-import seedu.pharmatracker.data.Storage;
+import seedu.pharmatracker.storage.Storage;
 import seedu.pharmatracker.exceptions.PharmaTrackerException;
 import seedu.pharmatracker.ui.Ui;
 
