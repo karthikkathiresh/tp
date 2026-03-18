@@ -20,8 +20,13 @@ public class Inventory {
     }
 
     public void removeMedication(Medication medication) {
+        assert medication != null : "Cannot remove a null medication from the inventory";
+        int initialCount = this.medicationCount;
+
         medications.remove(medication);
         medicationCount--;
+
+        assert this.medicationCount == initialCount - 1 : "Inventory count did not decrement correctly!";
     }
 
     public int getMedicationCount() {
