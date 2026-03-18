@@ -6,6 +6,10 @@ import seedu.pharmatracker.data.Inventory;
 import seedu.pharmatracker.data.Medication;
 import seedu.pharmatracker.ui.Ui;
 
+/**
+ * Represents a command to add a new medication to the inventory.
+ * Encapsulates all necessary details required to construct a Medication object.
+ */
 public class AddCommand extends Command {
 
     public static final String COMMAND_WORD = "add";
@@ -24,11 +28,22 @@ public class AddCommand extends Command {
     private final String maxDailyDose;
     private final ArrayList<String> warnings;
 
-    // For reference, the format of the description will be
-    // /n NAME /d DOSAGE /q QUANTITY /e EXPIRY /t TAG
-    // Optional: /df DOSAGE_FORM /mfr MANUFACTURER /dir DIRECTIONS
-    //           /freq FREQUENCY /route ROUTE /max MAX_DOSE /warn WARNING
-
+    /**
+     * Constructs an AddCommand with the specified medication details.
+     *
+     * @param name         The name of the medication.
+     * @param dosage       The strength or dosage of the medication (e.g. 500mg).
+     * @param quantity     The number of units being added to the inventory.
+     * @param expiryDate   The expiration date of the medication.
+     * @param tag          The category or tag associated with the medication.
+     * @param dosageForm   The physical form of the medication (e.g. Tablet, Capsule).
+     * @param manufacturer The manufacturer of the medication.
+     * @param directions   Instructions for taking the medication.
+     * @param frequency    How often the medication should be taken.
+     * @param route        The route of administration (e.g. Oral).
+     * @param maxDailyDose The maximum allowed dosage per day.
+     * @param warnings     A list of precautions or warnings associated with the medication.
+     */
     public AddCommand(String name, String dosage, int quantity, String expiryDate, String tag,
                       String dosageForm, String manufacturer, String directions,
                       String frequency, String route, String maxDailyDose,
@@ -48,6 +63,13 @@ public class AddCommand extends Command {
         this.warnings = warnings;
     }
 
+    /**
+     * Executes the command by creating a new Medication object with the provided results
+     * and adding it to the inventory. Also prints a success message to the user.
+     *
+     * @param inventory The current inventory where the medication will be added.
+     * @param ui        The user interface to display the success message.
+     */
     @Override
     public void execute(Inventory inventory, Ui ui) {
         Medication med = new Medication(name, dosage, quantity, expiryDate, tag);

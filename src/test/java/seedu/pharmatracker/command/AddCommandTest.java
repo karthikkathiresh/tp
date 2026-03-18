@@ -10,8 +10,19 @@ import seedu.pharmatracker.data.Inventory;
 import seedu.pharmatracker.data.Medication;
 import seedu.pharmatracker.ui.Ui;
 
+/**
+ * Tests the functionality of the {@link AddCommand} class.
+ * Ensures that medications are correctly created and added to the inventory
+ * under various input conditions.
+ */
 public class AddCommandTest {
 
+    /**
+     * Tests if an {@code AddCommand} containing only mandatory fields successfully
+     * adds a {@code Medication} to the {@code Inventory}.
+     * Verifies that the mandatory fields are set correctly and optional fields
+     * default to empty strings or empty lists.
+     */
     @Test
     public void execute_mandatoryFieldsOnly_addsToInventory() {
         Inventory inventory = new Inventory();
@@ -37,6 +48,12 @@ public class AddCommandTest {
         assertTrue(addedMed.getWarnings().isEmpty());
     }
 
+    /**
+     * Tests if an {@code AddCommand} containing all fields (mandatory and optional)
+     * successfully adds a {@code Medication} to the {@code Inventory}.
+     * Verifies that all specific attributes including the list of warnings
+     * are populated correctly.
+     */
     @Test
     public void execute_allFieldsPresent_addsSuccessfully() {
         Inventory inventory = new Inventory();
@@ -70,6 +87,10 @@ public class AddCommandTest {
         assertTrue(addedMed.getWarnings().contains("Do not take with alcohol"));
     }
 
+    /**
+     * Tests if executing multiple {@code AddCommand}s successfully appends
+     * multiple medications to the {@code Inventory} without overwriting previous entries.
+     */
     @Test
     public void execute_multipleAddCommands_appendsToInventory() {
         Inventory inventory = getInventory();
@@ -80,6 +101,10 @@ public class AddCommandTest {
         assertEquals("Tablet", secondMed.getDosageForm());
     }
 
+    /**
+     * Helper method to initialize an {@code Inventory}l and execute two {@code AddCommand}s.
+     * @return An {@code Inventory} populated with the two sample medications.
+     */
     private static Inventory getInventory() {
         Inventory inventory = new Inventory();
         Ui ui = new Ui();
