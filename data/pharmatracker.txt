@@ -7,3 +7,7 @@ Amoxicillin|250mg|50| 2026-06-01 |antibiotic|Capsule|Pfizer|"Take after meals"|"
 Paracetamol|500mg|50| 2026-12-31 |painkiller|||||||
 Paracetamol|500mg|100| 2026-12-31 |painkiller|||||||
 Amoxicillin|250mg|50| 2026-06-01 |antibiotic|Capsule|Pfizer|"Take after meals"|"Twice daily"|||"May cause allergic reactions"
+Aspirin|75mg|100| 2027-01-01 |blood-thinner|||||||
+Ibuprofen|400mg|50| 2026-12-31 |painkiller|Tablet|Johnson & Johnson|Take with food|Every 6 hours|Oral|3200mg|May cause stomach bleeding;Do not take if allergic to aspirin
+Amoxicillin|250mg|30| 2026-08-15 |antibiotic||||3 times a day|Oral||Finish the entire course of medication
+Loratadine|10mg|20| 2028-05-20 |antihistamine|Tablet||||||
