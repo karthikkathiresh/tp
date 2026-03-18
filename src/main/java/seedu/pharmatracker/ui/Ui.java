@@ -24,8 +24,8 @@ public class Ui {
     private static final String MESSAGE_ADDED = "You have added the following medication:";
     private static final String INDENT = "  ";
     private static final String MESSAGE_DELETED = "You have deleted the following medication:";
-    public static final String MESSAGE_WELCOME = "Welcome to Pharma Tracker!\nWhat can I do for you today?";
-    public static final String MESSAGE_COMMAND = "Enter command: ";
+    private static final String MESSAGE_WELCOME = "Welcome to Pharma Tracker!\nWhat can I do for you today?";
+    private static final String MESSAGE_COMMAND = "Enter command: ";
 
     private final Scanner in;
 
