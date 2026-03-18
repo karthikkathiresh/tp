@@ -14,13 +14,40 @@ import seedu.pharmatracker.command.HelpCommand;
 import seedu.pharmatracker.command.ExitCommand;
 import seedu.pharmatracker.exceptions.PharmaTrackerException;
 
+/**
+ * Parses user input into executable commands.
+ * Handles the extraction and validation of mandatory and optional flags from the raw command string.
+ */
 public class Parser {
 
+    public static final String FLAG_NAME = "/n";
+    public static final String FLAG_DOSAGE = "/d";
+    public static final String FLAG_QUANTITY = "/q";
+    public static final String FLAG_EXPIRY_DATE = "/e";
+    public static final String FLAG_TAG = "/t";
+    public static final String FLAG_DOSAGE_FORM = "/df";
+    public static final String FLAG_MANUFACTURER = "/mfr";
+    public static final String FLAG_DIRECTION = "/dir";
+    public static final String FLAG_FREQUENCY = "/freq";
+    public static final String FLAG_ROUTE = "/route";
+    public static final String FLAG_MAX_DOSAGE = "/max";
+    public static final String FLAG_WARNINGS = "/warn";
+
     private static final String[] ALL_FLAGS = {
-        "/n", "/d", "/q", "/e", "/t", "/df", "/mfr",
-        "/dir", "/freq", "/route", "/max", "/warn"
+        FLAG_NAME, FLAG_DOSAGE, FLAG_QUANTITY, FLAG_EXPIRY_DATE, FLAG_TAG,
+        FLAG_DOSAGE_FORM, FLAG_MANUFACTURER, FLAG_DIRECTION, FLAG_FREQUENCY,
+        FLAG_ROUTE, FLAG_MAX_DOSAGE, FLAG_WARNINGS
     };
 
+    /**
+     * Finds the index of the next flag appearing in the description string after a specified index.
+     * This is used to determine the end bound of a flag's associated value.
+     *
+     * @param description The raw string containing command arguments.
+     * @param afterIndex The index to start searching from.
+     * @return The index of the next occurring flag, or the length of the string if no more flags exist.
+     * @throws PharmaTrackerException If the search index provided is invalid.
+     */
     private static int findNextFlagIndex(String description, int afterIndex) throws PharmaTrackerException {
         if (afterIndex < 0 || afterIndex > description.length()) {
             throw new PharmaTrackerException("Error parsing command flags: Invalid search index.");
@@ -36,6 +63,14 @@ public class Parser {
         return earliest;
     }
 
+    /**
+     * Extracts the string value associated with a generic optional flag.
+     *
+     * @param description The raw string containing command arguments.
+     * @param flag The specific flag to search for.
+     * @return The extracted string value, or an empty string if the flag is not present.
+     * @throws PharmaTrackerException If the flag is present but has no accompanying value.
+     */
     private static String extractFlag(String description, String flag) throws PharmaTrackerException {
         int flagIndex = description.indexOf(flag);
         if (flagIndex == -1) {
@@ -57,9 +92,16 @@ public class Parser {
         return extractedValue;
     }
 
+    /**
+     * Extracts the mandatory medication name from the user input.
+     *
+     * @param description The raw string containing command arguments.
+     * @return The extracted medication name.
+     * @throws PharmaTrackerException If the format is invalid, missing flags, or if the name is empty.
+     */
     public static String extractName(String description) throws PharmaTrackerException {
-        int nameIndex = description.indexOf("/n");
-        int dosageIndex = description.indexOf("/d");
+        int nameIndex = description.indexOf(FLAG_NAME);
+        int dosageIndex = description.indexOf(FLAG_DOSAGE);
 
         if (nameIndex == -1 || dosageIndex == -1 || nameIndex >= dosageIndex) {
             throw new PharmaTrackerException("Invalid format! Please ensure you include '/n' followed by '/d'.");
@@ -73,9 +115,16 @@ public class Parser {
         return name;
     }
 
+    /**
+     * Extracts the mandatory medication storage from the user input.
+     *
+     * @param description The raw string containing command arguments.
+     * @return The extracted medication dosage.
+     * @throws PharmaTrackerException If the format is invalid, missing flags, or if the dosage is empty.
+     */
     public static String extractDosage(String description) throws PharmaTrackerException {
-        int dosageIndex = description.indexOf("/d");
-        int quantityIndex = description.indexOf("/q");
+        int dosageIndex = description.indexOf(FLAG_DOSAGE);
+        int quantityIndex = description.indexOf(FLAG_QUANTITY);
 
         if (dosageIndex == -1 || quantityIndex == -1 || dosageIndex > quantityIndex) {
             throw new PharmaTrackerException("Invalid format! Please ensure you include '/d' followed by '/q'.");
@@ -89,9 +138,16 @@ public class Parser {
         return dosage;
     }
 
+    /**
+     * Extracts the mandatory medication quantity from the user input.
+     *
+     * @param description The raw string containing command arguments.
+     * @return The extracted medication quantity.
+     * @throws PharmaTrackerException If the format is invalid, missing flags, or if the quantity is empty.
+     */
     public static int extractQuantity(String description) throws PharmaTrackerException {
-        int quantityIndex = description.indexOf("/q");
-        int expiryIndex = description.indexOf("/e");
+        int quantityIndex = description.indexOf(FLAG_QUANTITY);
+        int expiryIndex = description.indexOf(FLAG_EXPIRY_DATE);
 
         if (quantityIndex == -1 || expiryIndex == -1 || quantityIndex > expiryIndex) {
             throw new PharmaTrackerException("Invalid format! Please ensure you include '/q' followed by '/e'.");
@@ -113,8 +169,14 @@ public class Parser {
         }
     }
 
+    /**
+     * Extracts the mandatory medication expiry date from the user input.
+     * @param description The raw string containing command arguments.
+     * @return The extracted medication expiry date.
+     * @throws PharmaTrackerException If the format is invalid, missing flags, or if the expiry date is empty.
+     */
     public static String extractExpiryDate(String description) throws PharmaTrackerException {
-        int expiryIndex = description.indexOf("/e");
+        int expiryIndex = description.indexOf(FLAG_EXPIRY_DATE);
         if (expiryIndex == -1) {
             throw new PharmaTrackerException("Invalid format! Please ensure you include the '/e' flag.");
         }
@@ -135,15 +197,22 @@ public class Parser {
         return expiryDate;
     }
 
+    /**
+     * Extracts all occurrences of the warning flag and compiles them into a list.
+     *
+     * @param description The raw string containing command arguments.
+     * @return An {@code ArrayList} containing all extracted warning strings.
+     * @throws PharmaTrackerException If an error occurs during flag boundary detection.
+     */
     private static ArrayList<String> extractWarnings(String description) throws PharmaTrackerException {
         ArrayList<String> warnings = new ArrayList<>();
         int searchFrom = 0;
         while (true) {
-            int idx = description.indexOf("/warn", searchFrom);
+            int idx = description.indexOf(FLAG_WARNINGS, searchFrom);
             if (idx == -1) {
                 break;
             }
-            int valueStart = idx + "/warn".length();
+            int valueStart = idx + FLAG_WARNINGS.length();
             int valueEnd = findNextFlagIndex(description, valueStart);
             String value = description.substring(valueStart, valueEnd).trim();
             if (!value.isEmpty()) {
@@ -154,6 +223,13 @@ public class Parser {
         return warnings;
     }
 
+    /**
+     * Parses the full raw user input and returns the corresponding executable {@link Command}.
+     *
+     * @param userInput The raw string entered by the user.
+     * @return The specific {@link Command} object representing the user's intent, or null if unhandled.
+     * @throws PharmaTrackerException If the command word is unknown, or if the arguments are invalid / missing.
+     */
     public static Command parse(String userInput) throws PharmaTrackerException {
         String[] inputParts = userInput.trim().split("\\s+", 2);
         String commandWord = inputParts[0].toLowerCase();
@@ -165,36 +241,32 @@ public class Parser {
             String dosage = extractDosage(description);
             int quantity = extractQuantity(description);
             String expiryDate = extractExpiryDate(description);
-            String tag = extractFlag(description, "/t");
-            String dosageForm = extractFlag(description, "/df");
-            String manufacturer = extractFlag(description, "/mfr");
-            String directions = extractFlag(description, "/dir");
-            String frequency = extractFlag(description, "/freq");
-            String route = extractFlag(description, "/route");
-            String maxDailyDose = extractFlag(description, "/max");
+            String tag = extractFlag(description, FLAG_TAG);
+            String dosageForm = extractFlag(description, FLAG_DOSAGE_FORM);
+            String manufacturer = extractFlag(description, FLAG_MANUFACTURER);
+            String directions = extractFlag(description, FLAG_DIRECTION);
+            String frequency = extractFlag(description, FLAG_FREQUENCY);
+            String route = extractFlag(description, FLAG_ROUTE);
+            String maxDailyDose = extractFlag(description, FLAG_MAX_DOSAGE);
             ArrayList<String> warnings = extractWarnings(description);
             return new AddCommand(name, dosage, quantity, expiryDate, tag,
-                    dosageForm, manufacturer, directions, frequency, route,
-                    maxDailyDose, warnings);
+                                  dosageForm, manufacturer, directions, frequency,
+                                  route, maxDailyDose, warnings);
 
-        case "delete":
-            System.out.println("Delete command triggered.");
+        case DeleteCommand.COMMAND_WORD:
             return new DeleteCommand(description);
 
-        case "list":
-            System.out.println("List command triggered.");
+        case ListCommand.COMMAND_WORD:
             return new ListCommand();
 
-        case "find":
-            System.out.println("Find command triggered.");
+        case FindCommand.COMMAND_WORD:
             if (description.isEmpty()) {
                 System.out.println("Please provide a keyword to search for.");
                 break;
             }
             return new FindCommand(description);
 
-        case "view":
-            System.out.println("View command triggered.");
+        case ViewCommand.COMMAND_WORD:
             if (description.isEmpty()) {
                 System.out.println("Please provide an index to view.");
                 break;
@@ -207,8 +279,7 @@ public class Parser {
                 break;
             }
 
-        case "dispense":
-            System.out.println("Dispense command triggered.");
+        case DispenseCommand.COMMAND_WORD:
             if (description.isEmpty()) {
                 System.out.println("Please provide an index and quantity.");
                 break;
@@ -223,18 +294,13 @@ public class Parser {
                 break;
             }
 
-        case "sort":
-            System.out.println("Sort command triggered.");
+        case SortCommand.COMMAND_WORD:
             return new SortCommand();
 
-        case "label":
-            System.out.println("Label command triggered.");
-            break;
-
-        case "help":
+        case HelpCommand.COMMAND_WORD:
             return new HelpCommand();
 
-        case "exit":
+        case ExitCommand.COMMAND_WORD:
             return new ExitCommand();
 
         default:

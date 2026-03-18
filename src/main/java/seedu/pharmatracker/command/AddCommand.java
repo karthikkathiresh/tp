@@ -18,12 +18,14 @@ public class AddCommand extends Command {
 
     private static final Logger logger = Logger.getLogger(AddCommand.class.getName());
 
+    // Compulsory attributes for a medication.
     private final String name;
     private final String dosage;
     private final int quantity;
     private final String expiryDate;
-    private final String tag;
 
+    // Optional attributes for a medication.
+    private final String tag;
     private final String dosageForm;
     private final String manufacturer;
     private final String directions;

@@ -18,6 +18,8 @@ import seedu.pharmatracker.ui.Ui;
  */
 public class SortCommand extends Command {
 
+    public static final String COMMAND_WORD = "sort";
+
     private static final Logger logger = Logger.getLogger(SortCommand.class.getName());
 
     /**

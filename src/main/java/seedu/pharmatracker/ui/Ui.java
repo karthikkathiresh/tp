@@ -5,6 +5,11 @@ import java.util.Scanner;
 import seedu.pharmatracker.data.Inventory;
 import seedu.pharmatracker.data.Medication;
 
+/**
+ * Handles all user interactions for the PharmaTracker application.
+ * This class is responsible for reading user input from the console and
+ * formatting and displaying messages, errors, and data to the user.
+ */
 public class Ui {
     public static final String LOGO = "  _____  _                               _______              _\n" +
             " |  __ \\| |                             |__   __|            | |\n" +
@@ -19,43 +24,72 @@ public class Ui {
     private static final String MESSAGE_ADDED = "You have added the following medication:";
     private static final String INDENT = "  ";
     private static final String MESSAGE_DELETED = "You have deleted the following medication:";
+    private static final String MESSAGE_WELCOME = "Welcome to Pharma Tracker!\nWhat can I do for you today?";
+    private static final String MESSAGE_COMMAND = "Enter command: ";
 
     private final Scanner in;
 
+    /**
+     * Constructs a {@code Ui} instance.
+     * Initializes the standard input scanner used to read commands from the user.
+     */
     public Ui() {
         this.in = new Scanner(System.in);
     }
 
+    /**
+     * Prints an arbitrary number of messages to the console, each on a new line.
+     *
+     * @param message A variable number of string arguments to be printed.
+     */
     public void printToScreen(String... message) {
         for (String m : message) {
             System.out.println(m);
         }
     }
 
+    /**
+     * Displays the initial greeting message to the user, including the application logo.
+     */
     public void printWelcomeMessage() {
-        String logo = LOGO;
-        System.out.println("Hello from\n" + logo);
-        printLineDivider();
-        System.out.println("Welcome to Pharma Tracker!");
-        System.out.println("What can I do for you today?");
-        printLineDivider();
+        printToScreen(
+                "Hello from\n" + LOGO,
+                DIVIDER,
+                MESSAGE_WELCOME,
+                DIVIDER
+        );
     }
 
-    public void printLineDivider() {
-        System.out.println(DIVIDER);
-    }
-
+    /**
+     * Prompts the user for a command and reads their input from the console.
+     *
+     * @return The raw, trimmed string entered by the user.
+     */
     public String readCommand() {
-        System.out.print("Enter command: ");
+        System.out.print(MESSAGE_COMMAND);
         return in.nextLine().trim();
     }
 
+    /**
+     * Prints a standard message to the console.
+     *
+     * @param message The text message to be displayed.
+     */
     public void printMessage(String message) {
-        printLineDivider();
-        System.out.println(message);
-        printLineDivider();
+        printToScreen(
+                DIVIDER,
+                message,
+                DIVIDER
+        );
     }
 
+    /**
+     * Displays a confirmation message indicating that a medication has been successfully
+     * added to the inventory, along with the updated total medication count.
+     *
+     * @param med       The {@link Medication} that was just added.
+     * @param inventory The current {@Link Inventory} to retrieve the updated total count.
+     */
     public void printAddedMessage(Medication med, Inventory inventory) {
         int count = inventory.getMedicationCount();
         printToScreen(
@@ -67,6 +101,13 @@ public class Ui {
         );
     }
 
+    /**
+     * Displays a confirmation message indicating that a medication has been successfully
+     * removed from the inventory, along with the updated total medication count.
+     *
+     * @param med The {@Link Medication} that was just deleted.
+     * @param inventory The current {@Link Inventory} to retrieve the updated total count.
+     */
     public void printDeletedMessage(Medication med, Inventory inventory) {
         int count = inventory.getMedicationCount();
         printToScreen(
@@ -78,6 +119,12 @@ public class Ui {
         );
     }
 
+    /**
+     * Prints a highly detailed, formatted view of a specific medication's attributes.
+     * Empty optional fields are represented as "N/A" for better readability.
+     *
+     * @param med The {@Link Medication} whose detailed information is to be displayed.
+     */
     public void printMedicationDetails(Medication med) {
         System.out.println(DETAIL_BORDER);
         System.out.println("MEDICATION DETAILS");

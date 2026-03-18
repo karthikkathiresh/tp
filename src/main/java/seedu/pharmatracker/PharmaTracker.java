@@ -8,17 +8,35 @@ import seedu.pharmatracker.storage.Storage;
 import seedu.pharmatracker.exceptions.PharmaTrackerException;
 import seedu.pharmatracker.ui.Ui;
 
+/**
+ * The main entry point for the PharmaTracker application.
+ * Initializes the core components (UI, Storage and Inventory) and manages
+ * the main execution loop of the program.
+ */
 public class PharmaTracker {
     private Ui ui;
     private Inventory inventory;
     private Storage storage;
 
+    /**
+     * Constructs a {@code PharmaTracker} application instance.
+     * Initializes the user interface and storage handlers, and attempts to load
+     * any existing inventory data from the local storage file.
+     */
     public PharmaTracker() {
         ui = new Ui();
         storage = new Storage();
         inventory = storage.load();
     }
 
+    /**
+     * Runs the main execution loop of the application.
+     * Continuously reads user input, parses it into executable commands, executes the
+     * commands, and saves the updated inventory state to storage. Catches and displays
+     * any application-specific exceptions to the user.
+     *
+     * @throws PharmaTrackerException If a critical, unrecoverable error occurs during execution.
+     */
     public void run() throws PharmaTrackerException {
         assert ui != null : "UI should not be null";
         assert inventory != null : "Inventory should not be null";
@@ -38,6 +56,13 @@ public class PharmaTracker {
         }
     }
 
+    /**
+     * The main method that launches the PharmaTracker application.
+     *
+     * @param args Command line arguments.
+     *
+     * @throws PharmaTrackerException If a fatal error occurs during application run.
+     */
     public static void main(String[] args) throws PharmaTrackerException {
         new PharmaTracker().run();
     }

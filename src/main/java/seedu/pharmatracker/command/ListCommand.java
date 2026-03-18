@@ -9,6 +9,8 @@ import seedu.pharmatracker.data.Medication;
 import seedu.pharmatracker.ui.Ui;
 
 public class ListCommand extends Command {
+    public static final String COMMAND_WORD = "list";
+
     private static final int LOW_STOCK_THRESHOLD = 10;
     private static final String DIVIDER = "------------------------------------------------------";
     private static final Logger logger = Logger.getLogger(ListCommand.class.getName());

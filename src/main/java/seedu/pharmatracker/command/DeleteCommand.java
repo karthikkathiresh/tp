@@ -13,6 +13,8 @@ import seedu.pharmatracker.ui.Ui;
  */
 public class DeleteCommand extends Command {
 
+    public static final String COMMAND_WORD = "delete";
+
     private static final Logger logger = Logger.getLogger(DeleteCommand.class.getName());
     private final String description;
 
