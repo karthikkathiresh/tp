@@ -31,7 +31,11 @@ public class SortCommand extends Command {
      */
     @Override
     public void execute(Inventory inventory, Ui ui) {
+
+        assert inventory != null : "Inventory should not be null";
         ArrayList<Medication> medicationList = inventory.getMedications();
+        assert medicationList != null : "Medication list should not be null";
+
 
         // Check if inventory is empty
         if (medicationList.isEmpty()) {
@@ -40,18 +44,31 @@ public class SortCommand extends Command {
             return;
         }
 
+
         logger.log(Level.FINE, "Sorting " + medicationList.size() + " medications by expiry date");
 
         // Sort medications by expiry date
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         medicationList.sort(Comparator.comparing(med -> {
+            assert med != null : "Medication should not be null";
+            String expiryDate = med.getExpiryDate();
+            assert expiryDate != null : "Expiry date should not be null";
+            expiryDate = expiryDate.trim();
+            LocalDate parsedDate = null;
             try {
-                return LocalDate.parse(med.getExpiryDate(), formatter);
-            } catch (DateTimeParseException e) {
-                // Treat invalid dates as latest possible date
-                logger.log(Level.FINE, "Invalid expiry date for medication: " + med.getName());
-                return LocalDate.MAX;
+                parsedDate = LocalDate.parse(expiryDate, formatter1);
+                logger.log(Level.FINE, "Parsed (yyyy-MM-dd) for " + med.getName() + ": " + expiryDate + " -> " + parsedDate);
+            } catch (DateTimeParseException e1) {
+                try {
+                    parsedDate = LocalDate.parse(expiryDate, formatter2);
+                    logger.log(Level.FINE, "Parsed (dd/MM/yyyy) for " + med.getName() + ": " + expiryDate + " -> " + parsedDate);
+                } catch (DateTimeParseException e2) {
+                    logger.log(Level.WARNING, "Invalid expiry date for medication: " + med.getName() + ", value: " + expiryDate);
+                    parsedDate = LocalDate.MAX;
+                }
             }
+            return parsedDate;
         }));
 
         logger.log(Level.INFO, "Medications sorted successfully");
@@ -60,6 +77,7 @@ public class SortCommand extends Command {
         System.out.println("Medications sorted by expiry date:");
         for (int i = 0; i < medicationList.size(); i++) {
             Medication medication = medicationList.get(i);
+            assert medication != null : "Medication should not be null in display loop";
             System.out.println((i + 1) + ". " + medication.toString());
         }
     }
