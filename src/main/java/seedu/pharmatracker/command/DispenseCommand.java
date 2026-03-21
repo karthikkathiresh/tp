@@ -7,18 +7,51 @@ import seedu.pharmatracker.data.Inventory;
 import seedu.pharmatracker.data.Medication;
 import seedu.pharmatracker.ui.Ui;
 
+/**
+ * Command that dispenses a specified quantity of a medication from the inventory.
+ *
+ * <p>The target medication is identified by a 1-based index. Dispensing fails
+ * if the index is out of range or if the requested quantity exceeds current stock,
+ * in both cases printing an error message and leaving the inventory unchanged.
+ */
 public class DispenseCommand extends Command {
+
+    /** Command keyword used to trigger this command. */
     public static final String COMMAND_WORD = "dispense";
+
     private static final Logger logger = Logger.getLogger(DispenseCommand.class.getName());
 
+    /** 1-based index of the medication to dispense from the inventory. */
     private final int index;
+
+    /** Number of units to dispense. */
     private final int quantity;
 
+    /**
+     * Constructs a {@code DispenseCommand} with the target medication index and quantity.
+     *
+     * @param index    1-based position of the medication in the inventory
+     * @param quantity number of units to dispense; must not exceed available stock
+     */
     public DispenseCommand(int index, int quantity) {
         this.index = index;
         this.quantity = quantity;
     }
 
+    /**
+     * Executes the dispense command, reducing the medication's stock by the specified quantity.
+     *
+     * <p>Prints an error and returns early under two conditions:
+     * <ul>
+     *   <li>The index is less than 1 or exceeds the inventory size.</li>
+     *   <li>The requested quantity exceeds the medication's current stock.</li>
+     * </ul>
+     * On success, prints a confirmation with the medication name, dispensed amount,
+     * and updated stock level.
+     *
+     * @param inventory the inventory from which to dispense the medication
+     * @param ui        the UI instance (unused directly; output goes via {@code System.out})
+     */
     @Override
     public void execute(Inventory inventory, Ui ui) {
         logger.log(Level.INFO, "Executing DispenseCommand: index={0}, quantity={1}",

@@ -13,20 +13,36 @@ import java.io.PrintStream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * JUnit tests for {@link DispenseCommand}.
+ *
+ * <p>Redirects {@code System.out} to an in-memory stream before each test
+ * to allow assertion of printed output, and restores the original stream after.
+ */
 public class DispenseCommandTest {
     private final ByteArrayOutputStream out = new ByteArrayOutputStream();
     private final PrintStream original = System.out;
 
+    /**
+     * Redirects {@code System.out} to an in-memory stream before each test.
+     */
     @BeforeEach
     public void setUp() {
         System.setOut(new PrintStream(out));
     }
 
+    /**
+     * Restores {@code System.out} to its original stream after each test.
+     */
     @AfterEach
     public void tearDown() {
         System.setOut(original);
     }
 
+    /**
+     * Tests that a valid dispense operation reduces the medication's
+     * quantity in the inventory by the dispensed amount.
+     */
     @Test
     public void execute_validDispense_reducesQuantity() {
         Inventory inventory = new Inventory();
@@ -36,6 +52,10 @@ public class DispenseCommandTest {
         assertEquals(130, inventory.getMedication(0).getQuantity());
     }
 
+    /**
+     * Tests that a valid dispense operation prints a success message containing
+     * the medication name, dispensed amount, and updated stock level.
+     */
     @Test
     public void execute_validDispense_printsSuccessMessage() {
         Inventory inventory = new Inventory();
@@ -49,6 +69,10 @@ public class DispenseCommandTest {
         assertTrue(output.contains("Updated Stock: 130 units"));
     }
 
+    /**
+     * Tests that dispensing more than the available stock prints an error message
+     * and leaves the inventory quantity unchanged.
+     */
     @Test
     public void execute_quantityExceedsStock_printsError() {
         Inventory inventory = new Inventory();
@@ -59,6 +83,10 @@ public class DispenseCommandTest {
         assertEquals(10, inventory.getMedication(0).getQuantity());
     }
 
+    /**
+     * Tests that dispensing exactly the full stock reduces the quantity to zero
+     * and still prints a success message.
+     */
     @Test
     public void execute_exactStockDispensed_quantityBecomesZero() {
         Inventory inventory = new Inventory();
@@ -69,6 +97,10 @@ public class DispenseCommandTest {
         assertTrue(out.toString().contains("Dispensing successfully!"));
     }
 
+    /**
+     * Tests that providing an index greater than the inventory size prints
+     * an invalid index error message.
+     */
     @Test
     public void execute_invalidIndexTooHigh_printsError() {
         Inventory inventory = new Inventory();
@@ -78,6 +110,10 @@ public class DispenseCommandTest {
         assertTrue(out.toString().contains("Invalid index."));
     }
 
+    /**
+     * Tests that providing an index of zero, which is below the valid 1-based
+     * range, prints an invalid index error message.
+     */
     @Test
     public void execute_invalidIndexZero_printsError() {
         Inventory inventory = new Inventory();
