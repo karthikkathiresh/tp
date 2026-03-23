@@ -12,7 +12,11 @@
 ## Product scope
 ### Target user profile
 
-{Describe the target user profile}
+Pharmacy staff (pharmacists, pharmacy technicians) who:
+- Need to manage a medication inventory in a small to mid-size pharmacy
+- Prefer a fast CLI-based workflow over GUI applications
+- Are comfortable typing commands and can type quickly
+- Need to track medication stock, expiry dates, and dispensing
 
 ### Value proposition
 
@@ -20,10 +24,17 @@
 
 ## User Stories
 
-|Version| As a ... | I want to ... | So that I can ...|
-|--------|----------|---------------|------------------|
-|v1.0|new user|see usage instructions|refer to them when I forget how to use the application|
-|v2.0|user|find a to-do item by name|locate a to-do without having to go through the entire list|
+| Version | As a ...            | I want to ...                          | So that I can ...                                  |
+|---------|---------------------|----------------------------------------|----------------------------------------------------|
+| v1.0    | new user            | see usage instructions                 | refer to them when I forget how to use the app     |
+| v1.0    | pharmacist          | add medications to inventory           | track stock levels                                 |
+| v1.0    | pharmacist          | list all medications                   | see what is currently in stock                     |
+| v1.0    | pharmacist          | delete a medication                    | remove discontinued or incorrect entries           |
+| v1.0    | pharmacist          | find medication by keyword             | quickly locate a specific drug without scrolling   |
+| v1.0    | pharmacist          | sort medications by expiry date        | identify medications expiring soon                 |
+| v1.0    | pharmacist          | view detailed medication information   | check dosage form, directions, and warnings        |
+| v2.0    | pharmacist          | print a medication label               | attach it to dispensed packages                    |
+
 
 ## Non-Functional Requirements
 
