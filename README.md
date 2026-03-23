@@ -116,14 +116,27 @@ dispense 1 q/10
 dispense 2 q/50
 ```
 
-### 7. Help
+### 7. Print Medication Label
+Prints a formatted medication label for the medication at the specified index, showing name, dosage, expiry date, and tag.
+
+```
+label <index>
+```
+
+**Examples:**
+```
+label 1
+label 3
+```
+
+### 8. Help
 Displays available commands.
 
 ```
 help
 ```
 
-### 8. Exit
+### 9. Exit
 Exits the application.
 
 ```

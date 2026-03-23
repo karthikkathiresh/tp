@@ -12,20 +12,20 @@ import seedu.pharmatracker.ui.Ui;
  * information for dispensing or packaging purposes.
  * The medication is identified by its 1-based index.
  */
-public class PrintDescriptionCommand extends Command {
+public class LabelCommand extends Command {
 
     public static final String COMMAND_WORD = "label";
 
     private static final String DIVIDER = "----------------------------";
-    private static final Logger logger = Logger.getLogger(PrintDescriptionCommand.class.getName());
+    private static final Logger logger = Logger.getLogger(LabelCommand.class.getName());
     private final int index;
 
     /**
-     * Constructs a PrintDescriptionCommand with the specified target index.
+     * Constructs a LabelCommand with the specified target index.
      *
      * @param index The 1-based index of the medication whose label to print.
      */
-    public PrintDescriptionCommand(int index) {
+    public LabelCommand(int index) {
         this.index = index;
     }
 
@@ -38,7 +38,7 @@ public class PrintDescriptionCommand extends Command {
      */
     @Override
     public void execute(Inventory inventory, Ui ui) {
-        logger.log(Level.INFO, "Starting execution of PrintDescriptionCommand for index: " + index);
+        logger.log(Level.INFO, "Starting execution of LabelCommand for index: " + index);
 
         if (inventory.getMedications().isEmpty()) {
             logger.log(Level.WARNING, "Attempted to print label from empty inventory.");
@@ -67,6 +67,6 @@ public class PrintDescriptionCommand extends Command {
         }
         System.out.println(DIVIDER);
 
-        logger.log(Level.INFO, "Successfully executed PrintDescriptionCommand.");
+        logger.log(Level.INFO, "Successfully executed LabelCommand.");
     }
 }

@@ -13,7 +13,7 @@ import seedu.pharmatracker.data.Inventory;
 import seedu.pharmatracker.data.Medication;
 import seedu.pharmatracker.ui.Ui;
 
-public class PrintDescriptionCommandTest {
+public class LabelCommandTest {
 
     private final PrintStream originalOut = System.out;
     private ByteArrayOutputStream outContent;
@@ -36,7 +36,7 @@ public class PrintDescriptionCommandTest {
         Inventory inventory = new Inventory();
         inventory.addMedication(new Medication("Paracetamol", "500mg", 100, "2027-12-01", "painkiller"));
 
-        new PrintDescriptionCommand(1).execute(inventory, ui);
+        new LabelCommand(1).execute(inventory, ui);
         String output = outContent.toString();
 
         assertTrue(output.contains("Medication Label 1"));
@@ -51,7 +51,7 @@ public class PrintDescriptionCommandTest {
         Inventory inventory = new Inventory();
         inventory.addMedication(new Medication("Aspirin", "100mg", 50, "2027-01-01", ""));
 
-        new PrintDescriptionCommand(1).execute(inventory, ui);
+        new LabelCommand(1).execute(inventory, ui);
         String output = outContent.toString();
 
         assertTrue(output.contains("Name   : Aspirin"));
@@ -62,7 +62,7 @@ public class PrintDescriptionCommandTest {
     public void execute_emptyInventory_printsEmptyMessage() {
         Inventory inventory = new Inventory();
 
-        new PrintDescriptionCommand(1).execute(inventory, ui);
+        new LabelCommand(1).execute(inventory, ui);
         String output = outContent.toString();
 
         assertTrue(output.contains("Inventory is empty."));
@@ -73,7 +73,7 @@ public class PrintDescriptionCommandTest {
         Inventory inventory = new Inventory();
         inventory.addMedication(new Medication("Aspirin", "100mg", 50, "2027-01-01", "painkiller"));
 
-        new PrintDescriptionCommand(5).execute(inventory, ui);
+        new LabelCommand(5).execute(inventory, ui);
         String output = outContent.toString();
 
         assertTrue(output.contains("Invalid index"));
@@ -84,7 +84,7 @@ public class PrintDescriptionCommandTest {
         Inventory inventory = new Inventory();
         inventory.addMedication(new Medication("Aspirin", "100mg", 50, "2027-01-01", "painkiller"));
 
-        new PrintDescriptionCommand(0).execute(inventory, ui);
+        new LabelCommand(0).execute(inventory, ui);
         String output = outContent.toString();
 
         assertTrue(output.contains("Invalid index"));
@@ -95,7 +95,7 @@ public class PrintDescriptionCommandTest {
         Inventory inventory = new Inventory();
         inventory.addMedication(new Medication("Aspirin", "100mg", 50, "2027-01-01", "painkiller"));
 
-        new PrintDescriptionCommand(-1).execute(inventory, ui);
+        new LabelCommand(-1).execute(inventory, ui);
         String output = outContent.toString();
 
         assertTrue(output.contains("Invalid index"));
@@ -107,7 +107,7 @@ public class PrintDescriptionCommandTest {
         inventory.addMedication(new Medication("Aspirin", "100mg", 50, "2027-01-01", "painkiller"));
         inventory.addMedication(new Medication("Ibuprofen", "400mg", 30, "2026-06-15", "anti-inflammatory"));
 
-        new PrintDescriptionCommand(2).execute(inventory, ui);
+        new LabelCommand(2).execute(inventory, ui);
         String output = outContent.toString();
 
         assertTrue(output.contains("Medication Label 2"));

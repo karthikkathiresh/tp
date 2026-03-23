@@ -12,7 +12,7 @@ import seedu.pharmatracker.command.ViewCommand;
 import seedu.pharmatracker.command.DispenseCommand;
 import seedu.pharmatracker.command.HelpCommand;
 import seedu.pharmatracker.command.ExitCommand;
-import seedu.pharmatracker.command.PrintDescriptionCommand;
+import seedu.pharmatracker.command.LabelCommand;
 import seedu.pharmatracker.exceptions.PharmaTrackerException;
 
 /**
@@ -298,14 +298,14 @@ public class Parser {
         case SortCommand.COMMAND_WORD:
             return new SortCommand();
 
-        case PrintDescriptionCommand.COMMAND_WORD:
+        case LabelCommand.COMMAND_WORD:
             if (description.isEmpty()) {
                 System.out.println("Please provide an index for the label.");
                 break;
             }
             try {
                 int descIndex = Integer.parseInt(description.trim());
-                return new PrintDescriptionCommand(descIndex);
+                return new LabelCommand(descIndex);
             } catch (NumberFormatException e) {
                 System.out.println("Invalid index. Please enter a valid number.");
                 break;
