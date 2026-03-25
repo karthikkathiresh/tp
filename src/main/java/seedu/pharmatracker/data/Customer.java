@@ -61,4 +61,18 @@ public class Customer {
         assert medicationRecord != null : "Medication record cannot be null";
         this.dispensingHistory.add(medicationRecord);
     }
+
+    /**
+     * Returns a short summary string for use in list and find displays.
+     *
+     * @return A formatted string showing customer ID, name, and phone.
+     */
+    @Override
+    public String toString() {
+        String result = "[" + customerId + "] " + name + " | Phone: " + phone;
+        if (!address.isEmpty()) {
+            result += " | Address: " + address;
+        }
+        return result;
+    }
 }
