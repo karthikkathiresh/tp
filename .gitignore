@@ -16,4 +16,8 @@ bin/
 /text-ui-test/ACTUAL.TXT
 text-ui-test/EXPECTED-UNIX.TXT
 
+# Ignore PharmaTracker save data
 data/
+
+# Ignore generated log files
+*.log
