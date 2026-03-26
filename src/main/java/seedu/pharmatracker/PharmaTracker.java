@@ -52,6 +52,7 @@ public class PharmaTracker {
                 Command c = parse(fullCommand);
                 if (c != null) {
                     c.execute(inventory, ui, customerList);
+                    storage.save(inventory);
                 }
             } catch (PharmaTrackerException e) {
                 ui.printMessage(e.getMessage());
