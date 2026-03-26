@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import seedu.pharmatracker.data.Inventory;
 import seedu.pharmatracker.data.Medication;
 import seedu.pharmatracker.ui.Ui;
+import seedu.pharmatracker.data.CustomerList;
 
 
 /**
@@ -37,7 +38,7 @@ public class FindCommand extends Command {
      * @param ui        The user interface used to display messages and interact with the user.
      */
     @Override
-    public void execute(Inventory inventory, Ui ui) {
+    public void execute(Inventory inventory, Ui ui, CustomerList customerList) {
         logger.log(Level.INFO, "Starting execution of FindCommand with keyword: " + keyword);
 
         assert inventory != null : "Inventory cannot be null in FindCommand";

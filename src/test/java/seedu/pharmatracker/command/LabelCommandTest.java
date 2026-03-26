@@ -12,6 +12,7 @@ import java.io.PrintStream;
 import seedu.pharmatracker.data.Inventory;
 import seedu.pharmatracker.data.Medication;
 import seedu.pharmatracker.ui.Ui;
+import seedu.pharmatracker.data.CustomerList;
 
 public class LabelCommandTest {
 
@@ -34,9 +35,10 @@ public class LabelCommandTest {
     @Test
     public void execute_validIndex_printsLabel() {
         Inventory inventory = new Inventory();
+        CustomerList customerList = new CustomerList();
         inventory.addMedication(new Medication("Paracetamol", "500mg", 100, "2027-12-01", "painkiller"));
 
-        new LabelCommand(1).execute(inventory, ui);
+        new LabelCommand(1).execute(inventory, ui, customerList);
         String output = outContent.toString();
 
         assertTrue(output.contains("Medication Label 1"));
@@ -49,9 +51,10 @@ public class LabelCommandTest {
     @Test
     public void execute_validIndexNoTag_omitsTagLine() {
         Inventory inventory = new Inventory();
+        CustomerList customerList = new CustomerList();
         inventory.addMedication(new Medication("Aspirin", "100mg", 50, "2027-01-01", ""));
 
-        new LabelCommand(1).execute(inventory, ui);
+        new LabelCommand(1).execute(inventory, ui, customerList);
         String output = outContent.toString();
 
         assertTrue(output.contains("Name   : Aspirin"));
@@ -61,8 +64,8 @@ public class LabelCommandTest {
     @Test
     public void execute_emptyInventory_printsEmptyMessage() {
         Inventory inventory = new Inventory();
-
-        new LabelCommand(1).execute(inventory, ui);
+        CustomerList customerList = new CustomerList();
+        new LabelCommand(1).execute(inventory, ui, customerList);
         String output = outContent.toString();
 
         assertTrue(output.contains("Inventory is empty."));
@@ -71,9 +74,10 @@ public class LabelCommandTest {
     @Test
     public void execute_indexTooHigh_printsInvalidIndex() {
         Inventory inventory = new Inventory();
+        CustomerList customerList = new CustomerList();
         inventory.addMedication(new Medication("Aspirin", "100mg", 50, "2027-01-01", "painkiller"));
 
-        new LabelCommand(5).execute(inventory, ui);
+        new LabelCommand(5).execute(inventory, ui, customerList);
         String output = outContent.toString();
 
         assertTrue(output.contains("Invalid index"));
@@ -82,9 +86,10 @@ public class LabelCommandTest {
     @Test
     public void execute_indexZero_printsInvalidIndex() {
         Inventory inventory = new Inventory();
+        CustomerList customerList = new CustomerList();
         inventory.addMedication(new Medication("Aspirin", "100mg", 50, "2027-01-01", "painkiller"));
 
-        new LabelCommand(0).execute(inventory, ui);
+        new LabelCommand(0).execute(inventory, ui, customerList);
         String output = outContent.toString();
 
         assertTrue(output.contains("Invalid index"));
@@ -93,9 +98,10 @@ public class LabelCommandTest {
     @Test
     public void execute_negativeIndex_printsInvalidIndex() {
         Inventory inventory = new Inventory();
+        CustomerList customerList = new CustomerList();
         inventory.addMedication(new Medication("Aspirin", "100mg", 50, "2027-01-01", "painkiller"));
 
-        new LabelCommand(-1).execute(inventory, ui);
+        new LabelCommand(-1).execute(inventory, ui, customerList);
         String output = outContent.toString();
 
         assertTrue(output.contains("Invalid index"));
@@ -104,10 +110,11 @@ public class LabelCommandTest {
     @Test
     public void execute_secondMedication_printsCorrectLabel() {
         Inventory inventory = new Inventory();
+        CustomerList customerList = new CustomerList();
         inventory.addMedication(new Medication("Aspirin", "100mg", 50, "2027-01-01", "painkiller"));
         inventory.addMedication(new Medication("Ibuprofen", "400mg", 30, "2026-06-15", "anti-inflammatory"));
 
-        new LabelCommand(2).execute(inventory, ui);
+        new LabelCommand(2).execute(inventory, ui, customerList);
         String output = outContent.toString();
 
         assertTrue(output.contains("Medication Label 2"));

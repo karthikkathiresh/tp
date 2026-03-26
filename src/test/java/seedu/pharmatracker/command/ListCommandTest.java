@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import seedu.pharmatracker.data.Inventory;
 import seedu.pharmatracker.data.Medication;
 import seedu.pharmatracker.ui.Ui;
+import seedu.pharmatracker.data.CustomerList;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -48,7 +49,8 @@ public class ListCommandTest {
     public void execute_emptyInventory_printsEmptyMessage() {
         Inventory inventory = new Inventory();
         Ui ui = new Ui();
-        new ListCommand().execute(inventory, ui);
+        CustomerList customerList = new CustomerList();
+        new ListCommand().execute(inventory, ui, customerList);
         assertEquals("Inventory is empty.", out.toString().trim());
     }
 
@@ -60,8 +62,9 @@ public class ListCommandTest {
     public void execute_singleMedication_printsMedicationDetails() {
         Inventory inventory = new Inventory();
         Ui ui = new Ui();
+        CustomerList customerList = new CustomerList();
         inventory.addMedication(new Medication("Aspirin", "100mg", 50, "2027-01-01", "pain"));
-        new ListCommand().execute(inventory, ui);
+        new ListCommand().execute(inventory, ui, customerList);
         String output = out.toString();
         assertTrue(output.contains("Aspirin"));
         assertTrue(output.contains("100mg"));
@@ -78,9 +81,10 @@ public class ListCommandTest {
     public void execute_multipleMedications_printsAllWithIndex() {
         Inventory inventory = new Inventory();
         Ui ui = new Ui();
+        CustomerList customerList = new CustomerList();
         inventory.addMedication(new Medication("Aspirin", "100mg", 50, "2027-01-01", "pain"));
         inventory.addMedication(new Medication("Paracetamol", "500mg", 20, "2026-06-01", "fever"));
-        new ListCommand().execute(inventory, ui);
+        new ListCommand().execute(inventory, ui, customerList);
         String output = out.toString();
         assertTrue(output.contains("1."));
         assertTrue(output.contains("2."));
@@ -96,8 +100,9 @@ public class ListCommandTest {
     public void execute_medicationWithEmptyTag_noTagInOutput() {
         Inventory inventory = new Inventory();
         Ui ui = new Ui();
+        CustomerList customerList = new CustomerList();
         inventory.addMedication(new Medication("Aspirin", "100mg", 50, "2027-01-01", ""));
-        new ListCommand().execute(inventory, ui);
+        new ListCommand().execute(inventory, ui, customerList);
         assertFalse(out.toString().contains("| Tag:"));
     }
 
@@ -109,8 +114,9 @@ public class ListCommandTest {
     public void execute_nonEmptyInventory_printsHeaderAndFooter() {
         Inventory inventory = new Inventory();
         Ui ui = new Ui();
+        CustomerList customerList = new CustomerList();
         inventory.addMedication(new Medication("Aspirin", "100mg", 50, "2027-01-01", "pain"));
-        new ListCommand().execute(inventory, ui);
+        new ListCommand().execute(inventory, ui, customerList);
         String output = out.toString();
         assertTrue(output.contains("PharmaTracker Inventory:"));
         assertTrue(output.contains("Total Medications: 1"));
@@ -124,8 +130,9 @@ public class ListCommandTest {
     public void execute_lowStockMedication_printsLowStockFlag() {
         Inventory inventory = new Inventory();
         Ui ui = new Ui();
+        CustomerList customerList = new CustomerList();
         inventory.addMedication(new Medication("Aspirin", "100mg", 5, "2027-01-01", "pain"));
-        new ListCommand().execute(inventory, ui);
+        new ListCommand().execute(inventory, ui, customerList);
         assertTrue(out.toString().contains("[LOW STOCK]"));
     }
 
@@ -137,8 +144,9 @@ public class ListCommandTest {
     public void execute_normalStockMedication_noLowStockFlag() {
         Inventory inventory = new Inventory();
         Ui ui = new Ui();
+        CustomerList customerList = new CustomerList();
         inventory.addMedication(new Medication("Aspirin", "100mg", 50, "2027-01-01", "pain"));
-        new ListCommand().execute(inventory, ui);
+        new ListCommand().execute(inventory, ui, customerList);
         assertFalse(out.toString().contains("[LOW STOCK]"));
     }
 
@@ -150,10 +158,11 @@ public class ListCommandTest {
     public void execute_multipleMedications_correctTotalCount() {
         Inventory inventory = new Inventory();
         Ui ui = new Ui();
+        CustomerList customerList = new CustomerList();
         inventory.addMedication(new Medication("Aspirin", "100mg", 50, "2027-01-01", "pain"));
         inventory.addMedication(new Medication("Paracetamol", "500mg", 20, "2026-06-01", "fever"));
         inventory.addMedication(new Medication("Ibuprofen", "200mg", 3, "2026-03-01", "pain"));
-        new ListCommand().execute(inventory, ui);
+        new ListCommand().execute(inventory, ui, customerList);
         assertTrue(out.toString().contains("Total Medications: 3"));
     }
 }

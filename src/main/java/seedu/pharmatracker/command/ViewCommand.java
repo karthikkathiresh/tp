@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import seedu.pharmatracker.data.Inventory;
 import seedu.pharmatracker.data.Medication;
 import seedu.pharmatracker.ui.Ui;
+import seedu.pharmatracker.data.CustomerList;
 
 /**
  * Represents a command to view the details of a specific medication in the inventory.
@@ -35,7 +36,7 @@ public class ViewCommand extends Command {
      * @param ui        The user interface used to display messages and interact with the user.
      */
     @Override
-    public void execute(Inventory inventory, Ui ui) {
+    public void execute(Inventory inventory, Ui ui, CustomerList customerList) {
         logger.log(Level.INFO, "Starting execution of ViewCommand for index: " + index);
 
         assert inventory != null : "Inventory cannot be null in ViewCommand";

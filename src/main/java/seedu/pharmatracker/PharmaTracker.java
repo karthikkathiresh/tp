@@ -6,6 +6,7 @@ import seedu.pharmatracker.logger.LoggerSetup;
 import seedu.pharmatracker.command.Command;
 import seedu.pharmatracker.data.Inventory;
 import seedu.pharmatracker.storage.Storage;
+import seedu.pharmatracker.data.CustomerList;
 import seedu.pharmatracker.exceptions.PharmaTrackerException;
 import seedu.pharmatracker.ui.Ui;
 
@@ -18,6 +19,7 @@ public class PharmaTracker {
     private Ui ui;
     private Inventory inventory;
     private Storage storage;
+    private CustomerList customerList;
 
     /**
      * Constructs a {@code PharmaTracker} application instance.
@@ -28,6 +30,7 @@ public class PharmaTracker {
         ui = new Ui();
         storage = new Storage();
         inventory = storage.load();
+        customerList = new CustomerList();
     }
 
     /**
@@ -48,8 +51,7 @@ public class PharmaTracker {
             try {
                 Command c = parse(fullCommand);
                 if (c != null) {
-                    c.execute(inventory, ui);
-                    storage.save(inventory);
+                    c.execute(inventory, ui, customerList);
                 }
             } catch (PharmaTrackerException e) {
                 ui.printMessage(e.getMessage());

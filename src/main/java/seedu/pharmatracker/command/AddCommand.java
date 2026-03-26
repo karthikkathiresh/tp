@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import seedu.pharmatracker.data.Inventory;
 import seedu.pharmatracker.data.Medication;
 import seedu.pharmatracker.ui.Ui;
+import seedu.pharmatracker.data.CustomerList;
 
 /**
  * Represents a command to add a new medication to the inventory.
@@ -73,11 +74,12 @@ public class AddCommand extends Command {
      * Executes the command by creating a new Medication object with the provided results
      * and adding it to the inventory. Also prints a success message to the user.
      *
-     * @param inventory The current inventory where the medication will be added.
-     * @param ui        The user interface to display the success message.
+     * @param inventory    The current inventory containing all stored medications.
+     * @param ui           The user interface used to display messages and interact with the user.
+     * @param customerList The list of registered customers.
      */
     @Override
-    public void execute(Inventory inventory, Ui ui) {
+    public void execute(Inventory inventory, Ui ui, CustomerList customerList) {
         assert inventory != null : "Inventory cannot be null in AddCommand execution.";
         assert ui != null : "Ui canot be null in AddCommand execution.";
         logger.log(Level.INFO, "Starting execution of AddCommand for medication: " + name);

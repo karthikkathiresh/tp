@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import seedu.pharmatracker.data.Inventory;
 import seedu.pharmatracker.data.Medication;
 import seedu.pharmatracker.ui.Ui;
+import seedu.pharmatracker.data.CustomerList;
 
 /**
  * Tests the functionality of the {@link DeleteCommand} class.
@@ -24,13 +25,14 @@ public class DeleteCommandTest {
     public void execute_validFirstIndex_deletesCorrectMedication() {
         Inventory inventory = new Inventory();
         Ui ui = new Ui();
+        CustomerList customerList = new CustomerList();
         inventory.addMedication(new Medication("Paracetamol", "500mg", 100, "2026-12-31", "painkiller"));
         inventory.addMedication(new Medication("Amoxicillin", "250mg", 50, "2026-06-01", "antibiotic"));
 
         assertEquals(2, inventory.getMedicationCount());
 
         DeleteCommand deleteCommand = new DeleteCommand("1");
-        deleteCommand.execute(inventory, ui);
+        deleteCommand.execute(inventory, ui, customerList);
 
         assertEquals(1, inventory.getMedicationCount());
         assertEquals(1, inventory.getMedications().size());
@@ -50,11 +52,12 @@ public class DeleteCommandTest {
 
         Inventory inventory = new Inventory();
         Ui ui = new Ui();
+        CustomerList customerList = new CustomerList();
         inventory.addMedication(new Medication("Paracetamol", "500mg", 100, "2026-12-31", "painkiller"));
         inventory.addMedication(new Medication("Amoxicillin", "250mg", 50, "2026-06-01", "antibiotic"));
 
         DeleteCommand deleteCommand = new DeleteCommand("2");
-        deleteCommand.execute(inventory, ui);
+        deleteCommand.execute(inventory, ui, customerList);
 
         assertEquals(1, inventory.getMedicationCount());
 

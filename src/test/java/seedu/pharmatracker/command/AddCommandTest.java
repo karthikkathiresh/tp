@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import seedu.pharmatracker.data.Inventory;
 import seedu.pharmatracker.data.Medication;
 import seedu.pharmatracker.ui.Ui;
+import seedu.pharmatracker.data.CustomerList;
 
 /**
  * Tests the functionality of the {@link AddCommand} class.
@@ -27,13 +28,14 @@ public class AddCommandTest {
     public void execute_mandatoryFieldsOnly_addsToInventory() {
         Inventory inventory = new Inventory();
         Ui ui = new Ui();
+        CustomerList customerList = new CustomerList();
         ArrayList<String> emptyWarnings = new ArrayList<>();
 
         AddCommand addCommand = new AddCommand(
                 "Paracetamol", "500mg", 100, "2026-12-31", "painkiller", // Mandatory
                 "", "", "", "", "", "", emptyWarnings                    // Optional
         );
-        addCommand.execute(inventory, ui);
+        addCommand.execute(inventory, ui, customerList);
         assertEquals(1, inventory.getMedications().size());
 
         Medication addedMed = inventory.getMedication(0);
@@ -58,6 +60,7 @@ public class AddCommandTest {
     public void execute_allFieldsPresent_addsSuccessfully() {
         Inventory inventory = new Inventory();
         Ui ui = new Ui();
+        CustomerList customerList = new CustomerList();
         ArrayList<String> warnings = new ArrayList<>();
         warnings.add("May cause drowsiness");
         warnings.add("Do not take with alcohol");
@@ -68,7 +71,7 @@ public class AddCommandTest {
                 "Twice daily", "Oral", "1000mg", warnings
         );
 
-        addCommand.execute(inventory, ui);
+        addCommand.execute(inventory, ui, customerList);
 
         assertEquals(1, inventory.getMedications().size());
 
@@ -108,6 +111,7 @@ public class AddCommandTest {
     private static Inventory getInventory() {
         Inventory inventory = new Inventory();
         Ui ui = new Ui();
+        CustomerList customerList = new CustomerList();
         ArrayList<String> emptyWarnings = new ArrayList<>();
 
         AddCommand command1 = new AddCommand(
@@ -119,8 +123,8 @@ public class AddCommandTest {
                 "Tablet", "Moderna", "", "", "", "", emptyWarnings
         );
 
-        command1.execute(inventory, ui);
-        command2.execute(inventory, ui);
+        command1.execute(inventory, ui, customerList);
+        command2.execute(inventory, ui, customerList);
         return inventory;
     }
 }

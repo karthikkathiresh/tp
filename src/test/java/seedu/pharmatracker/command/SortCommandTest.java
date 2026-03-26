@@ -15,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import seedu.pharmatracker.data.Inventory;
 import seedu.pharmatracker.data.Medication;
 import seedu.pharmatracker.ui.Ui;
+import seedu.pharmatracker.data.CustomerList;
 
 /**
  * Test cases for the SortCommand class.
@@ -25,6 +26,7 @@ public class SortCommandTest {
     private SortCommand sortCommand;
     private Inventory inventory;
     private Ui ui;
+    private CustomerList customerList;
     private ByteArrayOutputStream outputStream;
     private PrintStream originalOut;
 
@@ -37,6 +39,7 @@ public class SortCommandTest {
         sortCommand = new SortCommand();
         inventory = new Inventory();
         ui = new Ui();
+        customerList = new CustomerList();
         outputStream = new ByteArrayOutputStream();
         originalOut = System.out;
         System.setOut(new PrintStream(outputStream));
@@ -48,7 +51,7 @@ public class SortCommandTest {
      */
     @Test
     public void execute_emptyInventory_displaysEmptyMessage() {
-        sortCommand.execute(inventory, ui);
+        sortCommand.execute(inventory, ui, customerList);
         String output = outputStream.toString();
         assertTrue(output.contains("Inventory is empty."), "Output should contain empty inventory message");
     }
@@ -62,7 +65,7 @@ public class SortCommandTest {
         Medication medication = new Medication("Aspirin", "500mg", 10, "2026-12-31", "painkiller");
         inventory.addMedication(medication);
 
-        sortCommand.execute(inventory, ui);
+        sortCommand.execute(inventory, ui, customerList);
         String output = outputStream.toString();
 
         assertTrue(output.contains("Medications sorted by expiry date:"), "Output should contain sort header");
@@ -87,7 +90,7 @@ public class SortCommandTest {
         ArrayList<Medication> medicationsBeforeSort = inventory.getMedications();
         assertEquals(3, medicationsBeforeSort.size(), "Inventory should contain 3 medications");
 
-        sortCommand.execute(inventory, ui);
+        sortCommand.execute(inventory, ui, customerList);
 
         ArrayList<Medication> medicationsAfterSort = inventory.getMedications();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -112,7 +115,7 @@ public class SortCommandTest {
         inventory.addMedication(invalidMedication);
         inventory.addMedication(validMedication);
 
-        sortCommand.execute(inventory, ui);
+        sortCommand.execute(inventory, ui, customerList);
 
         ArrayList<Medication> medicationsAfterSort = inventory.getMedications();
         assertEquals(2, medicationsAfterSort.size(), "Inventory should still contain 2 medications");
@@ -141,7 +144,7 @@ public class SortCommandTest {
         inventory.addMedication(medication1);
         inventory.addMedication(medication2);
 
-        sortCommand.execute(inventory, ui);
+        sortCommand.execute(inventory, ui, customerList);
         String output = outputStream.toString();
 
         assertTrue(output.contains("Medications sorted by expiry date:"), "Output should contain header");

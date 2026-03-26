@@ -1,7 +1,9 @@
 package seedu.pharmatracker.ui;
 
 import java.util.Scanner;
+import java.util.ArrayList;
 
+import seedu.pharmatracker.data.Customer;
 import seedu.pharmatracker.data.Inventory;
 import seedu.pharmatracker.data.Medication;
 
@@ -159,4 +161,65 @@ public class Ui {
         System.out.println(DETAIL_BORDER);
     }
 
+    /**
+     * Displays the full details of a customer including dispensing history.
+     *
+     * @param customer The customer whose details are to be displayed.
+     */
+    public void showCustomerDetails(Customer customer) {
+        System.out.println("========================================");
+        System.out.println("CUSTOMER DETAILS");
+        System.out.println("========================================");
+        System.out.printf("%-20s %s%n", "Customer ID:", customer.getCustomerId());
+        System.out.printf("%-20s %s%n", "Name:", customer.getName());
+        System.out.printf("%-20s %s%n", "Phone:", customer.getPhone());
+        System.out.printf("%-20s %s%n", "Address:",
+                customer.getAddress().isEmpty() ? "N/A" : customer.getAddress());
+        System.out.println("----------------------------------------");
+        System.out.println("DISPENSING HISTORY");
+        System.out.println("----------------------------------------");
+
+        if (customer.getDispensingHistory().isEmpty()) {
+            System.out.println("No medications dispensed yet.");
+        } else {
+            for (int i = 0; i < customer.getDispensingHistory().size(); i++) {
+                System.out.printf("%d. %s%n", i + 1, customer.getDispensingHistory().get(i));
+            }
+        }
+
+        System.out.println("========================================");
+    }
+
+    /**
+     * Displays medications in two sections: already expired and expiring soon.
+     * If both lists are empty, a single message is shown indicating no results.
+     *
+     * @param expiredMeds  The list of medications that have already expired.
+     * @param expiringMeds The list of medications expiring within the given window.
+     * @param days         The expiry window in days used for the search.
+     */
+    public void showExpiringMedications(ArrayList<Medication> expiredMeds,
+                                        ArrayList<Medication> expiringMeds, int days) {
+        if (expiredMeds.isEmpty() && expiringMeds.isEmpty()) {
+            System.out.println("No expired or expiring medications found.");
+            return;
+        }
+
+        if (!expiredMeds.isEmpty()) {
+            System.out.println("Already expired:");
+            for (int i = 0; i < expiredMeds.size(); i++) {
+                System.out.println((i + 1) + ". " + expiredMeds.get(i).toString());
+            }
+            System.out.println("Total: " + expiredMeds.size() + " medication(s) expired.");
+            System.out.println("----------------------------------------");
+        }
+
+        if (!expiringMeds.isEmpty()) {
+            System.out.println("Expiring within " + days + " days:");
+            for (int i = 0; i < expiringMeds.size(); i++) {
+                System.out.println((i + 1) + ". " + expiringMeds.get(i).toString());
+            }
+            System.out.println("Total: " + expiringMeds.size() + " medication(s) expiring soon.");
+        }
+    }
 }

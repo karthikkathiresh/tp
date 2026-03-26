@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import seedu.pharmatracker.data.Inventory;
 import seedu.pharmatracker.data.Medication;
 import seedu.pharmatracker.ui.Ui;
+import seedu.pharmatracker.data.CustomerList;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -47,8 +48,9 @@ public class DispenseCommandTest {
     public void execute_validDispense_reducesQuantity() {
         Inventory inventory = new Inventory();
         Ui ui = new Ui();
+        CustomerList customerList = new CustomerList();
         inventory.addMedication(new Medication("Paracetamol", "500mg", 150, "2026-12-31", "fever"));
-        new DispenseCommand(1, 20).execute(inventory, ui);
+        new DispenseCommand(1, 20).execute(inventory, ui, customerList);
         assertEquals(130, inventory.getMedication(0).getQuantity());
     }
 
@@ -60,8 +62,9 @@ public class DispenseCommandTest {
     public void execute_validDispense_printsSuccessMessage() {
         Inventory inventory = new Inventory();
         Ui ui = new Ui();
+        CustomerList customerList = new CustomerList();
         inventory.addMedication(new Medication("Paracetamol", "500mg", 150, "2026-12-31", "fever"));
-        new DispenseCommand(1, 20).execute(inventory, ui);
+        new DispenseCommand(1, 20).execute(inventory, ui, customerList);
         String output = out.toString();
         assertTrue(output.contains("Dispensing successfully!"));
         assertTrue(output.contains("Medication: Paracetamol"));
@@ -77,8 +80,9 @@ public class DispenseCommandTest {
     public void execute_quantityExceedsStock_printsError() {
         Inventory inventory = new Inventory();
         Ui ui = new Ui();
+        CustomerList customerList = new CustomerList();
         inventory.addMedication(new Medication("Aspirin", "100mg", 10, "2027-01-01", "pain"));
-        new DispenseCommand(1, 20).execute(inventory, ui);
+        new DispenseCommand(1, 20).execute(inventory, ui, customerList);
         assertTrue(out.toString().contains("Insufficient stock."));
         assertEquals(10, inventory.getMedication(0).getQuantity());
     }
@@ -91,8 +95,9 @@ public class DispenseCommandTest {
     public void execute_exactStockDispensed_quantityBecomesZero() {
         Inventory inventory = new Inventory();
         Ui ui = new Ui();
+        CustomerList customerList = new CustomerList();
         inventory.addMedication(new Medication("Aspirin", "100mg", 10, "2027-01-01", "pain"));
-        new DispenseCommand(1, 10).execute(inventory, ui);
+        new DispenseCommand(1, 10).execute(inventory, ui, customerList);
         assertEquals(0, inventory.getMedication(0).getQuantity());
         assertTrue(out.toString().contains("Dispensing successfully!"));
     }
@@ -105,8 +110,9 @@ public class DispenseCommandTest {
     public void execute_invalidIndexTooHigh_printsError() {
         Inventory inventory = new Inventory();
         Ui ui = new Ui();
+        CustomerList customerList = new CustomerList();
         inventory.addMedication(new Medication("Aspirin", "100mg", 10, "2027-01-01", "pain"));
-        new DispenseCommand(5, 1).execute(inventory, ui);
+        new DispenseCommand(5, 1).execute(inventory, ui, customerList);
         assertTrue(out.toString().contains("Invalid index."));
     }
 
@@ -118,8 +124,9 @@ public class DispenseCommandTest {
     public void execute_invalidIndexZero_printsError() {
         Inventory inventory = new Inventory();
         Ui ui = new Ui();
+        CustomerList customerList = new CustomerList();
         inventory.addMedication(new Medication("Aspirin", "100mg", 10, "2027-01-01", "pain"));
-        new DispenseCommand(0, 1).execute(inventory, ui);
+        new DispenseCommand(0, 1).execute(inventory, ui, customerList);
         assertTrue(out.toString().contains("Invalid index."));
     }
 }

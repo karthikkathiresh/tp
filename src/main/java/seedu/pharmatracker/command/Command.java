@@ -2,22 +2,22 @@ package seedu.pharmatracker.command;
 
 import seedu.pharmatracker.data.Inventory;
 import seedu.pharmatracker.ui.Ui;
+import seedu.pharmatracker.data.CustomerList;
 
 /**
- * Represents an executable command in the PharmaTracker application.
- * This is an abstract base class that all specific command types (e.g. AddCommand, DeleteCommand)
- * must inherit from and implement.
+ * Represents an abstract command in PharmaTracker.
+ * All commands must implement the {@link #execute(Inventory, Ui, CustomerList)} method.
  */
 public abstract class Command {
 
     /**
-     * Executes the specific logic of the command.
-     * Subclasses must implement this method to perform their designated operations,
-     * such as modifying the inventory, retrieving data, or displaying information.
+     * Executes the command with access to the medication inventory,
+     * user interface, and customer list.
      *
-     * @param inventory The current inventory containing all stored medications.
-     * @param ui        The user interface used to display messages and interact with the user.
+     * @param inventory    The current medication inventory.
+     * @param ui           The user interface for displaying messages.
+     * @param customerList The list of registered customers.
      */
-    public abstract void execute(Inventory inventory, Ui ui);
+    public abstract void execute(Inventory inventory, Ui ui, CustomerList customerList);
 
 }

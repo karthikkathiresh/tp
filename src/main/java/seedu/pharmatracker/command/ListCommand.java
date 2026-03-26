@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import seedu.pharmatracker.data.Inventory;
 import seedu.pharmatracker.data.Medication;
 import seedu.pharmatracker.ui.Ui;
+import seedu.pharmatracker.data.CustomerList;
 
 /**
  * Command that lists all medications currently in the inventory.
@@ -40,7 +41,7 @@ public class ListCommand extends Command {
      * @param ui        the UI instance (unused directly; output goes via {@code System.out})
      */
     @Override
-    public void execute(Inventory inventory, Ui ui) {
+    public void execute(Inventory inventory, Ui ui, CustomerList customerList) {
         logger.log(Level.INFO, "Executing ListCommand");
         ArrayList<Medication> medicationList = inventory.getMedications();
         if (medicationList.isEmpty()) {

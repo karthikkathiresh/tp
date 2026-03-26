@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import seedu.pharmatracker.data.Inventory;
 import seedu.pharmatracker.data.Medication;
 import seedu.pharmatracker.ui.Ui;
+import seedu.pharmatracker.data.CustomerList;
 
 /**
  * Sorts medications in the inventory by expiry date.
@@ -27,10 +28,12 @@ public class SortCommand extends Command {
      * in ascending order and displaying the sorted list to the user.
      * If the inventory is empty, displays a message indicating the inventory is empty.
      *
-     * @param inventory The inventory containing medications to be sorted.
+     * @param inventory    The current inventory containing all stored medications.
+     * @param ui           The user interface used to display messages and interact with the user.
+     * @param customerList The list of registered customers.
      */
     @Override
-    public void execute(Inventory inventory, Ui ui) {
+    public void execute(Inventory inventory, Ui ui, CustomerList customerList) {
 
         assert inventory != null : "Inventory should not be null";
         ArrayList<Medication> medicationList = inventory.getMedications();

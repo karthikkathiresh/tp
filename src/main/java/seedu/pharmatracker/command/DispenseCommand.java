@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import seedu.pharmatracker.data.Inventory;
 import seedu.pharmatracker.data.Medication;
 import seedu.pharmatracker.ui.Ui;
+import seedu.pharmatracker.data.CustomerList;
 
 /**
  * Command that dispenses a specified quantity of a medication from the inventory.
@@ -53,7 +54,7 @@ public class DispenseCommand extends Command {
      * @param ui        the UI instance (unused directly; output goes via {@code System.out})
      */
     @Override
-    public void execute(Inventory inventory, Ui ui) {
+    public void execute(Inventory inventory, Ui ui, CustomerList customerList) {
         logger.log(Level.INFO, "Executing DispenseCommand: index={0}, quantity={1}",
                 new Object[]{index, quantity});
         if (index < 1 || index > inventory.getMedications().size()) {
