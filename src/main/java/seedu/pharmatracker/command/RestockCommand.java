@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 import seedu.pharmatracker.data.Inventory;
 import seedu.pharmatracker.data.Medication;
 import seedu.pharmatracker.ui.Ui;
-import seedu.pharmatracker.data.CustomerList;
+import seedu.pharmatracker.customer.CustomerList;
 
 /**
  * Command that restocks a specified quantity of a medication in the inventory.

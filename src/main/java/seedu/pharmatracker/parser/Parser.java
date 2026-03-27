@@ -3,6 +3,7 @@ package seedu.pharmatracker.parser;
 import java.util.ArrayList;
 
 import seedu.pharmatracker.command.AddCommand;
+import seedu.pharmatracker.command.AddCustomerCommand;
 import seedu.pharmatracker.command.Command;
 import seedu.pharmatracker.command.DeleteCommand;
 import seedu.pharmatracker.command.ListCommand;
@@ -335,6 +336,10 @@ public class Parser {
             }
             System.out.println("Invalid format. Usage: expiring or expiring /days NUMBER");
             return null;
+
+        case AddCustomerCommand.COMMAND_WORD:
+
+
 
         case ViewCustomerCommand.COMMAND_WORD:
             try {
