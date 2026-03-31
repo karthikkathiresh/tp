@@ -235,4 +235,43 @@ public class Ui {
             System.out.println("Total: " + expiringMeds.size() + " medication(s) expiring soon.");
         }
     }
+
+    /**
+     * Prints all medications whose quantity is below the given threshold.
+     *
+     * @param lowStockMeds List of medications below the threshold.
+     * @param threshold    The stock threshold used to filter medications.
+     */
+    public void printLowStockList(java.util.List<Medication> lowStockMeds, int threshold) {
+        System.out.println(DIVIDER);
+        if (lowStockMeds.isEmpty()) {
+            System.out.println("No medications are low on stock (below " + threshold + " units).");
+            System.out.println(DIVIDER);
+            return;
+        }
+        System.out.println("Medications low on stock (below " + threshold + " units):");
+        for (int i = 0; i < lowStockMeds.size(); i++) {
+            Medication med = lowStockMeds.get(i);
+            System.out.println((i + 1) + ". " + med.getName()
+                    + " | " + med.getDosage()
+                    + " | Qty: " + med.getQuantity()
+                    + " | Expiry: " + med.getExpiryDate());
+        }
+        System.out.println("Total: " + lowStockMeds.size() + " medication(s) low on stock.");
+        System.out.println(DIVIDER);
+    }
+
+    /**
+     * Prints a confirmation message after a customer record has been successfully updated.
+     *
+     * @param customer The updated {@link Customer}.
+     */
+    public void printUpdatedCustomerMessage(Customer customer) {
+        printToScreen(
+                DIVIDER,
+                "Customer updated: " + customer.toString(),
+                DIVIDER
+        );
+    }
+
 }

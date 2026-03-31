@@ -15,6 +15,8 @@ import seedu.pharmatracker.command.HelpCommand;
 import seedu.pharmatracker.command.ExitCommand;
 import seedu.pharmatracker.command.LabelCommand;
 import seedu.pharmatracker.command.ExpiringCommand;
+import seedu.pharmatracker.command.LowStockCommand;
+import seedu.pharmatracker.command.UpdateCustomerCommand;
 import seedu.pharmatracker.command.ViewCustomerCommand;
 import seedu.pharmatracker.command.RestockCommand;
 import seedu.pharmatracker.exceptions.PharmaTrackerException;
@@ -43,6 +45,8 @@ public class Parser {
         FLAG_DOSAGE_FORM, FLAG_MANUFACTURER, FLAG_DIRECTION, FLAG_FREQUENCY,
         FLAG_ROUTE, FLAG_MAX_DOSAGE, FLAG_WARNINGS
     };
+
+    private static final String[] CUSTOMER_UPDATE_FLAGS = {"/n", "/p", "/a"};
 
     /**
      * Finds the index of the next flag appearing in the description string after a specified index.
@@ -228,6 +232,39 @@ public class Parser {
         return warnings;
     }
 
+    /**
+     * Extracts an optional customer flag for updatecustomer, returning {@code null} if absent.
+     * Uses customer-specific flag boundaries (/n, /p, /a).
+     *
+     * @param description The raw argument string (without the command word and index).
+     * @param flag        The flag to look for.
+     * @return The trimmed value if the flag is present, or {@code null} if the flag is absent.
+     * @throws PharmaTrackerException If the flag is present but has no accompanying value.
+     */
+    private static String extractCustomerUpdateFlag(String description, String flag)
+            throws PharmaTrackerException {
+        int flagIndex = description.indexOf(flag);
+        if (flagIndex == -1) {
+            return null;
+        }
+        int valueStart = flagIndex + flag.length();
+        if (valueStart >= description.length()) {
+            throw new PharmaTrackerException("Value for '" + flag + "' cannot be empty!");
+        }
+        int valueEnd = description.length();
+        for (String f : CUSTOMER_UPDATE_FLAGS) {
+            int idx = description.indexOf(f, valueStart);
+            if (idx != -1 && idx < valueEnd) {
+                valueEnd = idx;
+            }
+        }
+        String extractedValue = description.substring(valueStart, valueEnd).trim();
+        if (extractedValue.isEmpty()) {
+            throw new PharmaTrackerException("Value for '" + flag + "' cannot be empty!");
+        }
+        return extractedValue;
+    }
+
     private static String extractCustomerID(String description) {
         int idIndex = description.indexOf("/id");
         int nameIndex = description.indexOf("/n");
@@ -367,6 +404,24 @@ public class Parser {
             String address = extractCustomerAddress(description);
             return new AddCustomerCommand(id, customerName, phone, address);
 
+        case UpdateCustomerCommand.COMMAND_WORD:
+            if (description.isEmpty()) {
+                throw new PharmaTrackerException(
+                        "Invalid format! Use: updatecustomer INDEX [/n NAME] [/p PHONE] [/a ADDRESS]");
+            }
+            try {
+                String[] ucParts = description.trim().split("\\s+", 2);
+                int ucIndex = Integer.parseInt(ucParts[0]);
+                String ucArgs = (ucParts.length > 1) ? ucParts[1] : "";
+                String ucName = extractCustomerUpdateFlag(ucArgs, "/n");
+                String ucPhone = extractCustomerUpdateFlag(ucArgs, "/p");
+                String ucAddress = extractCustomerUpdateFlag(ucArgs, "/a");
+                return new UpdateCustomerCommand(ucIndex, ucName, ucPhone, ucAddress);
+            } catch (NumberFormatException e) {
+                throw new PharmaTrackerException(
+                        "Invalid index! The first argument must be a valid number.");
+            }
+
         case ViewCustomerCommand.COMMAND_WORD:
             try {
                 int index = Integer.parseInt(description.trim());
@@ -393,6 +448,29 @@ public class Parser {
 
         case HelpCommand.COMMAND_WORD:
             return new HelpCommand();
+
+        case LowStockCommand.COMMAND_WORD:
+            if (!description.isEmpty()) {
+                String[] lsParts = description.trim().split("\\s+");
+                for (int i = 0; i < lsParts.length; i++) {
+                    if (lsParts[i].equalsIgnoreCase("/threshold") && i + 1 < lsParts.length) {
+                        try {
+                            int threshold = Integer.parseInt(lsParts[i + 1]);
+                            if (threshold <= 0) {
+                                throw new PharmaTrackerException(
+                                        "Threshold must be a positive number.");
+                            }
+                            return new LowStockCommand(threshold);
+                        } catch (NumberFormatException e) {
+                            throw new PharmaTrackerException(
+                                    "Invalid threshold value. Please enter a valid whole number.");
+                        }
+                    }
+                }
+                throw new PharmaTrackerException(
+                        "Invalid format! Use: lowstock or lowstock /threshold NUMBER");
+            }
+            return new LowStockCommand();
 
         case ExitCommand.COMMAND_WORD:
             return new ExitCommand();

@@ -69,7 +69,6 @@ public class PharmaTracker {
      */
     public static void main(String[] args) throws PharmaTrackerException {
         LoggerSetup.init();
-        assert false : "Main method set to false";
         new PharmaTracker().run();
     }
 }

@@ -213,6 +213,66 @@ The following steps describe how an add command is processed.
 
 ---
 
+### Update Customer Feature
+
+The `updatecustomer` command allows pharmacy staff to update one or more fields of an existing customer record.
+Only the fields explicitly provided are changed; all other fields remain unchanged.
+```
+updatecustomer INDEX [/n NAME] [/p PHONE] [/a ADDRESS]
+```
+
+#### How it works
+
+1. The user enters `updatecustomer 1 /n Alice /p 91234567 /a 123 Main St`.
+2. `PharmaTracker.run()` passes the input to `Parser.parse()`.
+3. `Parser.parse()` identifies the command word `updatecustomer`.
+4. The parser splits the description into the 1-based index and a trailing argument string. It then calls `extractCustomerUpdateFlag()` for each of the `/n`, `/p`, and `/a` flags. Flags that are absent return `null`.
+5. An `UpdateCustomerCommand` is constructed with the index and the three (nullable) field values.
+6. `UpdateCustomerCommand.execute()` validates the index against `CustomerList.size()`. If no flags were supplied (all three are `null`), it prints an error and returns early.
+7. For each non-null field, the corresponding setter (`customer.setName()`, `customer.setPhone()`, `customer.setAddress()`) is called on the retrieved `Customer` object.
+8. `Ui.printUpdatedCustomerMessage(customer)` confirms the update to the user.
+
+
+
+#### Design Considerations
+
+| Aspect | Choice | Reason |
+|--------|--------|--------|
+| `null` for absent flags | Yes | Cleanly distinguishes "not provided" from an empty string; avoids silent overwrites |
+| Partial update vs full replacement | Partial | Users should not have to re-enter unchanged fields |
+| Validation location | `execute()`, not `Parser` | Keeps parser stateless; index validity requires live `CustomerList` size |
+
+---
+
+### Low Stock Feature
+
+The `lowstock` command displays all medications whose quantity falls below a threshold.
+The default threshold is **20 units**, and an optional `/threshold` flag lets users specify a custom value.
+```
+lowstock [/threshold NUMBER]
+```
+
+#### How it works
+
+1. The user enters `lowstock` or `lowstock /threshold 10`.
+2. `PharmaTracker.run()` passes the input to `Parser.parse()`.
+3. `Parser.parse()` identifies the command word `lowstock`. If the `/threshold` flag is present, its integer value is parsed; otherwise `LowStockCommand.DEFAULT_THRESHOLD` (20) is used.
+4. A `LowStockCommand` object is created with the resolved threshold.
+5. `LowStockCommand.execute()` iterates over every `Medication` in the `Inventory`. Any medication whose `quantity < threshold` is collected into a list.
+6. `Ui.printLowStockList(lowStockMeds, threshold)` displays the filtered list with the active threshold, or a message stating all stock is sufficient.
+
+
+
+#### Design Considerations
+
+| Aspect | Choice | Reason |
+|--------|--------|--------|
+| Default threshold of 20 | `DEFAULT_THRESHOLD` constant | Provides a sensible out-of-the-box value without requiring user input |
+| Strict `<` vs `<=` | `<` (strict less-than) | A medication at exactly the threshold is considered adequately stocked |
+| Optional `/threshold` flag | Optional | Keeps the command simple for common use while supporting custom thresholds |
+
+---
+
 ## Product scope
 
 ### Target user profile
@@ -242,6 +302,8 @@ Fast, lightweight medication tracking without needing a database or internet con
 | v2.0    | pharmacist          | view all registered customers          | reference their details quickly                    |
 | v2.0    | pharmacist          | restock a medication                   | top up stock when a new shipment arrives           |
 | v2.0    | pharmacist          | link a dispense event to a customer    | maintain each customer's medication history        |
+| v2.0    | pharmacist          | update a customer's details            | keep customer records current and accurate         |
+| v2.0    | pharmacist          | check which medications are low stock  | reorder before supplies run out                    |
 
 ## Non-Functional Requirements
 
@@ -296,3 +358,19 @@ Fast, lightweight medication tracking without needing a database or internet con
 2. **Expected:** Stock reduced by 20, confirmation includes customer ID and name.
 3. Without customer: `dispense 1 q/20` → behaves as original, no customer info in output.
 4. Invalid customer index: `dispense 1 q/20 c/99` → error message for out-of-bounds customer index.
+
+### Updating a customer
+
+1. Enter: `updatecustomer 1 /n Alice Tan /p 91234567`
+2. **Expected:** Confirmation showing updated customer details; address is unchanged.
+3. All fields: `updatecustomer 1 /n Alice Tan /p 91234567 /a 10 Orchard Road` → all three fields updated.
+4. No flags supplied: `updatecustomer 1` → error `No fields provided to update! Use /n, /p, or /a flags.`
+5. Invalid index: `updatecustomer 99 /n Alice` → error message for out-of-bounds index.
+
+### Checking low stock
+
+1. Enter: `lowstock`
+2. **Expected:** All medications with quantity below 20 (default threshold) are listed with their name, dosage, quantity, and expiry.
+3. Custom threshold: `lowstock /threshold 10` → lists medications with quantity below 10.
+4. No low-stock items: a message stating all medications are sufficiently stocked is shown.
+5. Invalid threshold: `lowstock /threshold abc` → error message for non-integer threshold.
