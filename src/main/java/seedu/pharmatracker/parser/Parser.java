@@ -265,6 +265,13 @@ public class Parser {
         return extractedValue;
     }
 
+    /**
+     * Extracts the mandatory customer ID from the user input.
+     *
+     * @param description The raw string containing command arguments.
+     * @return The extracted customer ID.
+     * @throws PharmaTrackerException If the format is invalid, missing flags, or if the ID is empty.
+     */
     private static String extractCustomerID(String description) throws PharmaTrackerException {
         int idIndex = description.indexOf("/id");
         int nameIndex = description.indexOf("/n");
@@ -282,6 +289,14 @@ public class Parser {
         return id;
     }
 
+    /**
+     * Extracts the mandatory customer name from the user input.
+     *
+     * @param description The raw string containing command arguments.
+     * @return The extracted customer name.
+     * @throws PharmaTrackerException PharmaTrackerException If the format is invalid, missing flags, or if the name is empty.
+     *
+     */
     public static String extractCustomerName(String description) throws PharmaTrackerException {
         int nameIndex = description.indexOf("/n");
         int phoneIndex = description.indexOf("/p");
@@ -299,6 +314,13 @@ public class Parser {
         return name;
     }
 
+    /**
+     * Extracts the mandatory customer phone number from the user input.
+     *
+     * @param description The raw string containing command arguments.
+     * @return The extracted customer phone number.
+     * @throws PharmaTrackerException PharmaTrackerException If the format is invalid, missing flags, or if the phone is empty.
+     */
     public static String extractCustomerPhone(String description) throws PharmaTrackerException {
         int phoneIndex = description.indexOf("/p");
         int addressIndex = description.indexOf("/addr");
@@ -322,6 +344,13 @@ public class Parser {
         return phone;
     }
 
+    /**
+     * Extracts the optional customer address from the user input.
+     *
+     * @param description The raw string containing command arguments.
+     * @return The extracted customer address, or an empty string if not provided.
+     * @throws PharmaTrackerException If the '/addr' flag is present but the address is empty.
+     */
     public static String extractCustomerAddress(String description) throws PharmaTrackerException {
         int addressIndex = description.indexOf("/addr");
 
