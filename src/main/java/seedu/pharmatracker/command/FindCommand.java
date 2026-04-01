@@ -59,10 +59,7 @@ public class FindCommand extends Command {
             return;
         }
 
-        System.out.println("Found " + matchingMedications.size() + " matching medication(s):");
-        for (int i = 0; i < matchingMedications.size(); i++) {
-            System.out.println((i + 1) + ". " + matchingMedications.get(i).toString());
-        }
+        ui.printFindResults(matchingMedications);
 
         logger.log(Level.INFO, "Successfully executed FindCommand. Found "
             + matchingMedications.size() + " result(s).");

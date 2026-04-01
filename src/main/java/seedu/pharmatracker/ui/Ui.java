@@ -135,6 +135,18 @@ public class Ui {
     }
 
     /**
+     * Prints the list of medications that matched the search keyword.
+     *
+     * @param matchingMedications The list of matched medications to display.
+     */
+    public void printFindResults(ArrayList<Medication> matchingMedications) {
+        System.out.println("Found " + matchingMedications.size() + " matching medication(s):");
+        for (int i = 0; i < matchingMedications.size(); i++) {
+            System.out.println((i + 1) + ". " + matchingMedications.get(i).toString());
+        }
+    }
+
+    /**
      * Prints a highly detailed, formatted view of a specific medication's attributes.
      * Empty optional fields are represented as "N/A" for better readability.
      *

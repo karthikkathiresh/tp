@@ -1,0 +1,74 @@
+@startuml
+skinparam ArrowFontStyle plain
+
+actor User
+participant ":PharmaTracker" as PharmaTracker
+participant ":Ui" as Ui
+participant "<<class>>\nParser" as Parser
+participant "c:ViewCustomerCommand" as ViewCustomerCommand
+participant "customerList:CustomerList" as CustomerList
+participant ":System.out" as Console
+participant "customer:Customer" as Customer
+
+User -> PharmaTracker : "view-customer 1"
+activate PharmaTracker
+
+PharmaTracker -> Ui : readCommand()
+activate Ui
+Ui --> PharmaTracker : fullCommand
+deactivate Ui
+
+PharmaTracker -> Parser : parse(fullCommand)
+activate Parser
+
+create ViewCustomerCommand
+Parser -> ViewCustomerCommand : new ViewCustomerCommand(index)
+activate ViewCustomerCommand
+ViewCustomerCommand --> Parser : c
+deactivate ViewCustomerCommand
+
+Parser --> PharmaTracker : c
+deactivate Parser
+
+PharmaTracker -> ViewCustomerCommand : execute(inv, ui, customerList)
+activate ViewCustomerCommand
+
+ViewCustomerCommand -> CustomerList : size()
+activate CustomerList
+CustomerList --> ViewCustomerCommand : size
+deactivate CustomerList
+
+alt customer list is empty
+    ViewCustomerCommand -> Console : println("No customers registered yet.")
+    activate Console
+    Console --> ViewCustomerCommand
+    deactivate Console
+else index is invalid
+    ViewCustomerCommand -> CustomerList : size()
+    activate CustomerList
+    CustomerList --> ViewCustomerCommand : size
+    deactivate CustomerList
+
+    ViewCustomerCommand -> Console : println("Invalid index...")
+    activate Console
+    Console --> ViewCustomerCommand
+    deactivate Console
+else valid request
+    ViewCustomerCommand -> CustomerList : getCustomer(index - 1)
+    activate CustomerList
+    CustomerList --> ViewCustomerCommand : customer
+    deactivate CustomerList
+
+    ViewCustomerCommand -> Ui : showCustomerDetails(customer)
+    activate Ui
+    Ui --> ViewCustomerCommand
+    deactivate Ui
+end
+
+ViewCustomerCommand --> PharmaTracker
+deactivate ViewCustomerCommand
+ViewCustomerCommand -[hidden]-> Parser
+destroy ViewCustomerCommand
+
+deactivate PharmaTracker
+@enduml
