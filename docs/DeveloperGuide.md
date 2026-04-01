@@ -104,6 +104,85 @@ The following sequence diagram shows the full flow of the add command, including
 ![Sequence diagram showing the execution flow of the Add Command](images/AddCommandSequence.png)
 ---
 
+### Find Medication Feature
+
+The `find` command searches the inventory for medications whose names contain a given keyword.
+The search is case-insensitive and supports partial matches.
+```
+find KEYWORD
+```
+
+#### How it works
+
+1. The user enters `find paracetamol`.
+2. `PharmaTracker.run()` reads the user input and passes the raw string to `Parser.parse()`.
+3. `Parser.parse()` identifies the command word `find` and extracts the remainder of the input
+   as the search keyword.
+4. A new `FindCommand(keyword)` object is constructed with the extracted keyword.
+5. `PharmaTracker.run()` calls `FindCommand.execute()`, which calls `Inventory.getMedications()`
+   to obtain the full medication list.
+6. The command iterates over every `Medication`, calling `getName()` on each one. If the name
+   contains the keyword (case-insensitive), the medication is added to `matchingMedications`.
+7. After the loop, the result is handled via an `alt` branch:
+   - If `matchingMedications` is empty, `"No medications found matching: ..."` is printed
+     directly to `System.out` and the command returns early.
+   - Otherwise, `Ui.printFindResults(matchingMedications)` is called to display the numbered
+     list of matches.
+
+The following sequence diagram shows the full execution flow of the `find` command:
+
+![Sequence diagram showing the execution flow of the Find Command](images/FindCommandSequence.png)
+
+#### Design Considerations
+
+| Aspect | Choice | Reason |
+|--------|--------|--------|
+| Case-insensitive matching | `toLowerCase()` on both sides | Reduces user friction; pharmacy staff should not need to remember exact capitalisation |
+| Partial match via `contains()` | Yes | A keyword like `Para` usefully returns `Paracetamol`; exact-match would be too restrictive |
+| No-results path prints directly | `System.out` in command | The no-results message is a simple one-liner; a dedicated `Ui` method would be added if the message ever needed formatting |
+
+---
+
+### View Medication Feature
+
+The `view` command displays the full details of a specific medication in the inventory,
+identified by its 1-based index as shown in `list`.
+```
+view INDEX
+```
+
+#### How it works
+
+1. The user enters `view 1`.
+2. `PharmaTracker.run()` reads the user input and passes the raw string to `Parser.parse()`.
+3. `Parser.parse()` identifies the command word `view` and calls `parseInt(description.trim())`
+   to extract the integer index.
+4. A new `ViewCommand(index)` object is constructed with the extracted index.
+5. `PharmaTracker.run()` calls `ViewCommand.execute()`, which calls `Inventory.getMedications()`
+   and validates the request via an `alt` block:
+   - If the inventory is empty, `"Inventory is empty."` is printed directly to `System.out`
+     and the command returns early.
+   - If the index is out of range (less than 1 or greater than list size), `getMedications()` is
+     called again to obtain the current size, an invalid-index error message is printed, and the
+     command returns early.
+6. For a valid index, `Inventory.getMedication(index - 1)` retrieves the target `Medication` object.
+7. `Ui.printMedicationDetails(med)` is called to display the medication's full profile, including
+   dosage form, manufacturer, directions, route, max daily dose, and warnings.
+
+The following sequence diagram shows the full execution flow of the `view` command:
+
+![Sequence diagram showing the execution flow of the View Command](images/ViewCommandSequence.png)
+
+#### Design Considerations
+
+| Aspect | Choice | Reason |
+|--------|--------|--------|
+| Two-stage guard (empty inventory, then out-of-range) | Yes | Produces a clearer error message; avoids an `IndexOutOfBoundsException` when the list is empty |
+| `parseInt` in `Parser`, not `execute()` | `Parser` | Fails fast with a parse error before a command object is even created; consistent with how other index-based commands are parsed |
+| Display delegated to `Ui.printMedicationDetails()` | `Ui` | Keeps the command focused on retrieval logic only; consistent with SRP enforced across the codebase |
+
+---
+
 ### List Customers Feature
 
 The `listcustomers` command retrieves and displays all registered customers with their ID, name, and phone number.
@@ -242,22 +321,41 @@ Cmd --> User : success message with customer name
 
 ### View Customer Feature
 
-This view-customer mechanism allows users to view the details of a chosen customer, including
-their ID, name, phone number, address, and dispensing history.
+The `view-customer` command allows pharmacy staff to retrieve and display the full profile of a
+specific customer, including their ID, name, phone number, address, and complete dispensing history.
 ```
-view-customer 1
+view-customer INDEX
 ```
-#### How it works
 
-The following steps describe how an add command is processed.
+#### How it works
 
 1. The user enters `view-customer 1`.
 2. `PharmaTracker.run()` reads the user input and passes the raw string to `Parser.parse()`.
-3. `Parser.parse()` identifies the command word `view-customer`.
-4. The parser then extracts the index from the description segment of the input.
-5. The extracted index is used to create a new `ViewCustomerCommand` object.
-6. `PharmaTracker.run()` calls `ViewCustomerCommand.execute()`, which obtains the indexed customer from customerList.
-7. Finally, `Ui.showCustomerDetails(customer)` is called to display the customer's details.
+3. `Parser.parse()` identifies the command word `view-customer` and extracts the integer index
+   from the remainder of the input string.
+4. The extracted index is used to construct a new `ViewCustomerCommand` object.
+5. `PharmaTracker.run()` calls `ViewCustomerCommand.execute()`, which first checks
+   `CustomerList.size()` to validate the request:
+   - If the customer list is empty, `"No customers registered yet."` is printed directly and
+     the command returns early.
+   - If the index is out of range (less than 1 or greater than list size), an invalid-index
+     error message is printed and the command returns early.
+6. For a valid index, `CustomerList.getCustomer(index - 1)` retrieves the target `Customer` object.
+7. Finally, `Ui.showCustomerDetails(customer)` is called to display the customer's full details,
+   including their dispensing history (or a `"No medications dispensed yet."` message if the
+   history is empty).
+
+The following sequence diagram shows the full execution flow of the `view-customer` command:
+
+![Sequence diagram showing the execution flow of the View Customer Command](images/ViewCustomerCommandSequence.png)
+
+#### Design Considerations
+
+| Aspect | Choice | Reason |
+|--------|--------|--------|
+| Index validation in `execute()`, not `Parser` | `execute()` | Index validity depends on the live `CustomerList` size, which the stateless parser does not hold |
+| Two-stage guard (empty list, then out-of-range) | Yes | Produces a clearer error message; avoids an `IndexOutOfBoundsException` when the list is empty |
+| Display delegated to `Ui.showCustomerDetails()` | `Ui` | Keeps display logic out of the command class; consistent with the SRP enforced across the codebase |
 
 ---
 
@@ -318,6 +416,50 @@ lowstock [/threshold NUMBER]
 | Default threshold of 20 | `DEFAULT_THRESHOLD` constant | Provides a sensible out-of-the-box value without requiring user input |
 | Strict `<` vs `<=` | `<` (strict less-than) | A medication at exactly the threshold is considered adequately stocked |
 | Optional `/threshold` flag | Optional | Keeps the command simple for common use while supporting custom thresholds |
+
+---
+
+### Expiring Medications Feature
+
+The `expiring` command scans the inventory and reports medications that have already passed their
+expiry date, as well as those expiring within a configurable number of days. It defaults to a
+30-day window if no argument is provided.
+```
+expiring [/days DAYS]
+```
+
+#### How it works
+
+1. The user enters `expiring /days 14` (or just `expiring`).
+2. `PharmaTracker.run()` reads the user input and passes the raw string to `Parser.parse()`.
+3. `Parser.parse()` identifies the command word `expiring` and checks for the optional `/days` flag:
+   - If `/days` is **absent**, a default `ExpiringCommand` is constructed using the no-argument
+     constructor, which sets the window to `DEFAULT_DAYS` (30).
+   - If `/days` is **present**, the parser calls `parseInt()` on the extracted value to obtain the
+     number of days, then constructs `ExpiringCommand(days)` with that value.
+4. `PharmaTracker.run()` calls `ExpiringCommand.execute()`, which calls
+   `Inventory.getMedications()` to obtain the full medication list.
+5. The command iterates over every `Medication`. For each one, `getExpiryDate()` is called:
+   - If the expiry date is `null` or cannot be parsed, the medication is **skipped**.
+   - If the expiry date is **before today**, the medication is added to `expiredMeds`.
+   - If the expiry date falls **within the cutoff window** (today through today + days), the
+     medication is added to `expiringMeds`.
+6. `Ui.showExpiringMedications(expiredMeds, expiringMeds, days)` is called to display the
+   results. If both lists are empty, a single `"No expired or expiring medications found."` message
+   is shown. Otherwise, expired and soon-to-expire medications are displayed in two labelled sections.
+
+The following sequence diagram shows the full execution flow of the `expiring` command:
+
+![Sequence diagram showing the execution flow of the Expiring Command](images/ExpiringCommandSequence.png)
+
+#### Design Considerations
+
+| Aspect | Choice | Reason |
+|--------|--------|--------|
+| Default window of 30 days | `DEFAULT_DAYS` constant | Provides a sensible out-of-the-box value; avoids requiring user input for the common case |
+| Skip medications with unparseable expiry | Silent skip | Prevents a single bad record from crashing the entire scan; logged for debugging |
+| Two separate result lists (`expiredMeds`, `expiringMeds`) | Yes | Allows the `Ui` to present expired and soon-to-expire items in clearly labelled sections, giving staff immediately actionable information |
+| Display delegated to `Ui.showExpiringMedications()` | `Ui` | Consistent with SRP; the command handles filtering logic only and hands display responsibility to `Ui` |
 
 ---
 

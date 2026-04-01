@@ -60,7 +60,23 @@ Searches for medications whose names contain the given keyword (case-insensitive
 
 Format: `find KEYWORD`
 
+- Partial matches are supported (e.g. `Para` matches `Paracetamol`).
+- At least one character must be provided as the keyword.
+- If no medications match, a message indicating this is shown instead.
+
 Example: `find Para`
+
+Expected output:
+```
+Found 2 matching medication(s):
+1. Paracetamol | 500mg | Qty: 100 | Expiry: 31/12/2026 | Tag: painkiller
+2. Paracetamol Junior | 250mg | Qty: 40 | Expiry: 15/06/2026 | Tag: painkiller
+```
+
+If no match is found:
+```
+No medications found matching: Para
+```
 
 ---
 
@@ -70,7 +86,32 @@ Displays the full details of a specific medication, including dosage form, manuf
 
 Format: `view INDEX`
 
+- `INDEX` must be a positive integer corresponding to a medication shown in `list`.
+
 Example: `view 1`
+
+Expected output:
+```
+========================================
+MEDICATION DETAILS
+========================================
+Drug Name:           Amoxicillin
+Strength:            250mg
+Dosage Form:         Capsule
+Manufacturer:        Pfizer
+----------------------------------------
+DOSAGE & ADMINISTRATION
+----------------------------------------
+Directions:          Take with food
+Frequency:           Twice daily
+Route:               Oral
+Max Daily Dose:      500mg
+----------------------------------------
+WARNINGS & PRECAUTIONS
+----------------------------------------
+- May cause allergic reactions
+========================================
+```
 
 ---
 
@@ -121,13 +162,33 @@ Format: `sort`
 
 ### Check for expiring medications: `expiring`
 
-Lists all medications that have already expired and those expiring within a specified number of days. Defaults to 30 days.
+Lists all medications that have already expired, and those expiring within a specified number of days. Defaults to 30 days if no value is provided.
 
 Format: `expiring [/days DAYS]`
+
+- `DAYS` must be a non-negative integer.
+- Expired medications are shown separately from soon-to-expire medications.
+- If there are no expired or expiring medications, a message indicating this is shown.
 
 Examples:
 - `expiring`
 - `expiring /days 14`
+
+Expected output:
+```
+Already expired:
+1. Aspirin | 100mg | Qty: 30 | Expiry: 01/01/2025 | Tag: painkiller
+Total: 1 medication(s) expired.
+----------------------------------------
+Expiring within 14 days:
+1. Ibuprofen | 200mg | Qty: 12 | Expiry: 10/04/2026 | Tag: painkiller
+Total: 1 medication(s) expiring soon.
+```
+
+If no results are found:
+```
+No expired or expiring medications found.
+```
 
 ---
 
@@ -189,11 +250,47 @@ Format: `listcustomers`
 
 ### View customer details: `view-customer`
 
-Displays the full details of a specific customer, including their ID, name, phone number, address, and dispensing history.
+Displays the full details of a specific customer, including their ID, name, phone number, address, and full dispensing history.
 
 Format: `view-customer INDEX`
 
+- `INDEX` must be a positive integer corresponding to a customer shown in `listcustomers`.
+- If the customer has no dispensing history, a message indicating this is shown instead.
+
 Example: `view-customer 1`
+
+Expected output:
+```
+========================================
+CUSTOMER DETAILS
+========================================
+Customer ID:         C001
+Name:                John Tan
+Phone:               99887766
+Address:             10 Orchard Road
+----------------------------------------
+DISPENSING HISTORY
+----------------------------------------
+1. Paracetamol | 500mg | Qty dispensed: 20 | Date: 01/04/2026
+2. Amoxicillin | 250mg | Qty dispensed: 10 | Date: 03/04/2026
+========================================
+```
+
+If the customer has no dispensing history:
+```
+========================================
+CUSTOMER DETAILS
+========================================
+Customer ID:         C001
+Name:                John Tan
+Phone:               99887766
+Address:             10 Orchard Road
+----------------------------------------
+DISPENSING HISTORY
+----------------------------------------
+No medications dispensed yet.
+========================================
+```
 
 ---
 

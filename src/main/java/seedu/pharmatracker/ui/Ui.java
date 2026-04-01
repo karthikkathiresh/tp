@@ -135,6 +135,18 @@ public class Ui {
     }
 
     /**
+     * Prints the list of medications that matched the search keyword.
+     *
+     * @param matchingMedications The list of matched medications to display.
+     */
+    public void printFindResults(ArrayList<Medication> matchingMedications) {
+        System.out.println("Found " + matchingMedications.size() + " matching medication(s):");
+        for (int i = 0; i < matchingMedications.size(); i++) {
+            System.out.println((i + 1) + ". " + matchingMedications.get(i).toString());
+        }
+    }
+
+    /**
      * Prints a highly detailed, formatted view of a specific medication's attributes.
      * Empty optional fields are represented as "N/A" for better readability.
      *
@@ -272,6 +284,26 @@ public class Ui {
                 "Customer updated: " + customer.toString(),
                 DIVIDER
         );
+    }
+    
+    /**
+     * Displays a numbered list of all registered customers.
+     *
+     * @param customerList The list of customers to display.
+     */
+    public void printCustomerList(CustomerList customerList) {
+        System.out.println(DIVIDER);
+        System.out.println("PharmaTracker Customers:");
+        if (customerList.size() == 0) {
+            System.out.println("No customers registered yet.");
+        } else {
+            for (int i = 0; i < customerList.size(); i++) {
+                Customer customer = customerList.getCustomer(i);
+                System.out.println((i + 1) + ". " + customer.toString());
+            }
+            System.out.println("Total Customers: " + customerList.size() + ".");
+        }
+        System.out.println(DIVIDER);
     }
 
     public void printUpdatedMedicationMessage(Medication med, ArrayList<String> changes) {

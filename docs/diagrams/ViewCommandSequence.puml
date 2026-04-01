@@ -1,0 +1,79 @@
+@startuml
+skinparam ArrowFontStyle plain
+
+actor User
+participant ":PharmaTracker" as PharmaTracker
+participant ":Ui" as Ui
+participant "<<class>>\nParser" as Parser
+participant "c:ViewCommand" as ViewCommand
+participant "inv:Inventory" as Inventory
+participant ":System.out" as Console
+participant "med:Medication" as Medication
+
+User -> PharmaTracker : "view 1"
+activate PharmaTracker
+
+PharmaTracker -> Ui : readCommand()
+activate Ui
+Ui --> PharmaTracker : fullCommand
+deactivate Ui
+
+PharmaTracker -> Parser : parse(fullCommand)
+activate Parser
+
+Parser -> Parser : parseInt(description.trim())
+activate Parser
+Parser --> Parser : index
+deactivate Parser
+
+create ViewCommand
+Parser -> ViewCommand : new ViewCommand(index)
+activate ViewCommand
+ViewCommand --> Parser : c
+deactivate ViewCommand
+
+Parser --> PharmaTracker : c
+deactivate Parser
+
+PharmaTracker -> ViewCommand : execute(inv, ui, customerList)
+activate ViewCommand
+
+ViewCommand -> Inventory : getMedications()
+activate Inventory
+Inventory --> ViewCommand : medicationList
+deactivate Inventory
+
+alt inventory is empty
+    ViewCommand -> Console : println("Inventory is empty.")
+    activate Console
+    Console --> ViewCommand
+    deactivate Console
+else index is invalid
+    ViewCommand -> Inventory : getMedications()
+    activate Inventory
+    Inventory --> ViewCommand : medicationList
+    deactivate Inventory
+
+    ViewCommand -> Console : println("Invalid index...")
+    activate Console
+    Console --> ViewCommand
+    deactivate Console
+else valid request
+    ViewCommand -> Inventory : getMedication(index - 1)
+    activate Inventory
+    Inventory --> ViewCommand : med
+    deactivate Inventory
+
+    ViewCommand -> Ui : printMedicationDetails(med)
+    activate Ui
+    Ui --> ViewCommand
+    deactivate Ui
+end
+
+ViewCommand --> PharmaTracker
+deactivate ViewCommand
+ViewCommand -[hidden]-> Parser
+destroy ViewCommand
+
+deactivate PharmaTracker
+@enduml

@@ -21,6 +21,7 @@ import seedu.pharmatracker.command.UpdateCustomerCommand;
 import seedu.pharmatracker.command.ViewCustomerCommand;
 import seedu.pharmatracker.command.RestockCommand;
 import seedu.pharmatracker.exceptions.PharmaTrackerException;
+import seedu.pharmatracker.command.ListCustomersCommand;
 
 /**
  * Parses user input into executable commands.
@@ -360,7 +361,7 @@ public class Parser {
             throw new PharmaTrackerException("Invalid format! Please ensure you include '/n' followed by '/p'.");
         }
 
-        String name = description.substring(nameIndex + 2, phoneIndex);
+        String name = description.substring(nameIndex + 2, phoneIndex).trim();
 
         if (name.isEmpty()) {
             throw new PharmaTrackerException("Customer name cannot be empty!");
@@ -390,7 +391,7 @@ public class Parser {
             throw new PharmaTrackerException("Invalid format! '/p' must come before '/addr'");
         }
 
-        String phone = description.substring(phoneIndex + 2, addressIndex);
+        String phone = description.substring(phoneIndex + 2, endIndex).trim();
 
         if (phone.isEmpty()) {
             throw new PharmaTrackerException("Customer phone cannot be empty!");
@@ -423,7 +424,7 @@ public class Parser {
             throw new PharmaTrackerException("Customer address cannot be empty if the '/addr' flag is used!");
         }
 
-        return description.substring(addressIndex + 5);
+        return description.substring(addressIndex + 5).trim();
     }
 
     /**
@@ -643,6 +644,9 @@ public class Parser {
 
         case ExitCommand.COMMAND_WORD:
             return new ExitCommand();
+
+        case ListCustomersCommand.COMMAND_WORD:
+            return new ListCustomersCommand();
 
         default:
             throw new PharmaTrackerException("Unknown command! " +
