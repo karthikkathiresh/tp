@@ -436,10 +436,17 @@ public class Parser {
             try {
                 String[] parts = description.trim().split("q/");
                 int dispenseIndex = Integer.parseInt(parts[0].trim());
-                int dispenseQuantity = Integer.parseInt(parts[1].trim());
+                String qPart = parts[1];
+                if (qPart.contains("c/")) {
+                    String[] qAndC = qPart.split("c/");
+                    int dispenseQuantity = Integer.parseInt(qAndC[0].trim());
+                    int dispenseCustomer = Integer.parseInt(qAndC[1].trim());
+                    return new DispenseCommand(dispenseIndex, dispenseQuantity, dispenseCustomer);
+                }
+                int dispenseQuantity = Integer.parseInt(qPart.trim());
                 return new DispenseCommand(dispenseIndex, dispenseQuantity);
             } catch (Exception e) {
-                System.out.println("Invalid format. Use: dispense INDEX q/QUANTITY");
+                System.out.println("Invalid format. Use: dispense INDEX q/QUANTITY [c/CUSTOMER_INDEX]");
                 break;
             }
 
