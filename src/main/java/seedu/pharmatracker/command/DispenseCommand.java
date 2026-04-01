@@ -10,51 +10,37 @@ import seedu.pharmatracker.data.Medication;
 import seedu.pharmatracker.ui.Ui;
 
 /**
- * Command that dispenses a specified quantity of a medication from the inventory.
- *
- * <p>The target medication is identified by a 1-based index. Dispensing fails
- * if the index is out of range or if the requested quantity exceeds current stock,
- * in both cases printing an error message and leaving the inventory unchanged.
- * An optional customer index links the dispense event to a registered customer's
- * dispensing history. If omitted, behaviour is identical to the original command.
+ * Represents a command to dispense a specified quantity of a medication from the inventory.
+ * Optionally links the dispense event to a registered customer's dispensing history.
  */
 public class DispenseCommand extends Command {
 
-    /** Command keyword used to trigger this command. */
     public static final String COMMAND_WORD = "dispense";
 
-    /** Sentinel value indicating no customer was linked. */
     private static final int NO_CUSTOMER = -1;
 
     private static final Logger logger = Logger.getLogger(DispenseCommand.class.getName());
 
-    /** 1-based index of the medication to dispense from the inventory. */
     private final int index;
-
-    /** Number of units to dispense. */
     private final int quantity;
-
-    /** 1-based index of the customer to link, or {@value #NO_CUSTOMER} if none. */
     private final int customerIndex;
 
     /**
-     * Constructs a {@code DispenseCommand} with no customer linking.
+     * Constructs a DispenseCommand with no customer linking.
      *
-     * @param index    1-based position of the medication in the inventory
-     * @param quantity number of units to dispense; must not exceed available stock
+     * @param index    1-based position of the medication in the inventory.
+     * @param quantity Number of units to dispense.
      */
     public DispenseCommand(int index, int quantity) {
-        this.index = index;
-        this.quantity = quantity;
-        this.customerIndex = NO_CUSTOMER;
+        this(index, quantity, NO_CUSTOMER);
     }
 
     /**
-     * Constructs a {@code DispenseCommand} with optional customer linking.
+     * Constructs a DispenseCommand with optional customer linking.
      *
-     * @param index         1-based position of the medication in the inventory
-     * @param quantity      number of units to dispense; must not exceed available stock
-     * @param customerIndex 1-based position of the customer to link, or -1 if none
+     * @param index         1-based position of the medication in the inventory.
+     * @param quantity      Number of units to dispense.
+     * @param customerIndex 1-based position of the customer to link, or -1 if none.
      */
     public DispenseCommand(int index, int quantity, int customerIndex) {
         this.index = index;
@@ -63,19 +49,12 @@ public class DispenseCommand extends Command {
     }
 
     /**
-     * Executes the dispense command, reducing the medication's stock by the specified quantity.
+     * Executes the dispense command by reducing the medication's stock by the specified quantity.
      * If a valid customer index is provided, records the dispense event in that customer's history.
      *
-     * <p>Prints an error and returns early under the following conditions:
-     * <ul>
-     *   <li>The medication index is less than 1 or exceeds the inventory size.</li>
-     *   <li>The requested quantity exceeds the medication's current stock.</li>
-     *   <li>A customer index is provided but is out of range.</li>
-     * </ul>
-     *
-     * @param inventory    the inventory from which to dispense the medication
-     * @param ui           the UI instance (unused directly; output goes via {@code System.out})
-     * @param customerList the list of registered customers
+     * @param inventory    The current medication inventory.
+     * @param ui           The user interface for displaying messages.
+     * @param customerList The list of registered customers.
      */
     @Override
     public void execute(Inventory inventory, Ui ui, CustomerList customerList) {
