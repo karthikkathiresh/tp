@@ -33,7 +33,9 @@ public class UpdateCommand extends Command {
     private final String maxDailyDose;
     private final ArrayList<String> warnings;
 
-    public UpdateCommand(int index, String name, String dosage, Integer quantity, String expiryDate, String tag, String dosageForm, String manufacturer, String directions, String frequency, String route, String maxDailyDose, ArrayList<String> warnings) {
+    public UpdateCommand(int index, String name, String dosage, Integer quantity, String expiryDate, String tag,
+                         String dosageForm, String manufacturer, String directions, String frequency, String route,
+                         String maxDailyDose, ArrayList<String> warnings) {
         this.index = index;
         this.name = name;
         this.dosage = dosage;
