@@ -6,7 +6,13 @@ Beyond the Java Standard Library, no other libraries were used. No code was reus
 
 ## Setting up, getting started
 
-{Update with instructions on setting up}
+1. Ensure Java 17 or above is installed on your computer.
+2. Download the latest `pharmatracker.jar` from the releases page.
+3. Open a terminal in the folder containing the jar file.
+4. Run `java -jar pharmatracker.jar` to start the application.
+5. Type a command and press Enter to execute it. Type `help` to see available commands.
+
+> **Note for developers:** Run `.\gradlew run` (Windows) or `./gradlew run` (macOS/Linux) from the project root to launch the app.
 
 ## Design
 
