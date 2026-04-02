@@ -10,16 +10,29 @@ ____________________________________________________________
 Welcome to Pharma Tracker!
 What can I do for you today?
 ____________________________________________________________
-Enter command: Here are the possible features of the chatbot:
-1. Add Medication (add /n NAME /d DOSAGE /q QUANTITY /e EXPIRY /t TAG)
-2. Delete Medication (delete INDEX)
-3. Dispense Medication (dispense INDEX q/QUANTITY)
-4. List Inventory (list)
-5. Find / Search Medication (find KEYWORD)
-6. View Medication Details (view INDEX)
-7. Sort by Expiry Date (sort)
-8. Print Description Label (label INDEX)
-9. Viewing Help (help)
-10. Exiting the Program (exit)
+Enter command: Here are the possible features of PharmaTracker:
+--- Medication Commands ---
+ 1. Add Medication           (add /n NAME /d DOSAGE /q QUANTITY /e EXPIRY /t TAG)
+ 2. Delete Medication        (delete INDEX)
+ 3. Dispense Medication      (dispense INDEX q/QUANTITY [c/CUSTOMER_INDEX])
+ 4. List Inventory           (list)
+ 5. Find / Search Medication (find KEYWORD)
+ 6. View Medication Details  (view INDEX)
+ 7. Sort by Expiry Date      (sort)
+ 8. Print Description Label  (label INDEX)
+ 9. Update Medication        (update INDEX /n NAME /d DOSAGE /q QUANTITY /e EXPIRY /t TAG)
+10. Restock Medication       (restock INDEX /q QUANTITY)
+11. Low Stock Alert          (lowstock | lowstock /threshold NUMBER)
+12. Expiring Medications     (expiring | expiring /days NUMBER)
+--- Customer Commands ---
+13. Add Customer             (addcustomer /n NAME /p PHONE /a ADDRESS)
+14. Delete Customer          (deletecustomer INDEX)
+15. Update Customer          (updatecustomer INDEX /n NAME /p PHONE /a ADDRESS)
+16. List Customers           (listcustomers)
+17. Find Customer            (findcustomer KEYWORD)
+18. View Customer            (viewcustomer INDEX)
+--- General ---
+19. Viewing Help             (help)
+20. Exiting the Program      (exit)
 Enter command: Exiting Application
 Stay Healthy!

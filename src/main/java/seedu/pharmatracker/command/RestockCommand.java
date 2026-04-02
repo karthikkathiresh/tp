@@ -32,8 +32,6 @@ public class RestockCommand extends Command {
      * @param quantity Number of units to add to existing stock; must be positive.
      */
     public RestockCommand(int index, int quantity) {
-        assert index >= 1 : "Medication index must be at least 1";
-        assert quantity >= MIN_QUANTITY : "Restock quantity must be at least 1";
         this.index = index;
         this.quantity = quantity;
     }

@@ -25,17 +25,12 @@ public class ListCustomersCommand extends Command {
      */
     @Override
     public void execute(Inventory inventory, Ui ui, CustomerList customerList) {
+        assert inventory != null : "Inventory must not be null";
         assert ui != null : "Ui must not be null";
         assert customerList != null : "CustomerList must not be null";
 
         logger.log(Level.INFO, "Executing ListCustomersCommand: customerCount={0}",
                 customerList.size());
-
-        if (customerList.size() < 0) {
-            logger.log(Level.SEVERE, "CustomerList returned negative size: {0}", customerList.size());
-            System.out.println("An unexpected error occurred. Unable to retrieve customer list.");
-            return;
-        }
 
         ui.printCustomerList(customerList);
 

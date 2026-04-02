@@ -200,7 +200,7 @@ public class Medication {
             s += " | [EXPIRED]";
         }
 
-        if (!tag.isEmpty()) {
+        if (tag != null && !tag.isEmpty()) {
             s += " | Tag: " + tag;
         }
 

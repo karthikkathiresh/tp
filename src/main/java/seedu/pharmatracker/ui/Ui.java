@@ -318,18 +318,18 @@ public class Ui {
      * @param customerList The list of customers to display.
      */
     public void printCustomerList(CustomerList customerList) {
-        System.out.println(DIVIDER);
-        System.out.println("PharmaTracker Customers:");
         if (customerList.size() == 0) {
             System.out.println("No customers registered yet.");
         } else {
+            System.out.println(DIVIDER);
+            System.out.println("PharmaTracker Customers:");
             for (int i = 0; i < customerList.size(); i++) {
                 Customer customer = customerList.getCustomer(i);
                 System.out.println((i + 1) + ". " + customer.toString());
             }
             System.out.println("Total Customers: " + customerList.size() + ".");
+            System.out.println(DIVIDER);
         }
-        System.out.println(DIVIDER);
     }
 
     public void printUpdatedMedicationMessage(Medication med, ArrayList<String> changes) {
@@ -339,6 +339,53 @@ public class Ui {
                 "Medication updated: " + med.getName() + " | " + changeString,
                 DIVIDER
         );
+    }
+
+    /**
+     * Prints the comprehensive help menu showing all available commands and their formats.
+     */
+    public void printHelpMessage() {
+        System.out.println("Here are the possible features of PharmaTracker:");
+        System.out.println("--- Medication Commands ---");
+        System.out.println(" 1. Add Medication           (add /n NAME /d DOSAGE /q QUANTITY /e EXPIRY /t TAG)");
+        System.out.println(" 2. Delete Medication        (delete INDEX)");
+        System.out.println(" 3. Dispense Medication      (dispense INDEX q/QUANTITY [c/CUSTOMER_INDEX])");
+        System.out.println(" 4. List Inventory           (list)");
+        System.out.println(" 5. Find / Search Medication (find KEYWORD)");
+        System.out.println(" 6. View Medication Details  (view INDEX)");
+        System.out.println(" 7. Sort by Expiry Date      (sort)");
+        System.out.println(" 8. Print Description Label  (label INDEX)");
+        System.out.println(" 9. Update Medication        (update INDEX /n NAME /d DOSAGE /q QUANTITY /e EXPIRY /t TAG)");
+        System.out.println("10. Restock Medication       (restock INDEX /q QUANTITY)");
+        System.out.println("11. Low Stock Alert          (lowstock | lowstock /threshold NUMBER)");
+        System.out.println("12. Expiring Medications     (expiring | expiring /days NUMBER)");
+        System.out.println("--- Customer Commands ---");
+        System.out.println("13. Add Customer             (addcustomer /n NAME /p PHONE /a ADDRESS)");
+        System.out.println("14. Delete Customer          (deletecustomer INDEX)");
+        System.out.println("15. Update Customer          (updatecustomer INDEX /n NAME /p PHONE /a ADDRESS)");
+        System.out.println("16. List Customers           (listcustomers)");
+        System.out.println("17. Find Customer            (findcustomer KEYWORD)");
+        System.out.println("18. View Customer            (viewcustomer INDEX)");
+        System.out.println("--- General ---");
+        System.out.println("19. Viewing Help             (help)");
+        System.out.println("20. Exiting the Program      (exit)");
+    }
+
+    /**
+     * Prints the exit message when the application is shutting down.
+     */
+    public void printExitMessage() {
+        System.out.println("Exiting Application");
+        System.out.println("Stay Healthy!");
+    }
+
+    /**
+     * Prints an error message to the console.
+     *
+     * @param message The error message to display.
+     */
+    public void printError(String message) {
+        System.out.println(message);
     }
 
 }

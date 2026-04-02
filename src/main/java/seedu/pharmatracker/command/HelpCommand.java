@@ -7,26 +7,34 @@ import seedu.pharmatracker.data.Inventory;
 import seedu.pharmatracker.ui.Ui;
 import seedu.pharmatracker.customer.CustomerList;
 
+/**
+ * Represents a command that displays all available commands and their formats.
+ * This command provides users with a comprehensive help menu showing medication commands,
+ * customer commands, and general application commands.
+ */
 public class HelpCommand extends Command {
+    
     public static final String COMMAND_WORD = "help";
+    
     private static final Logger logger = Logger.getLogger(HelpCommand.class.getName());
 
+    /**
+     * Executes the help command by displaying all available commands and their usage formats.
+     *
+     * @param inventory    The current medication inventory (unused).
+     * @param ui           The user interface for displaying messages.
+     * @param customerList The list of registered customers (unused).
+     */
     @Override
     public void execute(Inventory inventory, Ui ui, CustomerList customerList) {
         assert inventory != null : "Inventory should not be null";
         assert ui != null : "Ui should not be null";
+        assert customerList != null : "CustomerList should not be null";
+        
         logger.log(Level.INFO, "Executing HelpCommand");
-        System.out.println("Here are the possible features of the chatbot:");
-        System.out.println("1. Add Medication (add /n NAME /d DOSAGE /q QUANTITY /e EXPIRY /t TAG)");
-        System.out.println("2. Delete Medication (delete INDEX)");
-        System.out.println("3. Dispense Medication (dispense INDEX q/QUANTITY)");
-        System.out.println("4. List Inventory (list)");
-        System.out.println("5. Find / Search Medication (find KEYWORD)");
-        System.out.println("6. View Medication Details (view INDEX)");
-        System.out.println("7. Sort by Expiry Date (sort)");
-        System.out.println("8. Print Description Label (label INDEX)");
-        System.out.println("9. Viewing Help (help)");
-        System.out.println("10. Exiting the Program (exit)");
+        
+        ui.printHelpMessage();
+        
         logger.log(Level.INFO, "HelpCommand executed successfully");
     }
 }

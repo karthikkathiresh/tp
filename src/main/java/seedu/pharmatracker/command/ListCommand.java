@@ -33,6 +33,7 @@ public class ListCommand extends Command {
     public void execute(Inventory inventory, Ui ui, CustomerList customerList) {
         assert inventory != null : "Inventory must not be null";
         assert ui != null : "Ui must not be null";
+        assert customerList != null : "CustomerList must not be null";
 
         logger.log(Level.INFO, "Executing ListCommand");
 
