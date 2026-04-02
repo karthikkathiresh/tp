@@ -1,0 +1,26 @@
+@startuml
+actor User
+participant ":PharmaTracker" as PT
+participant ":Parser" as P
+participant ":ListCommand" as LC
+participant ":Inventory" as INV
+participant ":Ui" as UI
+
+User -> PT : list
+PT -> P : parse("list")
+P --> PT : new ListCommand()
+PT -> LC : execute(inventory, ui)
+LC -> INV : getMedications()
+INV --> LC : medicationList
+
+alt medicationList is empty
+    LC -> UI : print("Inventory is empty.")
+else medicationList not empty
+    LC -> UI : printMedicationList(medicationList)
+    loop for each Medication in medicationList
+        UI -> UI : format entry (index | name | dosage | qty | expiry [LOW STOCK?])
+    end
+    UI -> UI : print total count
+end
+UI --> User : displays output
+@enduml

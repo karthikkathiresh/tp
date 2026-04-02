@@ -46,12 +46,27 @@ Examples:
 
 ### List all medications: `list`
 
-Displays all medications in the inventory with their index, name, dosage, quantity, expiry date, and tag.
+Displays a high-level summary of all medications currently stored in the system. This provides a quick overview of drug names and current stock levels for the pharmacist.
 
-Format: `list`
+**Format**: `list`
 
-- Medications with quantity at or below 10 are flagged `[LOW STOCK]`.
+* Shows a numbered list of all medication records currently in the inventory.
+* Each entry displays the name, dosage, current quantity, and expiry date.
+* Medications with a quantity of **10 or less** are automatically flagged with `[LOW STOCK]`.
+* This list provides the **INDEX** values required for other commands such as `delete`, `view`, and `dispense`.
 
+**Example**:
+`list`
+
+**Expected Output**:
+```
+PharmaTracker Inventory:
+1. Amoxicillin | 250mg | Qty: 50  | Expiry: 01/06/2025
+2. Ibuprofen   | 200mg | Qty: 5   | Expiry: 15/06/2026 [LOW STOCK]
+3. Paracetamol | 500mg | Qty: 150 | Expiry: 31/12/2026
+------------------------------------------------------
+Total Medications: 3
+```
 ---
 
 ### Find a medication: `find`
@@ -132,7 +147,7 @@ dispense event to a registered customer — when a customer index is provided, t
 dispensed medication is automatically recorded in that customer's dispensing
 history. If `c/CUSTOMER_INDEX` is omitted, the command behaves exactly as before.
 
-Format: `dispense INDEX q/QUANTITY [c/CUSTOMER_INDEX]`
+**Format**: `dispense INDEX q/QUANTITY [c/CUSTOMER_INDEX]`
 
 - Dispensing fails if the requested quantity exceeds the current stock.
 - `c/CUSTOMER_INDEX` is optional. If omitted, no customer record is updated.
@@ -170,7 +185,7 @@ Additively increases the stock of an existing medication. Unlike `update`, which
 overwrites the quantity, `restock` tops up on top of the current stock level.
 Useful when a new shipment of medication arrives.
 
-Format: `restock INDEX /q QUANTITY`
+**Format**: `restock INDEX /q QUANTITY`
 
 - `INDEX` must be a positive integer corresponding to a medication shown in `list`.
 - `QUANTITY` must be a positive integer.
@@ -290,7 +305,7 @@ Example: `add-customer /id C001 /n John Tan /p 99887766 /addr 10 Orchard Road`
 Displays a numbered list of all customers currently registered in the system,
 showing their customer ID, name, and phone number.
 
-Format: `list-customers`
+**Format**: `list-customers`
 
 **Example — 3 customers registered:**
 

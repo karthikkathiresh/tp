@@ -209,7 +209,40 @@ The following sequence diagram shows the full execution flow of the `view` comma
 | Display delegated to `Ui.printMedicationDetails()` | `Ui` | Keeps the command focused on retrieval logic only; consistent with SRP enforced across the codebase |
 
 ---
+### List Medication Feature
 
+The `list` feature provides a summary view of the entire inventory, allowing users to identify item indices for subsequent operations.
+
+#### How it works
+
+1.  The user enters the `list` command into the CLI.
+2.  `PharmaTracker.run()` reads the input and passes the raw string to `Parser.parse()`.
+3.  `Parser.parse()` identifies the command word `list` and returns a new `ListCommand` object.
+4.  `PharmaTracker.run()` calls `ListCommand.execute()`.
+5.  `ListCommand.execute()` retrieves the list of all medications from `Inventory.getMedications()`.
+6.  The command iterates through the collection. For each `Medication` object:
+    * It retrieves the name, dosage, quantity, and expiry date.
+    * It checks the stock level; if the quantity is $\leq 10$, a `[LOW STOCK]` indicator is appended to the output string.
+7.  The formatted list is passed to the `Ui` component for display, followed by a summary count of total medications.
+
+#### Design Considerations
+
+| Aspect | Choice | Reason |
+|:--- |:--- |:--- |
+| **Information Density** | High-level summary | Keeps the output clean and scannable; users can use `view` for full details. |
+| **Index Alignment** | 1-based numbering | Ensures the index shown to the user matches the input requirements for index-based commands. |
+| **Stock Warning** | Hardcoded threshold ($\leq 10$) | Provides immediate visual priority for items needing replenishment without requiring a separate query. |
+
+### Manual Testing: List Feature
+
+1.  **Test case:** `list` (with items in inventory)
+2.  **Expected:** A numbered list appears. Each line follows the format `NAME | DOSAGE | Qty: QUANTITY | Expiry: DATE`.
+3.  **Low stock check:** Verify that any item with a quantity of 10 or less displays the `[LOW STOCK]` tag.
+4.  **Summary check:** Ensure the "Total Medications" count at the bottom matches the number of items listed.
+
+![Sequence diagram showing the execution flow of the List Command](images/ListCommandSequence.png)
+
+---
 ### List Customers Feature
 
 The `listcustomers` command retrieves and displays all registered customers with their
