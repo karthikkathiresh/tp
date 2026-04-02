@@ -228,7 +228,7 @@ Useful when a new shipment of medication arrives.
 
 ---
 
-### Updating a medication: `update`
+### Update a medication: `update`
 
 Edits the details of an existing medication in the inventory.
 
@@ -334,11 +334,21 @@ Example: `label 1`
 
 ### Add a customer: `add-customer`
 
-Registers a new customer in the system.
+Registers a new customer into the pharmacy's database.
 
-Format: `add-customer /id CUSTOMER_ID /n NAME /p PHONE /addr ADDRESS`
+**Format:** `add-customer /id CUSTOMER_ID /n NAME /p PHONE [/addr ADDRESS]`
 
-Example: `add-customer /id C001 /n John Tan /p 99887766 /addr 10 Orchard Road`
+**Mandatory Parameters:**
+* `/id CUSTOMER_ID`: A unique identifier for the customer (e.g., `C001`).
+* `/n NAME`: The full name of the customer.
+* `/p PHONE`: The customer's contact number.
+
+**Optional Parameters:**
+* `/addr ADDRESS`: The customer's residential or mailing address.
+
+**Examples:**
+* `add-customer /id C001 /n John Doe /p 98765432`
+* `add-customer /id C002 /n Jane Smith /p 91234567 /a 123 Clementi Road, #04-56`
 
 ---
 
