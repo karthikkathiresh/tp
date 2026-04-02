@@ -1,0 +1,23 @@
+@startuml
+skinparam classAttributeIconSize 0
+hide circle
+
+class Customer {
+    - customerId: String
+    - name: String
+    - phone: String
+    - address: String
+    - dispensingHistory: ArrayList<String>
+
+    + Customer(id, name, phone, address)
+    + addDispensingHistory(medicationRecord: String)
+    + toString(): String
+}
+
+note right of Customer
+  The dispensingHistory stores a list
+  of formatted medication strings
+  acting as a clinical audit trail.
+end note
+
+@enduml
