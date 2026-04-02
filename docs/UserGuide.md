@@ -391,11 +391,11 @@ Format: `help`
 
 ---
 
-### Exit the application: `bye`
+### Exit the application: `exit`
 
 Exits PharmaTracker. Data is automatically saved before the application closes.
 
-Format: `bye`
+Format: `exit`
 
 ---
 
@@ -417,22 +417,24 @@ A: PharmaTracker will display an error message and leave the inventory or custom
 
 ## Command Summary
 
-| Command | Format |
-|---------|--------|
-| Add medication | `add /n NAME /d DOSAGE /q QUANTITY /e EXPIRY [/t TAG] [...]` |
-| List medications | `list` |
-| Find medication | `find KEYWORD` |
-| View medication | `view INDEX` |
-| Delete medication | `delete INDEX` |
+| Command             | Format |
+|---------------------|--------|
+| Add medication      | `add /n NAME /d DOSAGE /q QUANTITY /e EXPIRY [/t TAG] [...]` |
+| Update medication   | `update INDEX [/n NAME] [/d DOSAGE] [/q QUANTITY] [/e EXPIRY]...` |
+| List medications    | `list` |
+| Find medication     | `find KEYWORD` |
+| View medication     | `view INDEX` |
+| Delete medication   | `delete INDEX` |
 | Dispense medication | `dispense INDEX q/QUANTITY [c/CUSTOMER_INDEX]` |
-| Restock medication | `restock INDEX /q QUANTITY` |
-| Sort by expiry | `sort` |
-| Check expiring | `expiring [/days DAYS]` |
-| Check low stock | `lowstock [/threshold NUMBER]` |
-| Print label | `label INDEX` |
-| Add customer | `add-customer /id ID /n NAME /p PHONE /addr ADDRESS` |
-| List customers | `listcustomers` |
-| View customer | `view-customer INDEX` |
-| Update customer | `updatecustomer INDEX [/n NAME] [/p PHONE] [/a ADDRESS]` |
-| Help | `help` |
-| Exit | `bye` |
+| Restock medication  | `restock INDEX /q QUANTITY` |
+| Sort by expiry      | `sort` |
+| Check expiring      | `expiring [/days DAYS]` |
+| Check low stock     | `lowstock [/threshold NUMBER]` |
+| Print label         | `label INDEX` |
+| Add customer        | `add-customer /id ID /n NAME /p PHONE /addr ADDRESS` |
+| List customers      | `listcustomers` |
+| View customer       | `view-customer INDEX` |
+| Update customer     | `updatecustomer INDEX [/n NAME] [/p PHONE] [/a ADDRESS]` |
+| Delete customer     | `delete-customer INDEX`     |
+| Help                | `help` |
+| Exit                | `exit` |
