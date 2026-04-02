@@ -3,6 +3,8 @@ package seedu.pharmatracker.command;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.text.AbstractDocument;
+
 import seedu.pharmatracker.customer.Customer;
 import seedu.pharmatracker.customer.CustomerList;
 import seedu.pharmatracker.data.Inventory;
@@ -43,15 +45,20 @@ public class DeleteCustomerCommand extends Command {
         assert customerList != null : "Customer list cannot be empty in DeleteCustomerCommand";
         assert ui != null : "Ui cannot be null in DeleteCustomerCommand";
 
-        int index = Integer.parseInt(description);
-        int zeroBasedIndex = index - 1;
-
-        Customer customer = customerList.getCustomer(zeroBasedIndex);
-        assert customer != null : "Retrieved customer to be removed cannot be null";
-
-        customerList.removeCustomer(customer);
-        ui.printDeletedCustomerMessage(customer, customerList);
-
-        logger.log(Level.INFO, "Successfully executed DeleteCommand");
+        try {
+            int index = Integer.parseInt(description.trim());
+            if (index < 1 || index > customerList.getCustomerCount()) {
+                System.out.println("Invalid index. Please enter a number between 1 and "
+                        + customerList.getCustomerCount() + ".");
+            }
+            int zeroBasedIndex = index - 1;
+            Customer customer = customerList.getCustomer(zeroBasedIndex);
+            customerList.removeCustomer(customer);
+            ui.printDeletedCustomerMessage(customer, customerList);
+            logger.log(Level.INFO, "Successfully executed DeleteCommand");
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid format! Please enter a valid number for the customer index.");
+            logger.log(Level.WARNING, "Failed to parse index in DeleteCustomerCommand: " + description);
+        }
     }
 }

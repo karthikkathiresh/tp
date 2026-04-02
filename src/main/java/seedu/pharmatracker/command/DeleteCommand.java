@@ -42,15 +42,22 @@ public class DeleteCommand extends Command {
         assert inventory != null : "Inventory cannot be null in DeleteCommand";
         assert ui != null : "Ui cannot be null in DeleteCommand";
 
-        int index = Integer.parseInt(description);
-        int zeroBasedIndex = index - 1;
+        try {
+            int index = Integer.parseInt(description);
+            if (index < 1 || index > inventory.getMedicationCount()) {
+                System.out.println("Invalid index. Please enter a number between 1 and "
+                        + inventory.getMedicationCount() + ".");
+            }
+            int zeroBasedIndex = index - 1;
+            Medication med = inventory.getMedication(zeroBasedIndex);
 
-        Medication med = inventory.getMedication(zeroBasedIndex);
-        assert med != null : "Retrieved medication to delete cannot be null";
+            inventory.removeMedication(med);
+            ui.printDeletedMessage(med, inventory);
 
-        inventory.removeMedication(med);
-        ui.printDeletedMessage(med, inventory);
-
-        logger.log(Level.INFO, "Successfully executed DeleteCommand.");
+            logger.log(Level.INFO, "Successfully executed DeleteCommand.");
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid format. Please provide a valid number for the index.");
+            logger.log(Level.WARNING, "Failed to parse index in DeleteCommand: " + description);
+        }
     }
 }

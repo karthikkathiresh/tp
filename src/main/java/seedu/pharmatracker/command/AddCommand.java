@@ -81,7 +81,7 @@ public class AddCommand extends Command {
     @Override
     public void execute(Inventory inventory, Ui ui, CustomerList customerList) {
         assert inventory != null : "Inventory cannot be null in AddCommand execution.";
-        assert ui != null : "Ui canot be null in AddCommand execution.";
+        assert ui != null : "Ui cannot be null in AddCommand execution.";
         logger.log(Level.INFO, "Starting execution of AddCommand for medication: " + name);
         Medication med = new Medication(name, dosage, quantity, expiryDate, tag);
 
