@@ -351,6 +351,21 @@ Registers a new customer into the pharmacy's database.
 * `add-customer /id C002 /n Jane Smith /p 91234567 /a 123 Clementi Road, #04-56`
 
 ---
+### Delete a customer: `delete-customer`
+
+Removes an existing customer from the pharmacy's database.
+
+**Format:** `delete-customer INDEX`
+
+**Rules & Constraints:**
+* Deletes the customer at the specified `INDEX`.
+* The `INDEX` refers to the index number shown in the **most recently displayed** customer list (e.g., after running a `list-customers` or `find-customer` command).
+* The index **must be a positive integer** and must not exceed the total number of customers currently in the list.
+
+**Examples:**
+* `list-customers` followed by `delete-customer 2`: Deletes the 2nd customer shown in the complete customer list.
+
+---
 
 ## List all customers: `list-customers`
 
