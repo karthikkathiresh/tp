@@ -360,22 +360,10 @@ public class DispenseCommandTest {
     }
 
     /**
-     * Tests that dispensing with a negative customer index prints an error.
-     */
-    @Test
-    public void execute_negativeCustomerIndex_printsError() {
-        Inventory inventory = new Inventory();
-        CustomerList customerList = new CustomerList();
-        inventory.addMedication(new Medication("Paracetamol", "500mg", 150, "2026-12-31", "fever"));
-        customerList.addCustomer(new Customer("C001", "John Tan", "99887766", ""));
-        new DispenseCommand(1, 20, -1).execute(inventory, new Ui(), customerList);
-        assertTrue(out.toString().contains("Invalid customer index."));
-        assertEquals(150, inventory.getMedication(0).getQuantity());
-    }
-
-    /**
      * Tests that dispensing without a customer index does not print
      * the customer confirmation line.
+     * Note: customerIndex = -1 is the NO_CUSTOMER sentinel — it is treated as
+     * "no customer linked", not as an invalid index.
      */
     @Test
     public void execute_noCustomerIndex_noCustomerConfirmation() {
