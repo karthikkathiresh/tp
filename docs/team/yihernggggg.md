@@ -32,7 +32,7 @@ Key implementation details:
 - Results are split into two separate lists — `expiredMeds` and `expiringMeds` — allowing `Ui.showExpiringMedications()` to present them in clearly labelled sections, giving staff immediately actionable information.
 
 #### 3. `find` Command
-Implemented the `FindCommand`, which searches the inventory for medications whose tag contains a given keyword (case-insensitive). This complements the existing `find` command which searches by name.
+Implemented the `FindCommand`, which searches the inventory for medications whose **name** contains a given keyword (case-insensitive). The search uses substring matching, so partial keywords (e.g. `cillin` matching `Amoxicillin`) are supported.
 
 #### 4. `view` Command
 Implemented the `ViewCommand`, which retrieves and displays the full details of a specific medication in the inventory by its 1-based index.
