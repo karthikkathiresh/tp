@@ -71,6 +71,8 @@ Removes a medication from the inventory.
 Examples
 - `list` followed by `delete 5` (This deletes the 5th medication in the inventory.)
 
+---
+
 ### List all medications: `list`
 
 Displays a high-level summary of all medications currently stored in the system. This provides a quick overview of drug names and current stock levels for the pharmacist.
@@ -225,6 +227,32 @@ Useful when a new shipment of medication arrives.
   ```
 
 ---
+
+### Updating a medication: `update`
+
+Edits the details of an existing medication in the inventory.
+
+**Format:** `update INDEX [/n NAME] [/d DOSAGE] [/q QUANTITY] [/e EXPIRY] [/t TAG] [/df DOSAGE_FORM] [/mfr MANUFACTURER] [/dir DIRECTIONS] [/freq FREQUENCY] [/route ROUTE] [/max MAX_DAILY_DOSE] [/warn WARNING]...`
+
+**Rules & Constraints:**
+* Updates the medication at the specified `INDEX`.
+* The index refers to the **most recently displayed** medication list.
+* The index **must be a positive integer** (e.g., 1, 2, 3) and must not exceed the total number of medications in the list.
+* **At least one** of the optional fields must be provided.
+* Existing values will be completely overwritten by the newly provided values.
+
+**Examples:**
+* `update 1 /e 31/12/2027`: Updates the expiry date of the 1st medication in the list to `31/12/2027`. All other details remain unchanged.
+* `update 2 /n Amoxicillin Forte /d 500mg`: Updates both the name and the dosage of the 2nd medication in the list.
+
+**Notes:**
+* **Updating quantities:** While you *can* use this command to overwrite the quantity (`/q`), it is highly recommended to use the `restock` and `dispense` commands for everyday inventory management, as they safely add to or subtract from the current stock.
+* **Replacing lists (Warnings/Tags):** When updating fields that can have multiple values (like `/warn` or `/t`), the existing values are **completely replaced** by the new ones.
+  * *Example:* If a medication has the warnings "Drowsiness" and "Take with food", typing `update 1 /warn Avoid alcohol` will remove the first two warnings and leave *only* "Avoid alcohol".
+* **Clearing lists:** *(Optional depending on your implementation)* To clear all warnings or tags from a medication without adding new ones, type the parameter without any text after it (e.g., `update 1 /warn`).
+* **Duplicates:** The system will reject the update if changing the name and dosage would cause it to be identical to another medication already in the inventory.
+
+--- 
 
 ### Sort medications by expiry: `sort`
 
