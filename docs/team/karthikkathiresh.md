@@ -31,9 +31,15 @@ fast typists who prefer a CLI workflow over GUI applications.
                          max daily dose, and multiple specific warnings.*
     * **Technical Highlights:** *Implemented `AddCommand` class which executes the overall feature. 
                                  Updated the `Parser` class to handle variable-length inputs. 
+                                 Update the `Ui` class to print a message to the user upon successful addition of the medication.
                                  The `execute` method throws a `PharmaTrackeException` to handle all possible input errors.*
 
-
+* **Delete Medication Feature** (vX.X):
+  * **What it does:** *Allows users to safely remove a specific medication from the inventory by referencing its 
+                       1-based index as shown in the inventory list.*
+  * **Technical Highlights:** *Implemented the `DeleteCommand` class which handles parsing the user input and 
+                               translating the 1-based user index to a 0-based system index. Built in error handling, 
+                               including boundary checks to prevent out-of-bounds deletions and try-catch blocks to catch `NumberFormatException` for non-integer inputs.*
 
 ### Contributions to Testing
 *(List the specific test classes you wrote and the edge cases you covered. This proves your commitment to software quality.)*
