@@ -22,3 +22,4 @@ data/
 # Ignore generated log files
 *.log
 *.lck
+*.log*

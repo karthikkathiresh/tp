@@ -8,7 +8,7 @@ import seedu.pharmatracker.customer.CustomerList;
 import seedu.pharmatracker.data.Inventory;
 import seedu.pharmatracker.data.Medication;
 import seedu.pharmatracker.exceptions.PharmaTrackerException;
-import seedu.pharmatracker.parser.Parser;
+import seedu.pharmatracker.parser.PharmaTrackerParser;
 import seedu.pharmatracker.ui.Ui;
 
 import java.io.ByteArrayOutputStream;
@@ -179,7 +179,7 @@ public class ViewCommandTest {
      */
     @Test
     public void parser_viewCommand_returnsCorrectCommandType() throws PharmaTrackerException {
-        Command c = Parser.parse("view 1");
+        Command c = PharmaTrackerParser.parse("view 1");
         assertTrue(c instanceof ViewCommand);
     }
 
@@ -188,7 +188,7 @@ public class ViewCommandTest {
      */
     @Test
     public void parser_viewCommandNoIndex_returnsNull() throws PharmaTrackerException {
-        Command c = Parser.parse("view");
+        Command c = PharmaTrackerParser.parse("view");
         assertEquals(null, c);
     }
 
@@ -197,7 +197,7 @@ public class ViewCommandTest {
      */
     @Test
     public void parser_viewCommandInvalidIndex_returnsNull() throws PharmaTrackerException {
-        Command c = Parser.parse("view abc");
+        Command c = PharmaTrackerParser.parse("view abc");
         assertEquals(null, c);
     }
 }
