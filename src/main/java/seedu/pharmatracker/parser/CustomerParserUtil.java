@@ -88,6 +88,11 @@ public class CustomerParserUtil {
             throw new PharmaTrackerException("Customer phone cannot be empty!");
         }
 
+        if (!(phone.startsWith("8") || phone.startsWith("9"))) {
+            throw new PharmaTrackerException("Customer phone must be a valid Singapore number!\n" +
+                    "Please ensure the number starts with either '8' or '9'");
+        }
+
         return phone;
     }
 
