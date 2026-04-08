@@ -2,6 +2,12 @@ package seedu.pharmatracker.parser;
 
 import seedu.pharmatracker.exceptions.PharmaTrackerException;
 
+/**
+ * Provides generic utility methods for parsing user input strings.
+ * This class contains common functions used to manipulate raw command strings,
+ * identify flag boundaries, and extract the corresponding values. It serves
+ * as the foundational text-processing utility for all specific command parsers.
+ */
 public class ParserUtil {
     /**
      * Finds the index of the next flag appearing in the description string after a specified index.

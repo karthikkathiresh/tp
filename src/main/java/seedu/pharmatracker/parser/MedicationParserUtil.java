@@ -4,6 +4,12 @@ import java.util.ArrayList;
 
 import seedu.pharmatracker.exceptions.PharmaTrackerException;
 
+/**
+ * Provides utility methods and constants specifically for extracting and parsing
+ * medication attributes from user input strings.
+ * This class defines the flag boundaries associated with medications (e.g., name, dosage, quantity)
+ * and handles the validation and formatting of these specific fields.
+ */
 public class MedicationParserUtil {
     public static final String FLAG_NAME = "/n";
     public static final String FLAG_DOSAGE = "/d";

@@ -5,7 +5,21 @@ import java.util.ArrayList;
 import seedu.pharmatracker.command.UpdateCommand;
 import seedu.pharmatracker.exceptions.PharmaTrackerException;
 
+/**
+ * Parses input arguments and creates a new UpdateCommand object.
+ * This class is responsible for extracting the target medication's index
+ * and the specific optional attributes the user wishes to modify from the input string.
+ */
 public class UpdateCommandParser implements Parser<UpdateCommand> {
+
+    /**
+     * Parses the given arguments string in the context of the update medication command
+     * and returns an UpdateCommand object for execution.
+     *
+     * @param description The string provided by the user expecting a target index followed by optional update flags.
+     * @return An UpdateCommand object instantiated with the target index and extracted updated details.
+     * @throws PharmaTrackerException If the input string is invalid.
+     */
     @Override
     public UpdateCommand parse(String description) throws PharmaTrackerException {
         if (description.isEmpty()) {

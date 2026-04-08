@@ -2,6 +2,13 @@ package seedu.pharmatracker.parser;
 
 import seedu.pharmatracker.exceptions.PharmaTrackerException;
 
+/**
+ * Provides utility methods specifically for extracting and parsing customer attributes
+ * from user input strings.
+ * This class defines the specific flag boundaries associated with customer profiles
+ * (such as ID, name, phone number, and address) and handles the validation and formatting
+ * of these dedicated fields.
+ */
 public class CustomerParserUtil {
     static final String[] CUSTOMER_UPDATE_FLAGS = {"/n", "/p", "/a"};
 
@@ -93,22 +100,23 @@ public class CustomerParserUtil {
      */
     public static String extractCustomerAddress(String description) throws PharmaTrackerException {
         int addressIndex = description.indexOf("/addr");
+        String warning = "Customer address cannot be empty if the /addr flag is used!";
 
         if (addressIndex == -1) {
             return "";
         }
 
         if (addressIndex + 5 >= description.length()) {
-            throw new PharmaTrackerException("Customer address cannot be empty if the /addr flag is used!");
+            throw new PharmaTrackerException(warning);
         }
 
         String address = description.substring(addressIndex + 5).trim();
 
         if (address.isEmpty()) {
-            throw new PharmaTrackerException("Customer address cannot be empty if the '/addr' flag is used!");
+            throw new PharmaTrackerException(warning);
         }
 
-        return description.substring(addressIndex + 5).trim();
+        return address;
     }
 
     /**
