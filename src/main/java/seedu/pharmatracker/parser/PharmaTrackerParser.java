@@ -5,6 +5,7 @@ import seedu.pharmatracker.command.AddCustomerCommand;
 import seedu.pharmatracker.command.Command;
 import seedu.pharmatracker.command.DeleteCommand;
 import seedu.pharmatracker.command.DeleteCustomerCommand;
+import seedu.pharmatracker.command.ExportMedicationCommand;
 import seedu.pharmatracker.command.ListCommand;
 import seedu.pharmatracker.command.SortCommand;
 import seedu.pharmatracker.command.FindCommand;
@@ -133,6 +134,9 @@ public class PharmaTrackerParser {
 
         case UpdateCommand.COMMAND_WORD:
             return new UpdateCommandParser().parse(description);
+
+        case ExportMedicationCommand.COMMAND_WORD:
+            return new ExportMedicationCommand();
 
         case AddCustomerCommand.COMMAND_WORD:
             return new AddCustomerCommandParser().parse(description);
