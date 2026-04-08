@@ -185,9 +185,9 @@ public class Medication {
     @Override
     public String toString() {
         String s = "Name: " + name +
-                   " | Dosage: " + dosage +
-                   " | Qty: " + quantity +
-                   " | Exp: " + expiryDate;
+                " | Dosage: " + dosage +
+                " | Qty: " + quantity +
+                " | Exp: " + expiryDate;
 
         // Add expired tag if medication is expired
         if (isExpired()) {
@@ -223,5 +223,28 @@ public class Medication {
         }
 
         return s;
+    }
+
+    /**
+     * Converts all medication details into a CSV-formatted string.
+     * Warnings are joined by a semicolon.
+     * @return A string representing a single CSV row.
+     */
+    public String toCsvString() {
+        String warningsStr = String.join(";", this.warnings);
+
+        return String.format("\"%s\",\"%s\",%d,\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"",
+                this.name,
+                this.dosage,
+                this.quantity,
+                this.expiryDate,
+                this.tag != null ? this.tag : "",
+                this.dosageForm,
+                this.manufacturer,
+                this.directions,
+                this.frequency,
+                this.route,
+                this.maxDailyDose,
+                warningsStr);
     }
 }
