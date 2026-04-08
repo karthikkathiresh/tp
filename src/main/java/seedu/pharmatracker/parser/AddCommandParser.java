@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import seedu.pharmatracker.command.AddCommand;
 import seedu.pharmatracker.exceptions.PharmaTrackerException;
 
-public class AddCommandParser implements NewParser<AddCommand> {
+public class AddCommandParser implements Parser<AddCommand> {
 
     @Override
     public AddCommand parse(String args) throws PharmaTrackerException {

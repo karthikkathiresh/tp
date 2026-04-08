@@ -1,6 +1,6 @@
 package seedu.pharmatracker;
 
-import static seedu.pharmatracker.parser.Parser.parse;
+import static seedu.pharmatracker.parser.PharmaTrackerParser.parse;
 import seedu.pharmatracker.logger.LoggerSetup;
 
 import seedu.pharmatracker.command.Command;
