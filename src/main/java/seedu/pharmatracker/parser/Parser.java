@@ -45,21 +45,7 @@ public class Parser {
 
         switch (commandWord) {
         case AddCommand.COMMAND_WORD:
-            String name = MedicationParserUtil.extractName(description);
-            String dosage = MedicationParserUtil.extractDosage(description);
-            int quantity = MedicationParserUtil.extractQuantity(description);
-            String expiryDate = MedicationParserUtil.extractExpiryDate(description);
-            String tag = ParserUtil.extractFlag(description, MedicationParserUtil.FLAG_TAG);
-            String dosageForm = ParserUtil.extractFlag(description, MedicationParserUtil.FLAG_DOSAGE_FORM);
-            String manufacturer = ParserUtil.extractFlag(description, MedicationParserUtil.FLAG_MANUFACTURER);
-            String directions = ParserUtil.extractFlag(description, MedicationParserUtil.FLAG_DIRECTION);
-            String frequency = ParserUtil.extractFlag(description, MedicationParserUtil.FLAG_FREQUENCY);
-            String route = ParserUtil.extractFlag(description, MedicationParserUtil.FLAG_ROUTE);
-            String maxDailyDose = ParserUtil.extractFlag(description, MedicationParserUtil.FLAG_MAX_DOSAGE);
-            ArrayList<String> warnings = MedicationParserUtil.extractWarnings(description);
-            return new AddCommand(name, dosage, quantity, expiryDate, tag,
-                    dosageForm, manufacturer, directions, frequency,
-                    route, maxDailyDose, warnings);
+            return new AddCommandParser().parse(description);
 
         case DeleteCommand.COMMAND_WORD:
             return new DeleteCommand(description);
