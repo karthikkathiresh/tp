@@ -2,6 +2,7 @@
 skinparam classAttributeIconSize 0
 skinparam ArrowFontStyle plain
 hide empty members
+hide circle
 
 abstract class Command {
     + execute(inventory: Inventory, ui: Ui, customerList: CustomerList) {abstract}
