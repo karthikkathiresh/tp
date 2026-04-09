@@ -78,31 +78,21 @@ This section describes some noteworthy details on how certain features are imple
 
 ### Add Medication Feature
 
-This add-medication mechanism allows users to record a new medication
-with the name, dosage, quantity and expiry date information.
+This add-medication mechanism allows users to record a new medication with mandatory details (name, dosage, quantity, and expiry date) as well as comprehensive optional clinical information.
 ```
-add /n NAME /d DOSAGE /q QUANTITY /e EXPIRY [/t TAG]
+add /n NAME /d DOSAGE /q QUANTITY /e EXPIRY [/t TAG] [/df DOSAGE_FORM] [/mfr MANUFACTURER] [/dir DIRECTIONS] [/freq FREQUENCY] [/route ROUTE] [/max MAX_DAILY_DOSE] [/warn WARNING]
 ```
 #### How it works
 
 The following steps describe how an add command is processed.
 
-1. The user enters `add /n Paracetamol /d 500mg /q 100 /e 2026-12-31 
-   /t Painkiller /df Tablet /warn May cause drowsiness`.
-2. `PharmaTracker.run()` reads the user input and passes the raw string to `Parser.parse()`.
-3. `Parser.parse()` identifies the command word `add`.
-4. The parser first delegates to specific extract methods
-   (`extractName()`, `extractDosage()`, `extractQuantity` and `extractExpiryDate()`).
-   These methods validate that the mandatory flags (`/n`, `/d`, `/q`, `/e`) are present
-   and in the correct relative order.
-5. Next, the parser extracts optional attributes using the `extractFlag()` method. 
-   To allow users to input optional flags in any order, `extractFlag()` relies on a helper method called
-   `findNextFlagIndex()`. This helper scans the remainder of the input string against a predefined array of 
-   `ALL_FLAGS` to dynamically determine where the current flag's value ends and where the next one begins. 
-6. For warnings, the parser uses `extractWarnings()`, which loops through the input string to locate all
-   occurrences of the `/warn` flag, compiling them into an `ArrayList<String>`.
-7. All extracted values (both compulsory and optional) are passed into the `AddCommand` constructor 
-   to create a new `AddCommand` object.
+1. The user enters `add /n Paracetamol /d 500mg /q 100 /e 2026-12-31 /t Painkiller /df Tablet /warn May cause drowsiness`.
+2. `PharmaTracker.run()` reads the user input and passes the raw string to `PharmaTrackerParser.parse()`.
+3. `PharmaTrackerParser.parse()` identifies the command word `add` and delegates the remaining description string to `AddCommandParser.parse()`.
+4. `AddCommandParser` first uses specific extraction methods from `MedicationParserUtil` (`extractName()`, `extractDosage()`, `extractQuantity()`, and `extractExpiryDate()`). These methods validate that the mandatory flags (`/n`, `/d`, `/q`, `/e`) are present, properly formatted, and in the correct relative order.
+5. Next, the parser extracts the optional attributes (Tag, Dosage Form, Manufacturer, Directions, Frequency, Route, Max Daily Dose) using the `ParserUtil.extractFlag()` method. To allow users to input optional flags in any order, `extractFlag()` relies on a helper method called `findNextFlagIndex()`. This helper scans the remainder of the input string against a predefined array of `ALL_FLAGS` to dynamically determine where the current flag's value ends and where the next one begins.
+6. For warnings, the parser uses `MedicationParserUtil.extractWarnings()`, which loops through the input string to locate all occurrences of the `/warn` flag, compiling them into an `ArrayList<String>`.
+7. All extracted values (both compulsory and optional) are passed into the `AddCommand` constructor to create a new `AddCommand` object.
 8. `PharmaTracker.run()` calls `AddCommand.execute()`, which creates a new `Medication` object and adds it to the `Inventory`. 
 9. Finally, `Ui.printAddedMessage()` is called to display a confirmation message to the user.
 

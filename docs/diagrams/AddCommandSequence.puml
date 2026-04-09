@@ -1,10 +1,13 @@
 @startuml
 skinparam ArrowFontStyle plain
+skinparam maxMessageSize 100
 
 actor User
 participant ":PharmaTracker" as PharmaTracker
 participant ":Ui" as Ui
-participant "<<class>>\nParser" as Parser
+participant ":PharmaTrackerParser" as PTP
+participant "parser:AddCommandParser" as AddParser
+participant "<<class>>\nMedicationParserUtil" as MedParserUtil
 participant "c:AddCommand" as AddCommand
 participant "med:Medication" as Medication
 participant "inv:Inventory" as Inventory
@@ -17,52 +20,77 @@ activate Ui
 Ui --> PharmaTracker : fullCommand
 deactivate Ui
 
-PharmaTracker -> Parser : parse(fullCommand)
-activate Parser
+PharmaTracker -> PTP : parse(fullCommand)
+activate PTP
 
-Parser -> Parser : extractName(description)
-activate Parser
-Parser --> Parser : name
-deactivate Parser
+create AddParser
+PTP -> AddParser : new AddCommandParser()
+activate AddParser
+AddParser --> PTP : parser
+deactivate AddParser
 
-Parser -> Parser : extractDosage(description)
-activate Parser
-Parser --> Parser : dosage
-deactivate Parser
+PTP -> AddParser : parse(description)
+activate AddParser
 
-Parser -> Parser : extractQuantity(description)
-activate Parser
-Parser --> Parser : quantity
-deactivate Parser
+AddParser -> MedParserUtil : extractName(description)
+activate MedParserUtil
+MedParserUtil --> AddParser : name
+deactivate MedParserUtil
 
-Parser -> Parser : extractExpiryDate(description)
-activate Parser
-Parser --> Parser : expiryDate
-deactivate Parser
+AddParser -> MedParserUtil : extractDosage(description)
+activate MedParserUtil
+MedParserUtil --> AddParser : dosage
+deactivate MedParserUtil
 
-note right of Parser
-  Optional flags are extracted
-  using extractFlag() and
-  extractWarnings()
+AddParser -> MedParserUtil : extractQuantity(description)
+activate MedParserUtil
+MedParserUtil --> AddParser : quantity
+deactivate MedParserUtil
+
+AddParser -> MedParserUtil : extractExpiryDate(description)
+activate MedParserUtil
+MedParserUtil --> AddParser : expiryDate
+deactivate MedParserUtil
+
+note right of AddParser
+  Optional flags and warnings are
+  extracted using ParserUtil and
+  MedicationParserUtil.extractWarnings()
 end note
 
 create AddCommand
-Parser -> AddCommand : new AddCommand(name, dosage, quantity, ...)
+AddParser -> AddCommand : new AddCommand(name, dosage, quantity, ...)
 activate AddCommand
-AddCommand --> Parser : c
+AddCommand --> AddParser : c
 deactivate AddCommand
 
-Parser --> PharmaTracker : c
-deactivate Parser
+AddParser --> PTP : c
+deactivate AddParser
+
+PTP --> PharmaTracker : c
+deactivate PTP
 
 PharmaTracker -> AddCommand : execute(inv, ui, customerList)
 activate AddCommand
 
 create Medication
-AddCommand -> Medication : new Medication(name, dosage, ...)
+AddCommand -> Medication : new Medication(name, dosage, quantity, expiryDate, tag)
 activate Medication
 Medication --> AddCommand : med
 deactivate Medication
+
+opt if optional attributes present
+    AddCommand -> Medication : setDosageForm(dosageForm)
+    activate Medication
+    Medication --> AddCommand
+    deactivate Medication
+
+    note right of AddCommand
+      Other optional setters (Manufacturer,
+      Route, etc.) and addWarning()
+      are called here.
+    end note
+end
 
 AddCommand -> Inventory : addMedication(med)
 activate Inventory
@@ -76,7 +104,7 @@ deactivate Ui
 
 AddCommand --> PharmaTracker
 deactivate AddCommand
-AddCommand -[hidden]-> Parser
+AddCommand -[hidden]-> AddParser
 destroy AddCommand
 
 deactivate PharmaTracker
