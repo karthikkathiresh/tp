@@ -10,6 +10,9 @@ ____________________________________________________________
 Welcome to Pharma Tracker!
 What can I do for you today?
 ____________________________________________________________
+____________________________________________________________
+Please login or register to use PharmaTracker features.
+____________________________________________________________
 Enter command: Here are the possible features of PharmaTracker:
 --- Medication Commands ---
  1. Add Medication           (add /n NAME /d DOSAGE /q QUANTITY /e EXPIRY /t TAG)
@@ -24,6 +27,24 @@ Enter command: Here are the possible features of PharmaTracker:
 10. Restock Medication       (restock INDEX /q QUANTITY)
 11. Low Stock Alert          (lowstock | lowstock /threshold NUMBER)
 12. Expiring Medications     (expiring | expiring /days NUMBER)
+13. Set Min Threshold        (set-threshold INDEX /threshold NUMBER)
+14. View Active Alerts       (alerts)
+15. Acknowledge Alert        (ack-alert ALERT_INDEX)
+16. View Alert History       (alert-history)
+--- Customer Commands ---
+17. Add Customer             (add-customer /n NAME /p PHONE /a ADDRESS)
+18. Delete Customer          (delete-customer INDEX)
+19. Update Customer          (update-customer INDEX /n NAME /p PHONE /a ADDRESS)
+20. List Customers           (list-customers)
+21. Find Customer            (find-customer KEYWORD)
+22. View Customer            (view-customer INDEX)
+--- Authentication ---
+23. Register                 (register USERNAME /p PASSWORD)
+24. Login                    (login USERNAME /p PASSWORD)
+25. Logout                   (logout)
+--- General ---
+26. Viewing Help             (help)
+27. Exiting the Program      (exit)
 13. Daily Dispense Log       (dispenselog | dispenselog /date YYYY-MM-DD)
 --- Customer Commands ---
 14. Add Customer             (add-customer /n NAME /p PHONE /a ADDRESS)
