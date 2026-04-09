@@ -47,6 +47,7 @@ public class DeleteCommand extends Command {
             if (index < 1 || index > inventory.getMedicationCount()) {
                 System.out.println("Invalid index. Please enter a number between 1 and "
                         + inventory.getMedicationCount() + ".");
+                return;
             }
             int zeroBasedIndex = index - 1;
             Medication med = inventory.getMedication(zeroBasedIndex);

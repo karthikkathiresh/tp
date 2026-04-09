@@ -48,6 +48,7 @@ public class DeleteCustomerCommand extends Command {
             if (index < 1 || index > customerList.getCustomerCount()) {
                 System.out.println("Invalid index. Please enter a number between 1 and "
                         + customerList.getCustomerCount() + ".");
+                return;
             }
             int zeroBasedIndex = index - 1;
             Customer customer = customerList.getCustomer(zeroBasedIndex);
