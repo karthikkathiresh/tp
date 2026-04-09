@@ -1,0 +1,92 @@
+@startuml
+skinparam ArrowFontStyle plain
+skinparam maxMessageSize 100
+
+actor User
+participant ":PharmaTracker" as PharmaTracker
+participant ":Ui" as Ui
+participant "<<class>>\nPharmaTrackerParser" as PTP
+participant "parser:AddCustomerCommandParser" as AddCustParser
+participant "<<class>>\nCustomerParserUtil" as CustParserUtil
+participant "c:AddCustomerCommand" as AddCustCmd
+participant "customerList:CustomerList" as CustomerList
+participant "customer:Customer" as Customer
+
+User -> PharmaTracker : "add-customer /id C001..."
+activate PharmaTracker
+
+PharmaTracker -> Ui : readCommand()
+activate Ui
+Ui --> PharmaTracker : fullCommand
+deactivate Ui
+
+PharmaTracker -> PTP : parse(fullCommand)
+activate PTP
+
+create AddCustParser
+PTP -> AddCustParser : new AddCustomerCommandParser()
+activate AddCustParser
+AddCustParser --> PTP : parser
+deactivate AddCustParser
+
+PTP -> AddCustParser : parse(description)
+activate AddCustParser
+
+AddCustParser -> CustParserUtil : extractCustomerID(description)
+activate CustParserUtil
+CustParserUtil --> AddCustParser : id
+deactivate CustParserUtil
+
+AddCustParser -> CustParserUtil : extractCustomerName(description)
+activate CustParserUtil
+CustParserUtil --> AddCustParser : name
+deactivate CustParserUtil
+
+AddCustParser -> CustParserUtil : extractCustomerPhone(description)
+activate CustParserUtil
+CustParserUtil --> AddCustParser : phone
+deactivate CustParserUtil
+
+AddCustParser -> CustParserUtil : extractCustomerAddress(description)
+activate CustParserUtil
+CustParserUtil --> AddCustParser : address
+deactivate CustParserUtil
+
+create AddCustCmd
+AddCustParser -> AddCustCmd : new AddCustomerCommand(id, name, phone, address)
+activate AddCustCmd
+AddCustCmd --> AddCustParser : c
+deactivate AddCustCmd
+
+AddCustParser --> PTP : c
+deactivate AddCustParser
+
+PTP --> PharmaTracker : c
+deactivate PTP
+
+PharmaTracker -> AddCustCmd : execute(inv, ui, customerList)
+activate AddCustCmd
+
+create Customer
+AddCustCmd -> Customer : new Customer(id, name, phone, address)
+activate Customer
+Customer --> AddCustCmd : customer
+deactivate Customer
+
+AddCustCmd -> CustomerList : addCustomer(customer)
+activate CustomerList
+CustomerList --> AddCustCmd
+deactivate CustomerList
+
+AddCustCmd -> Ui : printAddedCustomerMessage(customer, customerList)
+activate Ui
+Ui --> AddCustCmd
+deactivate Ui
+
+AddCustCmd --> PharmaTracker
+deactivate AddCustCmd
+AddCustCmd -[hidden]-> AddCustParser
+destroy AddCustCmd
+
+deactivate PharmaTracker
+@enduml

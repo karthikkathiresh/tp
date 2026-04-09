@@ -320,6 +320,29 @@ The `list` feature provides a summary view of the entire inventory, allowing use
 ![Sequence diagram showing the execution flow of the List Command](images/ListCommandSequence.png)
 
 ---
+### Add Customer Feature
+
+The `add-customer` command allows users to register a new customer profile in the database. This profile stores the customer's unique ID, name, contact number, and optionally, their residential address, enabling the system to track their dispensing history later.
+
+#### How it works
+
+1. The user enters the command into the CLI, specifying the customer details (e.g., `add-customer /id C001 /n John Doe /p 91234567 /a 123 Clementi Rd`).
+2. `PharmaTracker.run()` reads the input and passes the raw string to `PharmaTrackerParser.parse()`.
+3. `PharmaTrackerParser` identifies the `add-customer` command word and delegates the remaining argument string to `AddCustomerCommandParser.parse()`.
+4. `AddCustomerCommandParser` extracts the required and optional fields using `CustomerParserUtil`.
+5. The extraction methods (`extractCustomerID()`, `extractCustomerName()`, and `extractCustomerPhone()`) validate that the mandatory flags (`/id`, `/n`, `/p`) are present and in the correct relative order.
+6. The phone number extraction also strictly verifies that the number is a valid Singaporean format (starting with '8' or '9').
+7. `extractCustomerAddress()` attempts to find the `/a` flag; if absent, it safely returns an empty string.
+8. The extracted strings are passed into the `AddCustomerCommand` constructor to instantiate the command object.
+9. `PharmaTracker` calls the `execute()` method on the newly created `AddCustomerCommand`.
+10. Inside the `execute()` method, a new `Customer` object is instantiated using the parsed details.
+11. The newly created `Customer` is passed to `customerList.addCustomer()`, appending them to the active database and incrementing the total customer count.
+12. Finally, the command calls `Ui.printAddedCustomerMessage()` to display a success confirmation and the updated customer tally to the user.
+
+![Sequence diagram showing the execution flow of the Add Customer Command](images/AddCustomerCommandSequence.png)
+
+---
+
 ### List Customers Feature
 
 The `list-customers` command retrieves and displays all registered customers with their
