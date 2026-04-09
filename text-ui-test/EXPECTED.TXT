@@ -31,30 +31,20 @@ Enter command: Here are the possible features of PharmaTracker:
 14. View Active Alerts       (alerts)
 15. Acknowledge Alert        (ack-alert ALERT_INDEX)
 16. View Alert History       (alert-history)
+17. Daily Dispense Log       (dispenselog | dispenselog /date YYYY-MM-DD)
 --- Customer Commands ---
-17. Add Customer             (add-customer /n NAME /p PHONE /a ADDRESS)
-18. Delete Customer          (delete-customer INDEX)
-19. Update Customer          (update-customer INDEX /n NAME /p PHONE /a ADDRESS)
-20. List Customers           (list-customers)
-21. Find Customer            (find-customer KEYWORD)
-22. View Customer            (view-customer INDEX)
+18. Add Customer             (add-customer /n NAME /p PHONE /a ADDRESS)
+19. Delete Customer          (delete-customer INDEX)
+20. Update Customer          (update-customer INDEX /n NAME /p PHONE /a ADDRESS)
+21. List Customers           (list-customers)
+22. Find Customer            (find-customer KEYWORD)
+23. View Customer            (view-customer INDEX)
 --- Authentication ---
-23. Register                 (register USERNAME /p PASSWORD)
-24. Login                    (login USERNAME /p PASSWORD)
-25. Logout                   (logout)
+24. Register                 (register USERNAME /p PASSWORD)
+25. Login                    (login USERNAME /p PASSWORD)
+26. Logout                   (logout)
 --- General ---
-26. Viewing Help             (help)
-27. Exiting the Program      (exit)
-13. Daily Dispense Log       (dispenselog | dispenselog /date YYYY-MM-DD)
---- Customer Commands ---
-14. Add Customer             (add-customer /n NAME /p PHONE /a ADDRESS)
-15. Delete Customer          (delete-customer INDEX)
-16. Update Customer          (update-customer INDEX /n NAME /p PHONE /a ADDRESS)
-17. List Customers           (list-customers)
-18. Find Customer            (find-customer KEYWORD)
-19. View Customer            (view-customer INDEX)
---- General ---
-20. Viewing Help             (help)
-21. Exiting the Program      (exit)
+27. Viewing Help             (help)
+28. Exiting the Program      (exit)
 Enter command: Exiting Application
 Stay Healthy!
