@@ -31,18 +31,18 @@ public class Storage {
             for (Medication med : (ArrayList<Medication>) inventory.getMedications()) {
                 assert med != null : "Medication entry should not be null";
                 String warnings = String.join(WARNINGS_SEPARATOR, med.getWarnings());
-                fw.write(med.getName() + DELIMITER
-                        + med.getDosage() + DELIMITER
+                fw.write(sanitize(med.getName()) + DELIMITER
+                        + sanitize(med.getDosage()) + DELIMITER
                         + med.getQuantity() + DELIMITER
-                        + med.getExpiryDate() + DELIMITER
-                        + med.getTag() + DELIMITER
-                        + med.getDosageForm() + DELIMITER
-                        + med.getManufacturer() + DELIMITER
-                        + med.getDirections() + DELIMITER
-                        + med.getFrequency() + DELIMITER
-                        + med.getRoute() + DELIMITER
-                        + med.getMaxDailyDose() + DELIMITER
-                        + warnings + "\n");
+                        + sanitize(med.getExpiryDate()) + DELIMITER
+                        + sanitize(med.getTag()) + DELIMITER
+                        + sanitize(med.getDosageForm()) + DELIMITER
+                        + sanitize(med.getManufacturer()) + DELIMITER
+                        + sanitize(med.getDirections()) + DELIMITER
+                        + sanitize(med.getFrequency()) + DELIMITER
+                        + sanitize(med.getRoute()) + DELIMITER
+                        + sanitize(med.getMaxDailyDose()) + DELIMITER
+                        + sanitize(warnings) + "\n");
             }
             fw.close();
             logger.log(Level.INFO, "Inventory saved successfully with {0} entries",
@@ -187,5 +187,9 @@ public class Storage {
             System.out.println("Customer file not found.");
         }
         return list;
+    }
+
+    private String sanitize(String input) {
+        return input == null ? "" : input.replace(DELIMITER, " ");
     }
 }
