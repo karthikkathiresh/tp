@@ -403,6 +403,16 @@ Registers a new customer into the pharmacy's database.
 * `add-customer /id C001 /n John Doe /p 98765432`
 * `add-customer /id C002 /n Jane Smith /p 91234567 /a 123 Clementi Road, #04-56`
 
+**Example Output:**
+
+```
+____________________________________________________________
+You have added the following customer:
+  [C002] Jane Smith | Phone: 91234567 /a 123 Clementi Road, #04-56
+You now have 9 customers in your database!
+____________________________________________________________
+```
+
 ---
 
 ### Delete a customer: `delete-customer`
