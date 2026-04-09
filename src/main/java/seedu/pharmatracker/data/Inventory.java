@@ -9,6 +9,7 @@ import java.util.ArrayList;
 public class Inventory {
     private ArrayList<Medication> medications;
     private int medicationCount;
+    private DispenseLog dispenseLog;
 
     /**
      * Constructs an empty {@code Inventory}.
@@ -17,6 +18,7 @@ public class Inventory {
     public Inventory() {
         this.medications = new ArrayList<>();
         this.medicationCount = 0;
+        this.dispenseLog = new DispenseLog();
     }
 
     /**
@@ -73,6 +75,25 @@ public class Inventory {
      */
     public Medication getMedication(int index) {
         return this.medications.get(index);
+    }
+
+    /**
+     * Returns the dispense log associated with this inventory.
+     *
+     * @return The {@link DispenseLog} containing all recorded dispense events.
+     */
+    public DispenseLog getDispenseLog() {
+        return dispenseLog;
+    }
+
+    /**
+     * Replaces the dispense log (used when loading from storage).
+     *
+     * @param dispenseLog The log to set.
+     */
+    public void setDispenseLog(DispenseLog dispenseLog) {
+        assert dispenseLog != null : "DispenseLog must not be null";
+        this.dispenseLog = dispenseLog;
     }
 
     /**

@@ -1,10 +1,13 @@
 package seedu.pharmatracker.command;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import seedu.pharmatracker.customer.Customer;
 import seedu.pharmatracker.customer.CustomerList;
+import seedu.pharmatracker.data.DispenseRecord;
 import seedu.pharmatracker.data.Inventory;
 import seedu.pharmatracker.data.Medication;
 import seedu.pharmatracker.ui.Ui;
@@ -106,6 +109,20 @@ public class DispenseCommand extends Command {
         }
 
         performDispense(med);
+
+        // Record to daily dispense log
+        String patientName = "";
+        if (isCustomerLinked() && isValidCustomerIndex(customerList)) {
+            Customer logCustomer = customerList.getCustomer(customerIndex - 1);
+            if (logCustomer != null) {
+                patientName = logCustomer.getName();
+            }
+        }
+        String dosageStr = (med.getDosage() != null && !med.getDosage().isEmpty()) ? med.getDosage() : "N/A";
+        DispenseRecord record = new DispenseRecord(
+                LocalDate.now(), LocalTime.now(),
+                med.getName(), dosageStr, quantity, patientName);
+        inventory.getDispenseLog().addRecord(record);
 
         if (isCustomerLinked()) {
             linkToCustomer(med, customerList);

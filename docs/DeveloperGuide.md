@@ -622,6 +622,79 @@ The following sequence diagram shows the full execution flow of the `label` comm
 
 ---
 
+### Daily Dispense Log Feature
+
+The `dispenselog` command displays a summary of all medications dispensed on a given date.
+Every time a `dispense` command succeeds, a `DispenseRecord` is automatically appended to
+the `DispenseLog` held inside `Inventory`. The log is persisted to `data/dispense_log.txt`
+across sessions.
+
+```
+dispenselog [/date YYYY-MM-DD]
+```
+
+#### How it works
+
+1. **Recording (happens on every successful `dispense`):**
+   - After `DispenseCommand.performDispense()` reduces the stock, a `DispenseRecord` is
+     constructed with the current `LocalDate`, `LocalTime`, medication name, dosage,
+     quantity dispensed, and the linked customer's name (empty string if none).
+   - The record is appended to `inventory.getDispenseLog()` via `DispenseLog.addRecord()`.
+   - `PharmaTracker.run()` then calls `Storage.saveDispenseLog()`, which serialises every
+     record in the log to `data/dispense_log.txt` (one pipe-delimited line per record).
+
+2. **Viewing (`dispenselog` command):**
+   1. The user enters `dispenselog` (today) or `dispenselog /date 2026-04-09` (specific date).
+   2. `PharmaTracker.run()` passes the input to `Parser.parse()`.
+   3. `Parser.parse()` identifies the command word `dispenselog`:
+      - If no argument is given, a `DispenseSummaryCommand()` is constructed (defaults to `LocalDate.now()`).
+      - If `/date YYYY-MM-DD` is present, `LocalDate.parse(dateStr)` is called and the result
+        is passed to `DispenseSummaryCommand(date)`.
+   4. `PharmaTracker.run()` calls `DispenseSummaryCommand.execute()`, which calls
+      `inventory.getDispenseLog().getRecordsByDate(date)` to filter records.
+   5. The filtered list (and the target date) are passed to `Ui.printDispenseSummary()`,
+      which prints each record with a 1-based index, timestamp, medication name, dosage,
+      quantity, and patient name (if any), plus a totals line at the bottom.
+
+3. **Loading on startup:**
+   - `PharmaTracker()` calls `Storage.loadDispenseLog()`, which reads `data/dispense_log.txt`
+     line-by-line using `DispenseRecord.fromStorageString()` and reconstructs a `DispenseLog`.
+   - The loaded log is installed into `Inventory` via `inventory.setDispenseLog(log)`.
+
+#### Class overview
+
+| Class | Role |
+|---|---|
+| `DispenseRecord` | Immutable value object for one dispense event (date, time, med name, dosage, qty, patient) |
+| `DispenseLog` | Wrapper around `ArrayList<DispenseRecord>`; provides `getRecordsByDate()` for filtering |
+| `DispenseSummaryCommand` | Command class; retrieves filtered records and delegates display to `Ui` |
+| `Inventory` | Holds the `DispenseLog` field; exposes `getDispenseLog()` / `setDispenseLog()` |
+| `Storage` | `saveDispenseLog()` / `loadDispenseLog()` for file persistence |
+| `Ui` | `printDispenseSummary(date, records)` for formatted console output |
+
+#### Design Considerations
+
+| Aspect | Choice | Reason |
+|--------|--------|---------|
+| Log stored inside `Inventory` | `Inventory` field | `Inventory` is already the single source of truth for all medication-related data; avoids passing a separate `DispenseLog` object through every command's `execute()` signature |
+| Append only `DispenseRecord` after success | Post-`performDispense()` hook | Ensures only verified dispense events are recorded; a rejected dispense (invalid index, insufficient stock) produces no record |
+| Persistence in a separate file (`dispense_log.txt`) | Separate file | Decouples the fast-changing log from the slower-changing inventory snapshot; makes it easy to archive or clear logs independently |
+| `DispenseRecord.fromStorageString()` returns `null` on error | Null return, not exception | Lets `loadDispenseLog()` skip corrupted lines with a warning rather than aborting the entire load |
+| Date filter via `Stream.filter()` in `DispenseLog` | Stream | Concise and easy to extend (e.g. date-range queries) without changing the storage format |
+| Default to today in `DispenseSummaryCommand()` | `LocalDate.now()` | Most common use-case; staff checking end-of-day totals should not need to type a date |
+
+The following sequence diagrams show the two flows of the dispense log feature.
+
+**Recording flow** — how a `dispense` command writes to the log and saves it:
+
+![Sequence diagram showing the recording flow within the Dispense Command](images/DispenseCommandSequence.png)
+
+**Viewing flow** — how `dispenselog` loads, filters, and displays records:
+
+![Sequence diagram showing the execution flow of the Dispense Log Command](images/DispenseLogSequence.png)
+
+---
+
 ### Management of Customers
 
 This foundational data layer serves as the storage and management backbone for all patient-centric features.
@@ -678,6 +751,7 @@ Fast, lightweight medication tracking without needing a database or internet con
 | v2.0    | pharmacist          | link a dispense event to a customer    | maintain each customer's medication history        |
 | v2.0    | pharmacist          | update a customer's details            | keep customer records current and accurate         |
 | v2.0    | pharmacist          | check which medications are low stock  | reorder before supplies run out                    |
+| v2.0.1    | pharmacist          | view a daily dispense log              | review or audit all dispensing events for any date |
 
 ## Non-Functional Requirements
 
@@ -748,3 +822,12 @@ Fast, lightweight medication tracking without needing a database or internet con
 3. Custom threshold: `lowstock /threshold 10` → lists medications with quantity below 10.
 4. No low-stock items: a message stating all medications are sufficiently stocked is shown.
 5. Invalid threshold: `lowstock /threshold abc` → error message for non-integer threshold.
+
+### Viewing the daily dispense log
+
+1. Dispense some medications first: `dispense 1 q/5` and `dispense 2 q/3`.
+2. Enter: `dispenselog`
+3. **Expected:** A log showing today's date, one entry per dispense event with time, medication name, dosage, quantity, and patient name (if linked). A totals line at the bottom shows event count and total units.
+4. With a patient: `dispense 1 q/2 c/1` then `dispenselog` → the patient's name appears on that entry.
+5. Specific past date: `dispenselog /date 2026-01-01` → `No dispense events recorded for 2026-01-01.` (assuming no events on that date).
+6. Invalid date format: `dispenselog /date 09-04-2026` → error message asking for `YYYY-MM-DD` format.

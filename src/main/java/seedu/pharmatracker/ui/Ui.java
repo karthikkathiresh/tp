@@ -1,11 +1,14 @@
 package seedu.pharmatracker.ui;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Scanner;
 import java.util.ArrayList;
 
 import seedu.pharmatracker.alert.RestockAlert;
 import seedu.pharmatracker.customer.Customer;
 import seedu.pharmatracker.customer.CustomerList;
+import seedu.pharmatracker.data.DispenseRecord;
 import seedu.pharmatracker.data.Inventory;
 import seedu.pharmatracker.data.Medication;
 
@@ -466,6 +469,42 @@ public class Ui {
         System.out.println("--- General ---");
         System.out.println("26. Viewing Help             (help)");
         System.out.println("27. Exiting the Program      (exit)");
+        System.out.println("13. Daily Dispense Log       (dispenselog | dispenselog /date YYYY-MM-DD)");
+        System.out.println("--- Customer Commands ---");
+        System.out.println("14. Add Customer             (add-customer /n NAME /p PHONE /a ADDRESS)");
+        System.out.println("15. Delete Customer          (delete-customer INDEX)");
+        System.out.println("16. Update Customer          (update-customer INDEX /n NAME /p PHONE /a ADDRESS)");
+        System.out.println("17. List Customers           (list-customers)");
+        System.out.println("18. Find Customer            (find-customer KEYWORD)");
+        System.out.println("19. View Customer            (view-customer INDEX)");
+        System.out.println("--- General ---");
+        System.out.println("20. Viewing Help             (help)");
+        System.out.println("21. Exiting the Program      (exit)");
+    }
+
+    /**
+     * Prints a formatted daily dispense summary for the given date.
+     *
+     * @param date    The date of the summary.
+     * @param records The list of dispense records for that date.
+     */
+    public void printDispenseSummary(LocalDate date, List<DispenseRecord> records) {
+        System.out.println(DIVIDER);
+        System.out.println("Dispense Log for " + date);
+        System.out.println(DIVIDER);
+        if (records.isEmpty()) {
+            System.out.println("No dispense events recorded for " + date + ".");
+        } else {
+            int totalUnits = 0;
+            for (int i = 0; i < records.size(); i++) {
+                System.out.println((i + 1) + ". " + records.get(i));
+                totalUnits += records.get(i).getQuantity();
+            }
+            System.out.println(DIVIDER);
+            System.out.println("Total: " + records.size() + " dispense event(s), "
+                    + totalUnits + " unit(s) dispensed.");
+        }
+        System.out.println(DIVIDER);
     }
 
     /**

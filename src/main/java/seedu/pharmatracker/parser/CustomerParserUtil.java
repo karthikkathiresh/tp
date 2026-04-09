@@ -10,7 +10,12 @@ import seedu.pharmatracker.exceptions.PharmaTrackerException;
  * of these dedicated fields.
  */
 public class CustomerParserUtil {
-    static final String[] CUSTOMER_UPDATE_FLAGS = {"/n", "/p", "/a"};
+    public static final String FLAG_ID = "/id";
+    public static final String FLAG_NAME = "/n";
+    public static final String FLAG_PHONE = "/p";
+    public static final String FLAG_ADDRESS = "/a";
+
+    static final String[] CUSTOMER_UPDATE_FLAGS = {FLAG_NAME, FLAG_PHONE, FLAG_ADDRESS};
 
     /**
      * Extracts the mandatory customer ID from the user input.
@@ -20,8 +25,8 @@ public class CustomerParserUtil {
      * @throws PharmaTrackerException If the format is invalid, missing flags, or if the ID is empty.
      */
     static String extractCustomerID(String description) throws PharmaTrackerException {
-        int idIndex = description.indexOf("/id");
-        int nameIndex = description.indexOf("/n");
+        int idIndex = description.indexOf(FLAG_ID);
+        int nameIndex = description.indexOf(FLAG_NAME);
 
         if (idIndex == -1 || nameIndex == -1 || idIndex >= nameIndex) {
             throw new PharmaTrackerException("Invalid format! Please ensure you include '/id' followed by '/n'.");
@@ -45,8 +50,8 @@ public class CustomerParserUtil {
      *
      */
     public static String extractCustomerName(String description) throws PharmaTrackerException {
-        int nameIndex = description.indexOf("/n");
-        int phoneIndex = description.indexOf("/p");
+        int nameIndex = description.indexOf(FLAG_NAME);
+        int phoneIndex = description.indexOf(FLAG_PHONE);
 
         if (nameIndex == -1 || phoneIndex == -1 || nameIndex >= phoneIndex) {
             throw new PharmaTrackerException("Invalid format! Please ensure you include '/n' followed by '/p'.");
@@ -69,8 +74,8 @@ public class CustomerParserUtil {
      * @throws PharmaTrackerException PharmaTrackerException If the format is invalid.
      */
     public static String extractCustomerPhone(String description) throws PharmaTrackerException {
-        int phoneIndex = description.indexOf("/p");
-        int addressIndex = description.indexOf("/addr");
+        int phoneIndex = description.indexOf(FLAG_PHONE);
+        int addressIndex = description.indexOf(FLAG_ADDRESS);
 
         if (phoneIndex == -1) {
             throw new PharmaTrackerException("Invalid format! Please ensure you include the '/p' flag.");
@@ -88,6 +93,11 @@ public class CustomerParserUtil {
             throw new PharmaTrackerException("Customer phone cannot be empty!");
         }
 
+        if (!(phone.startsWith("8") || phone.startsWith("9"))) {
+            throw new PharmaTrackerException("Customer phone must be a valid Singapore number!\n" +
+                    "Please ensure the number starts with either '8' or '9'");
+        }
+
         return phone;
     }
 
@@ -99,7 +109,7 @@ public class CustomerParserUtil {
      * @throws PharmaTrackerException If the '/addr' flag is present but the address is empty.
      */
     public static String extractCustomerAddress(String description) throws PharmaTrackerException {
-        int addressIndex = description.indexOf("/addr");
+        int addressIndex = description.indexOf(FLAG_ADDRESS);
         String warning = "Customer address cannot be empty if the /addr flag is used!";
 
         if (addressIndex == -1) {
@@ -110,7 +120,7 @@ public class CustomerParserUtil {
             throw new PharmaTrackerException(warning);
         }
 
-        String address = description.substring(addressIndex + 5).trim();
+        String address = description.substring(addressIndex + 2).trim();
 
         if (address.isEmpty()) {
             throw new PharmaTrackerException(warning);
@@ -120,7 +130,7 @@ public class CustomerParserUtil {
     }
 
     /**
-     * Extracts an optional customer flag for updatecustomer, returning {@code null} if absent.
+     * Extracts an optional customer flag for update-customer, returning {@code null} if absent.
      * Uses customer-specific flag boundaries (/n, /p, /a).
      *
      * @param description The raw argument string (without the command word and index).

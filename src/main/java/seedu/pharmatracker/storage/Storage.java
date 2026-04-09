@@ -1,6 +1,8 @@
 package seedu.pharmatracker.storage;
 
 import seedu.pharmatracker.alert.RestockAlert;
+import seedu.pharmatracker.data.DispenseLog;
+import seedu.pharmatracker.data.DispenseRecord;
 import seedu.pharmatracker.data.Inventory;
 import seedu.pharmatracker.data.Medication;
 
@@ -28,6 +30,7 @@ public class Storage {
     private static final String USERS_FILE_PATH = "data/users.txt";
     private static final String SESSION_FILE_PATH = "data/session.txt";
     private static final String ALERTS_FILE_PATH = "data/alerts.txt";
+    private static final String DISPENSE_LOG_FILE_PATH = "data/dispense_log.txt";
 
     public void save(Inventory inventory) {
         assert inventory != null : "Inventory should not be null";
@@ -345,6 +348,44 @@ public class Storage {
         try {
             Scanner sc = new Scanner(file);
             while (sc.hasNextLine()) {
+     * Saves all dispense records to the dispense log file.
+     * Each record is written as one pipe-delimited line.
+     *
+     * @param dispenseLog The dispense log to persist.
+     */
+    public void saveDispenseLog(DispenseLog dispenseLog) {
+        assert dispenseLog != null : "DispenseLog should not be null";
+        try {
+            File file = new File(DISPENSE_LOG_FILE_PATH);
+            file.getParentFile().mkdirs();
+            FileWriter fw = new FileWriter(file);
+            for (DispenseRecord record : dispenseLog.getAllRecords()) {
+                fw.write(record.toStorageString() + "\n");
+            }
+            fw.close();
+        } catch (IOException e) {
+            logger.log(Level.SEVERE, "Error saving dispense log: {0}", e.getMessage());
+            System.out.println("Error saving dispense log: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Loads the dispense log from the dispense log file.
+     * Returns an empty {@link DispenseLog} if the file does not exist or is unreadable.
+     *
+     * @return A {@link DispenseLog} populated from the saved file.
+     */
+    public DispenseLog loadDispenseLog() {
+        DispenseLog log = new DispenseLog();
+        File file = new File(DISPENSE_LOG_FILE_PATH);
+        if (!file.exists()) {
+            return log;
+        }
+        try {
+            Scanner sc = new Scanner(file);
+            int lineNumber = 0;
+            while (sc.hasNextLine()) {
+                lineNumber++;
                 String line = sc.nextLine().trim();
                 if (line.isEmpty()) {
                     continue;
@@ -377,5 +418,19 @@ public class Storage {
         }
 
         return alertHistory;
+                DispenseRecord record = DispenseRecord.fromStorageString(line);
+                if (record == null) {
+                    logger.log(Level.WARNING, "Skipping malformed dispense log line {0}: {1}",
+                            new Object[]{lineNumber, line});
+                    continue;
+                }
+                log.addRecord(record);
+            }
+            sc.close();
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Error loading dispense log: {0}", e.getMessage());
+            System.out.println("Error loading dispense log: " + e.getMessage());
+        }
+        return log;
     }
 }

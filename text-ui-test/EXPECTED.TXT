@@ -24,15 +24,16 @@ Enter command: Here are the possible features of PharmaTracker:
 10. Restock Medication       (restock INDEX /q QUANTITY)
 11. Low Stock Alert          (lowstock | lowstock /threshold NUMBER)
 12. Expiring Medications     (expiring | expiring /days NUMBER)
+13. Daily Dispense Log       (dispenselog | dispenselog /date YYYY-MM-DD)
 --- Customer Commands ---
-13. Add Customer             (add-customer /n NAME /p PHONE /a ADDRESS)
-14. Delete Customer          (delete-customer INDEX)
-15. Update Customer          (update-customer INDEX /n NAME /p PHONE /a ADDRESS)
-16. List Customers           (list-customers)
-17. Find Customer            (find-customer KEYWORD)
-18. View Customer            (view-customer INDEX)
+14. Add Customer             (add-customer /n NAME /p PHONE /a ADDRESS)
+15. Delete Customer          (delete-customer INDEX)
+16. Update Customer          (update-customer INDEX /n NAME /p PHONE /a ADDRESS)
+17. List Customers           (list-customers)
+18. Find Customer            (find-customer KEYWORD)
+19. View Customer            (view-customer INDEX)
 --- General ---
-19. Viewing Help             (help)
-20. Exiting the Program      (exit)
+20. Viewing Help             (help)
+21. Exiting the Program      (exit)
 Enter command: Exiting Application
 Stay Healthy!

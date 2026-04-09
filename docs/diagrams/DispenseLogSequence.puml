@@ -1,0 +1,61 @@
+@startuml
+skinparam backgroundColor white
+skinparam sequenceArrowThickness 2
+
+actor User
+participant ":PharmaTracker" as PT
+participant ":Parser" as Parser
+participant ":DispenseSummaryCommand" as Cmd
+participant ":Inventory" as Inv
+participant ":DispenseLog" as Log
+participant ":Ui" as Ui
+participant ":Storage" as Storage
+
+== Startup: load persisted log ==
+
+PT -> Storage : loadDispenseLog()
+activate Storage
+Storage --> PT : dispenseLog
+deactivate Storage
+PT -> Inv : setDispenseLog(dispenseLog)
+
+== User views the dispense log ==
+
+User -> PT : run()
+PT -> Parser : parse("dispenselog /date 2026-04-09")
+activate Parser
+
+alt no /date flag
+    Parser --> PT : new DispenseSummaryCommand()\nnote right : defaults to LocalDate.now()
+else /date flag present
+    Parser -> Parser : LocalDate.parse("2026-04-09")
+    Parser --> PT : new DispenseSummaryCommand(date)
+else invalid date format
+    Parser --> User : "Invalid date format. Use: dispenselog /date YYYY-MM-DD"
+end
+deactivate Parser
+
+PT -> Cmd : execute(inventory, ui, customerList)
+activate Cmd
+
+Cmd -> Inv : getDispenseLog()
+Inv --> Cmd : dispenseLog
+
+Cmd -> Log : getRecordsByDate(date)
+Log --> Cmd : records
+
+Cmd -> Ui : printDispenseSummary(date, records)
+activate Ui
+
+alt records is empty
+    Ui --> User : "No dispense events recorded for <date>."
+else records present
+    loop for each DispenseRecord r in records
+        Ui --> User : "<index>. <time> | <medName> | Dosage: <dosage> | Qty: <qty> [| Patient: <name>]"
+    end
+    Ui --> User : "Total: N dispense event(s), M unit(s) dispensed."
+end
+deactivate Ui
+deactivate Cmd
+
+@enduml

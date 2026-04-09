@@ -39,6 +39,7 @@ public class PharmaTracker {
         ui = new Ui();
         storage = new Storage();
         inventory = storage.load();
+        inventory.setDispenseLog(storage.loadDispenseLog());
         customerList = storage.loadCustomers();
 
         authService = new AuthService(storage.loadUsers(), storage.loadSession());
@@ -93,6 +94,7 @@ public class PharmaTracker {
                             ui.printAutoRestockAlertSummary(activeAlerts);
                         }
                     }
+                    storage.saveDispenseLog(inventory.getDispenseLog());
                 }
             } catch (PharmaTrackerException e) {
                 ui.printMessage(e.getMessage());

@@ -40,6 +40,21 @@ PharmaTracker is a command-line application for pharmacy staff to manage medicat
 
 - Implemented `Sort` command
 
+#### 6. Daily Dispense Log (`dispenselog`)
+
+- **What it does:** Records every dispense event (medication name, dosage, quantity, time, and optional patient name) and displays a formatted daily summary on demand. Defaults to today's date; an optional `/date YYYY-MM-DD` flag lets staff view logs for any past date.
+- **Format:** `dispenselog [/date YYYY-MM-DD]`
+- **Justification:** Pharmacies are often required to maintain a daily dispensing record for audit and compliance purposes. This feature auto-captures each dispense in the background and persists the log to `data/dispense_log.txt` across sessions so nothing is lost on restart.
+- **Files added/modified:**
+  - `DispenseRecord.java` — data class for a single dispense event
+  - `DispenseLog.java` — collection of records with date-based filtering
+  - `DispenseSummaryCommand.java` — command implementation
+  - `Inventory.java` — added `DispenseLog` field
+  - `DispenseCommand.java` — appends a record after each successful dispense
+  - `Storage.java` — `saveDispenseLog()` / `loadDispenseLog()` for persistence
+  - `PharmaTrackerParser.java` — added `dispenselog` command case
+  - `Ui.java` — added `printDispenseSummary()` and updated help menu
+
 ---
 
 ### Contributions to the User Guide
@@ -105,5 +120,34 @@ Updates one or more fields of an existing customer record. Only the fields you p
 ```
 -------------------------------
 Customer updated: [C001] Alice Tan | Phone: 81234567 | Address: 99 Clementi Ave
+-------------------------------
+```
+
+---
+
+### View Daily Dispense Log: `dispenselog`
+
+Displays a summary of all medications dispensed on a given date. Defaults to today if no date is provided.
+
+**Format:** `dispenselog [/date YYYY-MM-DD]`
+
+- Each entry shows the time, medication name, dosage, quantity dispensed, and patient name (if linked).
+- A total unit count and event count are shown at the bottom.
+- The log persists across sessions in `data/dispense_log.txt`.
+
+**Examples:**
+- `dispenselog`
+- `dispenselog /date 2026-04-09`
+
+**Expected output (example):**
+```
+-------------------------------
+Dispense Log for 2026-04-09
+-------------------------------
+1. 09:15 | Paracetamol | Dosage: 500mg | Qty: 2 | Patient: Alice Tan
+2. 11:42 | Ibuprofen | Dosage: 200mg | Qty: 1
+3. 14:30 | Amoxicillin | Dosage: 250mg | Qty: 3 | Patient: Bob Lee
+-------------------------------
+Total: 3 dispense event(s), 6 unit(s) dispensed.
 -------------------------------
 ```

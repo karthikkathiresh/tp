@@ -7,7 +7,9 @@ participant ":PharmaTracker" as PT
 participant ":Parser" as Parser
 participant ":DispenseCommand" as Cmd
 participant ":Inventory" as Inv
+participant ":DispenseLog" as Log
 participant ":CustomerList" as CustList
+participant ":Storage" as Storage
 
 User -> PT : run()
 PT -> Parser : parse("dispense 1 q/20 c/1")
@@ -16,7 +18,11 @@ PT -> Cmd : execute(inventory, ui, customerList)
 Cmd -> Inv : getMedications()
 Inv --> Cmd : medications
 
-alt invalid medication index
+alt invalid quantity
+    Cmd --> User : "Invalid quantity."
+else empty inventory
+    Cmd --> User : "Inventory is empty."
+else invalid medication index
     Cmd --> User : "Invalid index."
 else quantity exceeds stock
     Cmd --> User : "Insufficient stock."
@@ -25,12 +31,24 @@ else invalid customer index
 else all valid
     Cmd -> Inv : getMedication(0)
     Inv --> Cmd : med
+    note right of Cmd : performDispense(med)
     Cmd -> Inv : med.setQuantity(currentQty - 20)
+    Cmd --> User : "Dispensing successfully!"
+
+    note right of Cmd : Record to dispense log
+    Cmd -> Inv : getDispenseLog()
+    Inv --> Cmd : dispenseLog
+    Cmd -> Log : addRecord(new DispenseRecord(date, time, name, dosage, qty, patient))
+
     alt c/ flag provided
         Cmd -> CustList : getCustomer(0)
         CustList --> Cmd : customer
         Cmd -> CustList : customer.addDispensingHistory(record)
+        Cmd --> User : "Recorded for customer: [C001] ..."
     end
-    Cmd --> User : success message
+
+    PT -> Storage : save(inventory)
+    PT -> Storage : saveCustomers(customerList)
+    PT -> Storage : saveDispenseLog(dispenseLog)
 end
 @enduml

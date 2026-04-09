@@ -330,6 +330,44 @@ Example: `label 1`
 
 ---
 
+### View daily dispense log: `dispenselog`
+
+Displays a summary of all medications dispensed on a given date. Defaults to today if no date is provided. Each dispense event is automatically recorded whenever the `dispense` command is used, and the log persists across sessions.
+
+**Format:** `dispenselog [/date YYYY-MM-DD]`
+
+- Each entry shows the time, medication name, dosage, quantity dispensed, and patient name (if the dispense was linked to a customer).
+- A total event count and unit count are shown at the bottom.
+- The date must be in `YYYY-MM-DD` format (e.g. `2026-04-09`).
+
+**Examples:**
+- `dispenselog`
+- `dispenselog /date 2026-04-09`
+
+**Expected output (today's log):**
+```
+-------------------------------
+Dispense Log for 2026-04-09
+-------------------------------
+1. 09:15 | Paracetamol | Dosage: 500mg | Qty: 2 | Patient: Alice Tan
+2. 11:42 | Ibuprofen | Dosage: 200mg | Qty: 1
+3. 14:30 | Amoxicillin | Dosage: 250mg | Qty: 3 | Patient: Bob Lee
+-------------------------------
+Total: 3 dispense event(s), 6 unit(s) dispensed.
+-------------------------------
+```
+
+**Expected output (no events recorded):**
+```
+-------------------------------
+Dispense Log for 2026-04-09
+-------------------------------
+No dispense events recorded for 2026-04-09.
+-------------------------------
+```
+
+---
+
 ## Customer Commands
 
 ### Add a customer: `add-customer`
@@ -513,6 +551,7 @@ A: PharmaTracker will display an error message and leave the inventory or custom
 | Check expiring      | `expiring [/days DAYS]` |
 | Check low stock     | `lowstock [/threshold NUMBER]` |
 | Print label         | `label INDEX` |
+| Daily dispense log  | `dispenselog [/date YYYY-MM-DD]` |
 | Add customer        | `add-customer /id ID /n NAME /p PHONE /addr ADDRESS` |
 | List customers      | `list-customers` |
 | View customer       | `view-customer INDEX` |

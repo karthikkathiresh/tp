@@ -8,6 +8,7 @@ import seedu.pharmatracker.command.AcknowledgeAlertCommand;
 import seedu.pharmatracker.command.Command;
 import seedu.pharmatracker.command.DeleteCommand;
 import seedu.pharmatracker.command.DeleteCustomerCommand;
+import seedu.pharmatracker.command.DispenseSummaryCommand;
 import seedu.pharmatracker.command.ListCommand;
 import seedu.pharmatracker.command.SortCommand;
 import seedu.pharmatracker.command.FindCommand;
@@ -29,6 +30,8 @@ import seedu.pharmatracker.command.ViewCustomerCommand;
 import seedu.pharmatracker.command.RestockCommand;
 import seedu.pharmatracker.exceptions.PharmaTrackerException;
 import seedu.pharmatracker.command.ListCustomersCommand;
+
+import java.time.LocalDate;
 
 /**
  * Parses user input into executable commands.
@@ -197,6 +200,23 @@ public class PharmaTrackerParser {
 
         case HelpCommand.COMMAND_WORD:
             return new HelpCommand();
+
+        case DispenseSummaryCommand.COMMAND_WORD:
+            if (description.isEmpty()) {
+                return new DispenseSummaryCommand();
+            }
+            if (description.startsWith("/date")) {
+                String dateStr = description.substring("/date".length()).trim();
+                try {
+                    LocalDate targetDate = LocalDate.parse(dateStr);
+                    return new DispenseSummaryCommand(targetDate);
+                } catch (Exception e) {
+                    System.out.println("Invalid date format. Use: dispenselog /date YYYY-MM-DD");
+                    return null;
+                }
+            }
+            System.out.println("Invalid format. Use: dispenselog or dispenselog /date YYYY-MM-DD");
+            return null;
 
         case LowStockCommand.COMMAND_WORD:
             if (!description.isEmpty()) {
