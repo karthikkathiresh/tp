@@ -1,0 +1,44 @@
+@startuml
+actor User
+participant ":PharmaTracker" as PharmaTracker
+participant ":PharmaTrackerParser" as PharmaTrackerParser
+participant "c:SortCommand" as SortCommand
+participant ":Inventory" as Inventory
+participant "med:Medication" as Medication
+
+User -> PharmaTracker : sort
+activate PharmaTracker
+
+PharmaTracker -> PharmaTrackerParser : parseCommand("sort")
+activate PharmaTrackerParser
+
+create SortCommand
+PharmaTrackerParser -> SortCommand : new SortCommand()
+activate SortCommand
+return c
+
+return c
+
+PharmaTracker -> SortCommand : execute(inventory, ui, customerList)
+activate SortCommand
+
+SortCommand -> Inventory : getMedications()
+activate Inventory
+return medicationList
+
+loop for each medication
+    SortCommand -> Medication : getExpiryDate()
+    activate Medication
+    return expiryDate
+end
+
+SortCommand -> SortCommand : medicationList.sort(Comparator.comparing(expiry))
+activate SortCommand
+return
+
+SortCommand --> PharmaTracker : prints sorted list
+deactivate SortCommand
+
+PharmaTracker --> User : displays output
+deactivate PharmaTracker
+@enduml

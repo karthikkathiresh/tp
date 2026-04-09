@@ -1,5 +1,52 @@
 # Developer Guide
 
+## Table of Contents
+
+- [Acknowledgements](#acknowledgements)
+- [Setting up, getting started](#setting-up-getting-started)
+- [Design](#design)
+    - [Architecture](#architecture)
+    - [Command Component](#command-component)
+    - [Storage Component](#storage-component)
+    - [UI Component](#ui-component)
+- [Implementation](#implementation)
+    - [Add Medication Feature](#add-medication-feature)
+    - [Delete Medication Feature](#delete-medication-feature)
+    - [Find Medication Feature](#find-medication-feature)
+    - [View Medication Feature](#view-medication-feature)
+    - [Update Medication Feature](#update-medication-feature)
+    - [List Medication Feature](#list-medication-feature)
+    - [List Customers Feature](#list-customers-feature)
+    - [Restock Medication Feature](#restock-medication-feature)
+    - [Dispense with Customer Linking Feature](#dispense-with-customer-linking-feature)
+    - [View Customer Feature](#view-customer-feature)
+    - [Update Customer Feature](#update-customer-feature)
+    - [Sort Medication Feature](#sort-medication-feature)
+    - [Low Stock Feature](#low-stock-feature)
+    - [Expiring Medications Feature](#expiring-medications-feature)
+    - [Label Feature](#label-feature)
+    - [Daily Dispense Log Feature](#daily-dispense-log-feature)
+    - [User Authentication Feature](#user-authentication-feature)
+    - [Auto Restock Alerts Feature](#auto-restock-alerts-feature)
+    - [Management of Customers](#management-of-customers)
+- [Product scope](#product-scope)
+    - [Target user profile](#target-user-profile)
+    - [Value proposition](#value-proposition)
+- [User Stories](#user-stories)
+- [Non-Functional Requirements](#non-functional-requirements)
+- [Glossary](#glossary)
+- [Instructions for manual testing](#instructions-for-manual-testing)
+    - [Launching the application](#launching-the-application)
+    - [Adding a medication](#adding-a-medication)
+    - [Listing medications](#listing-medications)
+    - [Finding a medication](#finding-a-medication)
+    - [Listing customers](#listing-customers)
+    - [Restocking a medication](#restocking-a-medication)
+    - [Dispensing with customer linking](#dispensing-with-customer-linking)
+    - [Updating a customer](#updating-a-customer)
+    - [Checking low stock](#checking-low-stock)
+    - [Viewing the daily dispense log](#viewing-the-daily-dispense-log)
+
 ## Acknowledgements
 
 Beyond the Java Standard Library, no other libraries were used. No code was reused as well.
@@ -36,6 +83,17 @@ The key components of the system are outlined below.
 | `Storage`            | Handles the serialization and deserialization of data to a local text file (`data/pharmatracker.txt`) to ensure data persistence across sessions.                   |
 | `Ui`                 | Manages all interactions with the user, including reading terminal inputs and printing formatted outputs to the console.                                            |
 
+The following component diagram provides a high-level overview of how these components relate to one another:
+
+![Architecture Component Diagram](images/Architecture.png)
+
+A few key relationships to note:
+
+- **User → UI → Parser → Commands**: The main data flow follows a strict top-down path. The user interacts exclusively with `Ui`, which hands raw input to `PharmaTrackerParser`. The parser instantiates the appropriate `Command` subclass, which is then executed by the main loop.
+- **Commands → AppServices → AuthService / RestockAlertService**: Commands do not call `AuthService` or `RestockAlertService` directly. Instead, they go through `AppServices`, a static singleton that acts as a service locator. This avoids passing service references through every constructor and keeps the `Command` API clean.
+- **Commands ↔ Storage ↔ Model**: `Commands` read and modify the in-memory `Inventory` and `CustomerList`. After each command executes, `PharmaTracker` delegates to `Storage` to persist those changes to disk.
+- **Commons (dashed)**: `LoggerSetup` and `PharmaTrackerException` are shared utilities consumed across the application. They are shown with dashed lines to indicate a supporting dependency rather than a primary data flow.
+
 The following sequence diagram illustrates the complete runtime flow of PharmaTracker, from app initialization through 
 the continuous command execution loop:
 
@@ -67,10 +125,6 @@ The UI component is solely responsible for handling all interactions with the us
 To maintain a clean architecture, the UI component is strictly separated from the logic and data models.
 * **No Direct Printing:** Developers should **never** use `System.out.println()` directly within `Command`, `Parser`, or `Inventory` classes.
 * **Data Handoff:** If a command needs to display a result, it must process the data and pass the relevant object to a specific method inside the `Ui` class to handle the actual printing.
-
-The following class diagram summarizes the `Ui` component's primary API. *(Note: Private string constants and standard constructors are omitted to reduce visual clutter).*
-
-![UI Component Class Diagram](images/UiClassDiagram.png)
 
 ## Implementation
 
@@ -119,17 +173,13 @@ delete INDEX
 The following steps describe how a delete command is processed.
 
 1. The user enters a delete command into the command line, specifying the index of the medication (e.g. `delete 1`)
-2. The Ui component reads the raw input string and passes it to the `PharmaTracker` main loop.
-3. `PharmaTracker` calls the `Parser.parse()` method with the input string.
-4. The `Parser` identifies that the `delete` command word, extracts the provided index string, and instantiates a
-   new `DeleteCommand` object with this description.
+2. `PharmaTracker.run()` reads the raw input string using `ui.readCommand()`.
+3. `PharmaTracker` passes the string to `PharmaTrackerParser.parse()`.
+4. `PharmaTrackerParser` identifies the `delete` command word, extracts the provided index string, and instantiates a new `DeleteCommand` object with this description.
 5. `PharmaTracker` calls the `execute(inventory, ui, customerList)` method on the newly created `DeleteCommand`.
-6. Inside the `execute` method, the string index is parsed into an integer and converted from a 1-based index to a
-   0-based index to match the internal `ArrayList` logic.
-7. The specific `Medication` object is retrieved from the `Inventory` using the `getMedication(zeroBasedIndex)`
-   method.
-8. The retrieved `Medication` object is passed to `inventory.removeMedication()`, which deletes it from the internal
-   list and decrements the medication count.
+6. Inside the `execute` method, the string index is parsed into an integer and converted from a 1-based index to a 0-based index to match the internal `ArrayList` logic.
+7. The specific `Medication` object is retrieved from the `Inventory` using the `getMedication(zeroBasedIndex)`method.
+8. The retrieved `Medication` object is passed to `inventory.removeMedication()`, which deletes it from the internal list and decrements the medication count.
 9. The `DeleteCommand` calls `ui.printDeletedMessage()` to display a success message to the user.
 
 ![Sequence diagram showing the execution flow of the Delete Command](images/DeleteCommandSequence.png)
@@ -234,7 +284,7 @@ update INDEX [/n NAME] [/d DOSAGE] [/q QUANTITY] [/e EXPIRY] [/t TAG] [/df DOSAG
 9. As fields are updated, descriptions of the changes are appended to an `ArrayList<String> changes`.
 10. Finally, `Ui.printUpdatedMedicationMessage()` is called with the updated `Medication` and the `changes` list to generate a dynamic success message showing exactly what was modified.
 
-![Sequence diagram showing the execution flow of the Update Command](images/UpdateCommandSequence.png)
+
 ---
 ### List Medication Feature
 
@@ -400,6 +450,47 @@ linking. The `[c/ flag present]` alt branch is only entered when a customer inde
 | Customer index validated **before** stock decrement | Pre-decrement guard | Prevents a state where stock is already reduced but the customer record write then fails |
 | Dispensing record stored on `Customer`, not `Medication` | `Customer` | The natural query is "what has this customer received?"; storing on `Medication` would require scanning every medication to reconstruct a customer's history |
 | Two constructors (2-arg and 3-arg) | Overloaded constructors | Keeps call sites for the no-customer case clean; the 2-arg constructor delegates to the 3-arg one via `this(index, quantity, NO_CUSTOMER)` |
+
+---
+
+### Find Customer Feature
+
+The `find-customer` command searches the customer list for customers whose names contain a given
+keyword. The search is case-insensitive and supports partial matches.
+```
+find-customer KEYWORD
+```
+
+#### How it works
+
+1. The user enters `find-customer alice`.
+2. `PharmaTracker.run()` reads the user input and passes the raw string to `Parser.parse()`.
+3. `Parser.parse()` identifies the command word `find-customer` and extracts the remainder of
+   the input as the search keyword. If the keyword is empty, an error message is printed and
+   no command is returned.
+4. A new `FindCustomerCommand(keyword)` object is constructed with the extracted keyword.
+5. `PharmaTracker.run()` calls `FindCustomerCommand.execute()`, which retrieves all customers
+   from `CustomerList`.
+6. The command iterates over every `Customer`, calling `getName()` on each one. If the name
+   contains the keyword (case-insensitive), the customer is added to a `matchingCustomers` list.
+7. After the loop, the result is handled via an `alt` branch:
+    - If `matchingCustomers` is empty, a `"No customers found matching: ..."` message is printed
+      and the command returns early.
+    - Otherwise, the matching customers are printed as a numbered list showing each customer's
+      ID, name, and phone number.
+
+The following sequence diagram shows the full execution flow of the `find-customer` command:
+
+![Sequence diagram showing the execution flow of the Find Customer Command](images/FindCustomerCommandSequence.png)
+
+#### Design Considerations
+
+| Aspect | Choice | Reason |
+|--------|--------|--------|
+| Case-insensitive matching | `toLowerCase()` on both sides | Reduces user friction; staff should not need to remember the exact capitalisation of a customer's name |
+| Partial match via `contains()` | Yes | A keyword like `Ali` usefully returns `Alice`; exact-match would be too restrictive for quick lookups |
+| Search on name only | Name field | Names are the primary lookup key in a pharmacy context; searching across all fields (e.g. phone, address) would produce unintuitive results |
+| Empty keyword handled in `Parser` | `Parser` | Fails fast before a command object is created; consistent with how other commands with mandatory arguments are validated |
 
 ---
 

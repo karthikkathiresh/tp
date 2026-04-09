@@ -1,0 +1,44 @@
+@startuml
+skinparam ArrowFontStyle plain
+skinparam packageStyle rectangle
+
+actor User
+
+package "PharmaTracker (Main)" {
+    [Ui]
+    [PharmaTrackerParser]
+    [Commands]
+    [AuthService]
+    [RestockAlertService]
+    [AppServices]
+    [Inventory]
+    [CustomerList]
+    [Storage]
+}
+
+package "Commons" {
+    [LoggerSetup]
+    [PharmaTrackerException]
+}
+
+database "Data Files" as Files
+
+User --> [Ui] : input
+[Ui] --> [PharmaTrackerParser] : parse(fullCommand)
+[PharmaTrackerParser] --> [Commands] : instantiate
+[Commands] --> [AppServices] : access services
+[AppServices] ..> [AuthService]
+[AppServices] ..> [RestockAlertService]
+[Commands] --> [Inventory] : read / modify
+[Commands] --> [CustomerList] : read / modify
+[Commands] --> [AuthService] : authenticate
+[Commands] --> [RestockAlertService] : evaluate
+[Storage] --> [Inventory] : load
+[Storage] --> [CustomerList] : load
+[Inventory] --> [Storage] : save
+[CustomerList] --> [Storage] : save
+[Storage] --> Files : read / write
+[LoggerSetup] ..> [PharmaTrackerParser] : init
+[PharmaTrackerException] ..> [Commands] : thrown by
+
+@enduml

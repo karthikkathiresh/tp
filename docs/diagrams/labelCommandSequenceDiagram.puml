@@ -1,0 +1,58 @@
+@startuml
+actor User
+participant ":PharmaTracker" as PharmaTracker
+participant ":PharmaTrackerParser" as PharmaTrackerParser
+participant "c:LabelCommand" as LabelCommand
+participant ":Inventory" as Inventory
+participant "med:Medication" as Medication
+
+User -> PharmaTracker : label 1
+activate PharmaTracker
+
+PharmaTracker -> PharmaTrackerParser : parseCommand("label 1")
+activate PharmaTrackerParser
+
+PharmaTrackerParser -> PharmaTrackerParser : parseInt("1")
+activate PharmaTrackerParser
+return index
+
+create LabelCommand
+PharmaTrackerParser -> LabelCommand : new LabelCommand(1)
+activate LabelCommand
+return c
+
+return c
+
+PharmaTracker -> LabelCommand : execute(inventory, ui, customerList)
+activate LabelCommand
+
+LabelCommand -> Inventory : getMedications()
+activate Inventory
+return medicationList
+
+LabelCommand -> Inventory : getMedication(0)
+activate Inventory
+return med
+
+LabelCommand -> Medication : getName()
+activate Medication
+return name
+
+LabelCommand -> Medication : getDosage()
+activate Medication
+return dosage
+
+LabelCommand -> Medication : getExpiryDate()
+activate Medication
+return expiryDate
+
+LabelCommand -> Medication : getTag()
+activate Medication
+return tag
+
+LabelCommand --> PharmaTracker : prints formatted label
+deactivate LabelCommand
+
+PharmaTracker --> User : displays output
+deactivate PharmaTracker
+@enduml

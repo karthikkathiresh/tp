@@ -4,7 +4,7 @@ skinparam ArrowFontStyle plain
 actor User
 participant ":PharmaTracker" as PharmaTracker
 participant ":Ui" as Ui
-participant "<<class>>\nParser" as Parser
+participant "<<class>>\nPharmaTrackerParser" as Parser
 participant "c:ExpiringCommand" as ExpiringCommand
 participant "inv:Inventory" as Inventory
 participant "med:Medication" as Medication
@@ -20,24 +20,15 @@ deactivate Ui
 PharmaTracker -> Parser : parse(fullCommand)
 activate Parser
 
+create ExpiringCommand
 alt no /days argument provided
-    create ExpiringCommand
     Parser -> ExpiringCommand : new ExpiringCommand()
-    activate ExpiringCommand
-    ExpiringCommand --> Parser : c
-    deactivate ExpiringCommand
 else valid /days argument provided
-    Parser -> Parser : parseInt(daysStr)
-    activate Parser
-    Parser --> Parser : days
-    deactivate Parser
-
-    create ExpiringCommand
     Parser -> ExpiringCommand : new ExpiringCommand(days)
-    activate ExpiringCommand
-    ExpiringCommand --> Parser : c
-    deactivate ExpiringCommand
 end
+activate ExpiringCommand
+ExpiringCommand --> Parser : c
+deactivate ExpiringCommand
 
 Parser --> PharmaTracker : c
 deactivate Parser
@@ -64,14 +55,8 @@ loop for each medication
         end note
     else expired before today
         ExpiringCommand -> ExpiringCommand : expiredMeds.add(med)
-        activate ExpiringCommand
-        ExpiringCommand --> ExpiringCommand
-        deactivate ExpiringCommand
     else within cutoff window
         ExpiringCommand -> ExpiringCommand : expiringMeds.add(med)
-        activate ExpiringCommand
-        ExpiringCommand --> ExpiringCommand
-        deactivate ExpiringCommand
     end
 end
 
@@ -82,7 +67,6 @@ deactivate Ui
 
 ExpiringCommand --> PharmaTracker
 deactivate ExpiringCommand
-ExpiringCommand -[hidden]-> Parser
 destroy ExpiringCommand
 
 deactivate PharmaTracker

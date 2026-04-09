@@ -73,8 +73,18 @@ Removes a medication from the inventory.
 - The `INDEX` refers to the index number shown in the **most recently displayed** medication list.
 - The index **must be a positive integer**, and must not exceed the number of medications currently in the list.
 
-Examples
+**Examples:**
 - `list` followed by `delete 5` (This deletes the 5th medication in the inventory.)
+
+**Expected Output:**
+
+```
+____________________________________________________________
+You have deleted the following medication:
+  Name: Paracetamol | Dosage: 500mg | Qty: 100 | Exp: 2026-12-31 | Tag: painkiller
+You now have 6 medications in your inventory!
+____________________________________________________________
+```
 
 ---
 

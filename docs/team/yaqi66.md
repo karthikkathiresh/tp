@@ -40,7 +40,13 @@ PharmaTracker is a command-line application for pharmacy staff to manage medicat
 
 - Implemented `Sort` command
 
-#### 6. Daily Dispense Log (`dispenselog`)
+#### 6. Expiring Medications Command (`expiring`)
+
+- **What it does:** Lists all medications that have already expired or will expire within a specified number of days. Defaults to 7 days if no `/days` flag is provided.
+- **Format:** `expiring [/days NUMBER]`
+- **Justification:** Pharmacy staff need to quickly identify medications approaching expiry to prevent dispensing or stocking expired products. This command surfaces both already-expired items and those expiring soon in one report.
+
+#### 7. Daily Dispense Log (`dispenselog`)
 
 - **What it does:** Records every dispense event (medication name, dosage, quantity, time, and optional patient name) and displays a formatted daily summary on demand. Defaults to today's date; an optional `/date YYYY-MM-DD` flag lets staff view logs for any past date.
 - **Format:** `dispenselog [/date YYYY-MM-DD]`

@@ -1,0 +1,55 @@
+@startuml
+actor User
+participant ":PharmaTracker" as PharmaTracker
+participant ":PharmaTrackerParser" as PharmaTrackerParser
+participant "c:LowStockCommand" as LowStockCommand
+participant ":Inventory" as Inventory
+participant "med:Medication" as Medication
+participant ":Ui" as Ui
+
+User -> PharmaTracker : lowstock /threshold 10
+activate PharmaTracker
+
+PharmaTracker -> PharmaTrackerParser : parseCommand("lowstock /threshold 10")
+activate PharmaTrackerParser
+
+alt /threshold flag provided
+    create LowStockCommand
+    PharmaTrackerParser -> LowStockCommand : new LowStockCommand(10)
+    activate LowStockCommand
+    return c
+else no arguments
+    create LowStockCommand
+    PharmaTrackerParser -> LowStockCommand : new LowStockCommand()
+    activate LowStockCommand
+    return c
+end
+
+return c
+
+PharmaTracker -> LowStockCommand : execute(inventory, ui, customerList)
+activate LowStockCommand
+
+LowStockCommand -> Inventory : getMedications()
+activate Inventory
+return medicationList
+
+loop for each medication
+    LowStockCommand -> Medication : getQuantity()
+    activate Medication
+    return quantity
+
+    alt quantity < threshold
+        LowStockCommand -> LowStockCommand : lowStockMeds.add(med)
+    end
+end
+
+LowStockCommand -> Ui : printLowStockList(lowStockMeds, threshold)
+activate Ui
+return
+
+return
+
+PharmaTracker --> User : displays output
+deactivate PharmaTracker
+@enduml

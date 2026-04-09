@@ -1,0 +1,52 @@
+@startuml
+skinparam ArrowFontStyle plain
+
+actor User
+participant ":PharmaTracker" as PharmaTracker
+participant "<<class>>\nPharmaTrackerParser" as Parser
+participant "fc:FindCustomerCommand" as FindCustomerCommand
+participant ":CustomerList" as CustomerList
+participant ":Ui" as Ui
+
+User -> PharmaTracker : find-customer alice
+activate PharmaTracker
+
+PharmaTracker -> Parser : parse("find-customer alice")
+activate Parser
+
+create FindCustomerCommand
+Parser -> FindCustomerCommand : new FindCustomerCommand("alice")
+activate FindCustomerCommand
+FindCustomerCommand --> Parser : fc
+deactivate FindCustomerCommand
+
+Parser --> PharmaTracker : fc
+deactivate Parser
+
+PharmaTracker -> FindCustomerCommand : execute(inventory, ui, customerList)
+activate FindCustomerCommand
+
+FindCustomerCommand -> CustomerList : findByName("alice")
+activate CustomerList
+CustomerList --> FindCustomerCommand : matches
+deactivate CustomerList
+
+alt matches is empty
+    FindCustomerCommand -> Ui : printMessage("No customers found matching: alice")
+    activate Ui
+    Ui --> FindCustomerCommand
+    deactivate Ui
+else matches found
+    FindCustomerCommand -> Ui : printFindCustomerResults("alice", matches)
+    activate Ui
+    Ui --> FindCustomerCommand
+    deactivate Ui
+end
+
+FindCustomerCommand --> PharmaTracker
+deactivate FindCustomerCommand
+
+destroy FindCustomerCommand
+
+deactivate PharmaTracker
+@enduml

@@ -4,7 +4,7 @@ skinparam ArrowFontStyle plain
 actor User
 participant ":PharmaTracker" as PharmaTracker
 participant ":Ui" as Ui
-participant "<<class>>\nParser" as Parser
+participant "<<class>>\nPharmaTrackerParser" as Parser
 participant "c:ViewCustomerCommand" as ViewCustomerCommand
 participant "customerList:CustomerList" as CustomerList
 participant ":System.out" as Console

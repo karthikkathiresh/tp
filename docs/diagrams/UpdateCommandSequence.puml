@@ -5,9 +5,9 @@ skinparam maxMessageSize 100
 actor User
 participant ":PharmaTracker" as PharmaTracker
 participant ":Ui" as Ui
-participant ":PharmaTrackerParser" as PTP
+participant "<<class>>\nPharmaTrackerParser" as PTP
 participant "parser:UpdateCommandParser" as UpdateParser
-participant ":MedicationParserUtil" as MedParserUtil
+participant "<<class>>\nMedicationParserUtil" as MedParserUtil
 participant "u:UpdateCommand" as UpdateCommand
 participant "inv:Inventory" as Inventory
 participant "med:Medication" as Medication
