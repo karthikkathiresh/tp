@@ -220,7 +220,7 @@ dispense event to a registered customer — when a customer index is provided, t
 dispensed medication is automatically recorded in that customer's dispensing
 history. If `/c CUSTOMER_INDEX` is omitted, the command behaves exactly as before.
 
-**Format**: `dispense INDEX q/QUANTITY [/c CUSTOMER_INDEX]`
+**Format**: `dispense INDEX /q QUANTITY [/c CUSTOMER_INDEX]`
 
 - Dispensing fails if the requested quantity exceeds the current stock.
 - `/c CUSTOMER_INDEX` is optional. If omitted, no customer record is updated.
@@ -762,7 +762,7 @@ A: PharmaTracker will display an error message and leave the inventory or custom
 | Find medication     | `find KEYWORD` |
 | View medication     | `view INDEX` |
 | Delete medication   | `delete INDEX` |
-| Dispense medication | `dispense INDEX q/QUANTITY [/c CUSTOMER_INDEX]` |
+| Dispense medication | `dispense INDEX /q QUANTITY [/c CUSTOMER_INDEX]` |
 | Restock medication  | `restock INDEX /q QUANTITY` |
 | Sort by expiry      | `sort` |
 | Check expiring      | `expiring [/days DAYS]` |

@@ -160,12 +160,12 @@ The `restock` command **additively** increases the stock of an existing medicati
 
 Extends the existing `dispense` command with an optional `/c CUSTOMER_INDEX` flag. When the flag is provided, the dispensed medication is recorded in that customer's dispensing history. Omitting `/c` retains the original behaviour exactly.
 
-**Format:** `dispense INDEX q/QUANTITY [/c CUSTOMER_INDEX]`
+**Format:** `dispense INDEX /q QUANTITY [/c CUSTOMER_INDEX]`
 
 #### How it works
 
-1. The user enters `dispense 1 q/20 /c 1`.
-2. `Parser.parse()` extracts the medication index, `q/` quantity, and optional `c/` customer index.
+1. The user enters `dispense 1 /q 20 /c 1`.
+2. `Parser.parse()` extracts the medication index, `/q` quantity, and optional `/c` customer index.
 3. A `DispenseCommand` is constructed via the 3-arg constructor; the 2-arg constructor delegates to it with `NO_CUSTOMER = -1`.
 4. `execute()` validates medication index → stock sufficiency → customer index, in that order. No state is modified until all three pass.
 5. Stock is decremented, then the dispense record is appended to the customer's history.
@@ -290,7 +290,7 @@ Medication: Amoxicillin | Added: 100 units | Updated Stock: 120 units.
 
 Reduces the stock of a medication by the specified quantity. Optionally links the dispense event to a registered customer, recording it in their dispensing history.
 
-**Format:** `dispense INDEX q/QUANTITY [/c CUSTOMER_INDEX]`
+**Format:** `dispense INDEX /q QUANTITY [/c CUSTOMER_INDEX]`
 
 **Behaviour:**
 - Dispensing fails if the requested quantity exceeds current stock.

@@ -82,7 +82,7 @@ public class HelpCommandTest {
         assertAll("Command formats should be displayed",
             () -> assertTrue(output.contains("/n NAME")),
             () -> assertTrue(output.contains("delete INDEX")),
-            () -> assertTrue(output.contains("dispense INDEX q/QUANTITY")),
+            () -> assertTrue(output.contains("dispense INDEX /q QUANTITY")),
             () -> assertTrue(output.contains("/c CUSTOMER_INDEX")),
             () -> assertTrue(output.contains("find KEYWORD")),
             () -> assertTrue(output.contains("view INDEX")),

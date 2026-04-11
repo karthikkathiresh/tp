@@ -456,7 +456,7 @@ flag is provided, the dispensed medication is recorded in that customer's dispen
 Omitting `/c` retains the original behaviour exactly — no customer data is read or written.
 
 ```
-dispense INDEX q/QUANTITY [/c CUSTOMER_INDEX]
+dispense INDEX /q QUANTITY [/c CUSTOMER_INDEX]
 ```
 
 #### How it works

@@ -458,7 +458,7 @@ public class Ui {
         System.out.println("--- Medication Commands ---");
         System.out.println(" 1. Add Medication           (add /n NAME /d DOSAGE /q QUANTITY /e EXPIRY /t TAG)");
         System.out.println(" 2. Delete Medication        (delete INDEX)");
-        System.out.println(" 3. Dispense Medication      (dispense INDEX q/QUANTITY [/c CUSTOMER_INDEX])");
+        System.out.println(" 3. Dispense Medication      (dispense INDEX /q QUANTITY [/c CUSTOMER_INDEX])");
         System.out.println(" 4. List Inventory           (list)");
         System.out.println(" 5. Find / Search Medication (find KEYWORD)");
         System.out.println(" 6. View Medication Details  (view INDEX)");

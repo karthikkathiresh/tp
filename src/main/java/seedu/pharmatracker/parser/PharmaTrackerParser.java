@@ -87,19 +87,32 @@ public class PharmaTrackerParser {
                 break;
             }
             try {
-                String[] parts = description.trim().split("q/");
+                String[] parts = description.trim().split("\\s+", 2);
                 int dispenseIndex = Integer.parseInt(parts[0].trim());
-                String qPart = parts[1];
-                if (qPart.contains("/c")) {
-                    String[] qAndC = qPart.split("/c");
-                    int dispenseQuantity = Integer.parseInt(qAndC[0].trim());
-                    int dispenseCustomer = Integer.parseInt(qAndC[1].trim());
-                    return new DispenseCommand(dispenseIndex, dispenseQuantity, dispenseCustomer);
+                String args = (parts.length > 1) ? parts[1] : "";
+                
+                if (!args.contains("/q")) {
+                    System.out.println("Invalid format. Use: dispense INDEX /q QUANTITY [/c CUSTOMER_INDEX]");
+                    break;
                 }
-                int dispenseQuantity = Integer.parseInt(qPart.trim());
+                
+                String quantityStr = extractFlagValue(args, "/q", "/c");
+                if (quantityStr == null || quantityStr.isEmpty()) {
+                    System.out.println("Invalid format. Use: dispense INDEX /q QUANTITY [/c CUSTOMER_INDEX]");
+                    break;
+                }
+                int dispenseQuantity = Integer.parseInt(quantityStr.trim());
+                
+                if (args.contains("/c")) {
+                    String customerStr = extractFlagValue(args, "/c", null);
+                    if (customerStr != null && !customerStr.isEmpty()) {
+                        int dispenseCustomer = Integer.parseInt(customerStr.trim());
+                        return new DispenseCommand(dispenseIndex, dispenseQuantity, dispenseCustomer);
+                    }
+                }
                 return new DispenseCommand(dispenseIndex, dispenseQuantity);
             } catch (Exception e) {
-                System.out.println("Invalid format. Use: dispense INDEX q/QUANTITY [/c CUSTOMER_INDEX]");
+                System.out.println("Invalid format. Use: dispense INDEX /q QUANTITY [/c CUSTOMER_INDEX]");
                 break;
             }
 
@@ -327,5 +340,32 @@ public class PharmaTrackerParser {
         } catch (NumberFormatException e) {
             throw new PharmaTrackerException("Invalid format! Use: ack-alert ALERT_INDEX");
         }
+    }
+
+    /**
+     * Extracts the value of a flag from the command arguments.
+     *
+     * @param args The full command arguments string.
+     * @param flag The flag to extract (e.g., "/q", "/c").
+     * @param nextFlag The next flag that marks the end of this flag's value (null if at end).
+     * @return The value associated with the flag, or null if flag not found.
+     */
+    private static String extractFlagValue(String args, String flag, String nextFlag) {
+        int flagIndex = args.indexOf(flag);
+        if (flagIndex == -1) {
+            return null;
+        }
+
+        int startIndex = flagIndex + flag.length();
+        int endIndex = args.length();
+
+        if (nextFlag != null) {
+            int nextFlagIndex = args.indexOf(nextFlag, startIndex);
+            if (nextFlagIndex != -1) {
+                endIndex = nextFlagIndex;
+            }
+        }
+
+        return args.substring(startIndex, endIndex).trim();
     }
 }
