@@ -138,7 +138,7 @@ Displays a high-level summary of all medications currently stored in the system.
 
 * Shows a numbered list of all medication records currently in the inventory.
 * Each entry displays the name, dosage, current quantity, and expiry date.
-* Medications with a quantity of **10 or less** are automatically flagged with `[LOW STOCK]`.
+* Medications with a quantity of **less than 20** are automatically flagged with `[LOW STOCK]` (consistent with the default threshold for the `lowstock` command).
 * This list provides the **INDEX** values required for other commands such as `delete`, `view`, and `dispense`.
 
 **Example**:
@@ -220,9 +220,10 @@ dispense event to a registered customer — when a customer index is provided, t
 dispensed medication is automatically recorded in that customer's dispensing
 history. If `/c CUSTOMER_INDEX` is omitted, the command behaves exactly as before.
 
-**Format**: `dispense INDEX q/QUANTITY [/c CUSTOMER_INDEX]`
+**Format**: `dispense INDEX /q QUANTITY [/c CUSTOMER_INDEX]`
 
 - Dispensing fails if the requested quantity exceeds the current stock.
+- Dispensing is blocked for expired medications. A warning is shown and stock remains unchanged.
 - `/c CUSTOMER_INDEX` is optional. If omitted, no customer record is updated.
 - If `/c CUSTOMER_INDEX` is provided but out of range, an error is shown and
   stock remains unchanged.
@@ -231,7 +232,7 @@ history. If `/c CUSTOMER_INDEX` is omitted, the command behaves exactly as befor
 
 **Example — no customer linked:**
 
-`dispense 2 q/10`
+`dispense 2 /q 10`
 
 ```
 Dispensing successfully!
@@ -242,7 +243,7 @@ Updated Stock: 40 units
 
 **Example — linked to customer:**
 
-`dispense 1 q/20 /c 1`
+`dispense 1 /q 20 /c 1`
 
 ```
 Dispensing successfully!
@@ -254,12 +255,20 @@ Recorded for customer: [C001] John Tan.
 
 **Example — allergy conflict detected:**
 
-`dispense 1 q/5 /c 1` *(where customer C001 is allergic to penicillin and medication 1 is Penicillin V)*
+`dispense 1 /q 5 /c 1` *(where customer C001 is allergic to penicillin and medication 1 is Penicillin V)*
 
 ```
 WARNING: Allergy conflict detected!
 Customer "Alice Tan" has a recorded allergy to "penicillin".
 Dispense aborted. Please verify with a pharmacist before proceeding.
+```
+
+**Example — expired medication blocked:**
+
+`dispense 3 /q 10`
+
+```
+Cannot dispense expired medication: Amoxicillin (Expired on 2024-10-01).
 ```
 
 ---
@@ -572,7 +581,7 @@ Displays the full details of a specific customer, including their ID, name, phon
 
 Format: `view-customer INDEX`
 
-- `INDEX` must be a positive integer corresponding to a customer shown in `listcustomers`.
+- `INDEX` must be a positive integer corresponding to a customer shown in `list-customers`.
 - If the customer has no dispensing history, a message indicating this is shown instead.
 
 Example: `view-customer 1`
@@ -762,7 +771,7 @@ A: PharmaTracker will display an error message and leave the inventory or custom
 | Find medication     | `find KEYWORD` |
 | View medication     | `view INDEX` |
 | Delete medication   | `delete INDEX` |
-| Dispense medication | `dispense INDEX q/QUANTITY [/c CUSTOMER_INDEX]` |
+| Dispense medication | `dispense INDEX /q QUANTITY [/c CUSTOMER_INDEX]` |
 | Restock medication  | `restock INDEX /q QUANTITY` |
 | Sort by expiry      | `sort` |
 | Check expiring      | `expiring [/days DAYS]` |

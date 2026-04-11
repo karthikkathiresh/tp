@@ -12,7 +12,7 @@ participant ":CustomerList" as CustList
 participant ":Storage" as Storage
 
 User -> PT : run()
-PT -> Parser : parse("dispense 1 q/20 c/1")
+PT -> Parser : parse("dispense 1 /q 20 /c 1")
 Parser --> PT : new DispenseCommand(1, 20, 1)
 PT -> Cmd : execute(inventory, ui, customerList)
 Cmd -> Inv : getMedications()
@@ -24,10 +24,14 @@ else empty inventory
     Cmd --> User : "Inventory is empty."
 else invalid medication index
     Cmd --> User : "Invalid index."
+else medication is expired
+    Cmd --> User : "Cannot dispense expired medication."
 else quantity exceeds stock
     Cmd --> User : "Insufficient stock."
 else invalid customer index
     Cmd --> User : "Invalid customer index."
+else allergy conflict
+    Cmd --> User : "WARNING: Allergy conflict detected!"
 else all valid
     Cmd -> Inv : getMedication(0)
     Inv --> Cmd : med
@@ -40,7 +44,7 @@ else all valid
     Inv --> Cmd : dispenseLog
     Cmd -> Log : addRecord(new DispenseRecord(date, time, name, dosage, qty, patient))
 
-    alt c/ flag provided
+    alt /c flag provided
         Cmd -> CustList : getCustomer(0)
         CustList --> Cmd : customer
         Cmd -> CustList : customer.addDispensingHistory(record)

@@ -304,7 +304,7 @@ The `list` feature provides a summary view of the entire inventory, allowing use
 5.  `ListCommand.execute()` retrieves the list of all medications from `Inventory.getMedications()`.
 6.  The command iterates through the collection. For each `Medication` object:
     * It retrieves the name, dosage, quantity, and expiry date.
-    * It checks the stock level; if the quantity is $\leq 10$, a `[LOW STOCK]` indicator is appended to the output string.
+    * It checks the stock level; if the quantity is $< 20$, a `[LOW STOCK]` indicator is appended to the output string (matching the default threshold for the `lowstock` command).
 7.  The formatted list is passed to the `Ui` component for display, followed by a summary count of total medications.
 
 #### Design Considerations
@@ -313,13 +313,13 @@ The `list` feature provides a summary view of the entire inventory, allowing use
 |:--- |:--- |:--- |
 | **Information Density** | High-level summary | Keeps the output clean and scannable; users can use `view` for full details. |
 | **Index Alignment** | 1-based numbering | Ensures the index shown to the user matches the input requirements for index-based commands. |
-| **Stock Warning** | Hardcoded threshold ($\leq 10$) | Provides immediate visual priority for items needing replenishment without requiring a separate query. |
+| **Stock Warning** | Consistent threshold (20) | Provides immediate visual priority for items needing replenishment, matching the default threshold for the `lowstock` command to ensure consistency across features. |
 
 ### Manual Testing: List Feature
 
 1.  **Test case:** `list` (with items in inventory)
 2.  **Expected:** A numbered list appears. Each line follows the format `NAME | DOSAGE | Qty: QUANTITY | Expiry: DATE`.
-3.  **Low stock check:** Verify that any item with a quantity of 10 or less displays the `[LOW STOCK]` tag.
+3.  **Low stock check:** Verify that any item with a quantity less than 20 displays the `[LOW STOCK]` tag.
 4.  **Summary check:** Ensure the "Total Medications" count at the bottom matches the number of items listed.
 
 ![Sequence diagram showing the execution flow of the List Command](images/ListCommandSequence.png)
@@ -456,16 +456,16 @@ flag is provided, the dispensed medication is recorded in that customer's dispen
 Omitting `/c` retains the original behaviour exactly — no customer data is read or written.
 
 ```
-dispense INDEX q/QUANTITY [/c CUSTOMER_INDEX]
+dispense INDEX /q QUANTITY [/c CUSTOMER_INDEX]
 ```
 
 #### How it works
 
-1. The user enters `dispense 1 q/20 /c 1` (or `dispense 1 q/20` without customer linking).
+1. The user enters `dispense 1 /q 20 /c 1` (or `dispense 1 /q 20` without customer linking).
 2. `PharmaTracker.run()` passes the raw string to `Parser.parse()`.
 3. `Parser.parse()` identifies the command word `dispense`, then:
    - Extracts the medication index from the leading portion of the description.
-   - Locates the `q/` flag and parses the quantity.
+   - Locates the `/q` flag and parses the quantity.
     - Checks for the optional `/c` flag. If present, its value is parsed as an integer
      `customerIndex`; if absent, the two-argument constructor is used, which internally
      sets `customerIndex` to the sentinel value `NO_CUSTOMER` (-1).
@@ -473,6 +473,8 @@ dispense INDEX q/QUANTITY [/c CUSTOMER_INDEX]
 5. `PharmaTracker.run()` calls `DispenseCommand.execute()`, which performs the following
    validation before modifying any data:
    - If the medication index is out of range, an error is printed and the command returns early.
+    - If the medication is expired, an error is printed and the command returns early. Stock is
+       **not** decremented.
    - If the quantity exceeds current stock, an error is printed and the command returns early.
    - If `customerIndex != NO_CUSTOMER` and the customer index is out of range, an error is
      printed and the command returns early. Stock is **not** decremented in this case.
@@ -488,7 +490,7 @@ dispense INDEX q/QUANTITY [/c CUSTOMER_INDEX]
    customer's ID and name.
 
 The following sequence diagram shows the full execution flow of `dispense` with customer
-linking. The `[c/ flag present]` alt branch is only entered when a customer index is supplied:
+linking. The `[/c flag present]` alt branch is only entered when a customer index is supplied:
 
 ![Sequence diagram showing the execution flow of the Dispense Command with Customer Linking](images/DispenseCommandSequence.png)
 
@@ -496,7 +498,7 @@ linking. The `[c/ flag present]` alt branch is only entered when a customer inde
 
 | Aspect | Choice | Reason |
 |--------|--------|--------|
-| Optional `c/` flag vs a separate command | Optional flag on existing command | Avoids duplicating stock-decrement logic; fully backward compatible — existing calls without `c/` are unaffected |
+| Optional `/c` flag vs a separate command | Optional flag on existing command | Avoids duplicating stock-decrement logic; fully backward compatible — existing calls without `/c` are unaffected |
 | Sentinel value `NO_CUSTOMER = -1` | Sentinel (`int`) over `Integer` / `null` | Avoids autoboxing and null-pointer risk on a primitive field; the sentinel is a named constant and self-documenting |
 | Customer index validated **before** stock decrement | Pre-decrement guard | Prevents a state where stock is already reduced but the customer record write then fails |
 | Allergy check positioned **after** customer index validation, **before** stock decrement | Pre-decrement guard | Ensures stock is never modified when dispensing is blocked by an allergy conflict |
@@ -1027,9 +1029,11 @@ Fast, lightweight medication tracking without needing a database or internet con
 
 ### Launching the application
 
-1. Open a terminal in the project root directory.
-2. Run `./gradlew run` (Linux/macOS) or `.\gradlew run` (Windows).
-3. The welcome banner and `Enter command:` prompt should appear.
+1. Ensure Java 17 or above is installed on your computer.
+2. Download the latest `pharmatracker.jar` from the releases page.
+3. Open a terminal in the folder containing the jar file.
+4. Run `java -jar pharmatracker.jar` to start the application.
+5. The welcome banner and `Enter command:` prompt should appear.
 
 ### Adding a medication
 
@@ -1040,7 +1044,7 @@ Fast, lightweight medication tracking without needing a database or internet con
 ### Listing medications
 
 1. Enter: `list`
-2. **Expected:** All medications displayed with index, name, dosage, quantity, expiry, and tag. Items with quantity ≤ 10 show `[LOW STOCK]`.
+2. **Expected:** All medications displayed with index, name, dosage, quantity, expiry, and tag. Items with quantity < 20 show `[LOW STOCK]`.
 
 ### Finding a medication
 
@@ -1062,10 +1066,10 @@ Fast, lightweight medication tracking without needing a database or internet con
 
 ### Dispensing with customer linking
 
-1. Enter: `dispense 1 q/20 /c 1`
+1. Enter: `dispense 1 /q 20 /c 1`
 2. **Expected:** Stock reduced by 20, confirmation includes customer ID and name.
-3. Without customer: `dispense 1 q/20` → behaves as original, no customer info in output.
-4. Invalid customer index: `dispense 1 q/20 /c 99` → error message for out-of-bounds customer index.
+3. Without customer: `dispense 1 /q 20` → behaves as original, no customer info in output.
+4. Invalid customer index: `dispense 1 /q 20 /c 99` → error message for out-of-bounds customer index.
 
 ### Updating a customer
 
@@ -1085,9 +1089,9 @@ Fast, lightweight medication tracking without needing a database or internet con
 
 ### Viewing the daily dispense log
 
-1. Dispense some medications first: `dispense 1 q/5` and `dispense 2 q/3`.
+1. Dispense some medications first: `dispense 1 /q 5` and `dispense 2 /q 3`.
 2. Enter: `dispenselog`
 3. **Expected:** A log showing today's date, one entry per dispense event with time, medication name, dosage, quantity, and patient name (if linked). A totals line at the bottom shows event count and total units.
-4. With a patient: `dispense 1 q/2 /c 1` then `dispenselog` → the patient's name appears on that entry.
+4. With a patient: `dispense 1 /q 2 /c 1` then `dispenselog` → the patient's name appears on that entry.
 5. Specific past date: `dispenselog /date 2026-01-01` → `No dispense events recorded for 2026-01-01.` (assuming no events on that date).
 6. Invalid date format: `dispenselog /date 09-04-2026` → error message asking for `YYYY-MM-DD` format.

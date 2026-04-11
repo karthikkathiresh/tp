@@ -95,6 +95,14 @@ public class DispenseCommand extends Command {
             return;
         }
 
+        if (med.isExpired()) {
+            logger.log(Level.WARNING, "Attempted to dispense expired medication: {0} (Exp: {1})",
+                new Object[]{med.getName(), med.getExpiryDate()});
+            System.out.println("Cannot dispense expired medication: " + med.getName()
+                + " (Expired on " + med.getExpiryDate() + ").");
+            return;
+        }
+
         if (!hasSufficientStock(med)) {
             logger.log(Level.WARNING, "Insufficient stock for {0}: requested={1}, available={2}",
                     new Object[]{med.getName(), quantity, med.getQuantity()});

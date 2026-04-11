@@ -107,13 +107,13 @@ view 3
 Removes a quantity of medication from inventory (e.g., when dispensing to a patient).
 
 ```
-dispense <index> q/<quantity>
+dispense <index> /q <quantity>
 ```
 
 **Examples:**
 ```
-dispense 1 q/10
-dispense 2 q/50
+dispense 1 /q 10
+dispense 2 /q 50
 ```
 
 ### 7. Print Medication Label

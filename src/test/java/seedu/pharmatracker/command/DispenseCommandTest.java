@@ -193,6 +193,35 @@ public class DispenseCommandTest {
         assertTrue(out.toString().contains("10"));
     }
 
+    /**
+     * Tests that dispensing an expired medication is blocked and stock remains unchanged.
+     */
+    @Test
+    public void execute_expiredMedication_blocksDispenseAndKeepsStock() {
+        Inventory inventory = new Inventory();
+        inventory.addMedication(new Medication("ExpiredMed", "100mg", 10, "2000-01-01", "pain"));
+
+        new DispenseCommand(1, 2).execute(inventory, new Ui(), new CustomerList());
+
+        String output = out.toString();
+        assertTrue(output.contains("Cannot dispense expired medication"));
+        assertFalse(output.contains("Dispensing successfully!"));
+        assertEquals(10, inventory.getMedication(0).getQuantity());
+    }
+
+    /**
+     * Tests that blocked dispensing of expired medication does not create a dispense log record.
+     */
+    @Test
+    public void execute_expiredMedication_noDispenseLogRecordCreated() {
+        Inventory inventory = new Inventory();
+        inventory.addMedication(new Medication("ExpiredMed", "100mg", 10, "2000-01-01", "pain"));
+
+        new DispenseCommand(1, 2).execute(inventory, new Ui(), new CustomerList());
+
+        assertEquals(0, inventory.getDispenseLog().size());
+    }
+
     // -------------------------------------------------------------------------
     // Invalid quantity
     // -------------------------------------------------------------------------

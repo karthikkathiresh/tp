@@ -26,7 +26,7 @@ Extended the existing `dispense` command with an optional `/c CUSTOMER_INDEX` fl
 **Technical Implementation:**
 - Added an overloaded constructor to `DispenseCommand` using a sentinel value (`NO_CUSTOMER = -1`) to distinguish linked and unlinked dispenses without nullable primitives or autoboxing overhead.
 - Implemented a pre-decrement validation sequence: medication index → stock sufficiency → customer index. This ordering ensures no state is modified if any validation fails, preserving atomicity between the stock update and the customer history write.
-- Updated `Parser` to detect and extract the optional `c/` flag.
+- Updated `Parser` to detect and extract the optional `/c` flag.
 - Wrote 4 new JUnit tests covering customer linking, confirmation output, invalid customer index rollback, and the no-customer baseline (10 tests total, all passing).
 
 #### 2. List Inventory (`list`)
@@ -34,7 +34,7 @@ Extended the existing `dispense` command with an optional `/c CUSTOMER_INDEX` fl
 Implemented the core inventory overview command that provides a high-level summary of all medications.
 
 **Key Features:**
-- **Visual Cues**: Automatically flags items with a quantity of 10 or less as `[LOW STOCK]` to provide immediate visual priority for replenishment.
+- **Visual Cues**: Automatically flags items with a quantity of less than 20 as `[LOW STOCK]` to provide immediate visual priority for replenishment (consistent with the default threshold for the `lowstock` command).
 - **Reference Point**: Displays 1-based indices required for all other medication-based commands like `delete`, `view`, and `dispense`.
 
 #### 3. List Customers (`listcustomers`)
@@ -58,7 +58,7 @@ Implemented an additive restock command that tops up an existing medication's st
 | `list` command | Format, descriptive list of fields (name, dosage, quantity, expiry), and example output with low-stock indicators |
 | `listcustomers` command | Format, both examples (with and without customers), and expected output blocks |
 | `restock` command | Format, both examples, and expected output blocks |
-| `dispense` command | Extended format with optional `c/` flag, both examples (with and without customer linking), expected output blocks, and error behaviour description |
+| `dispense` command | Extended format with optional `/c` flag, both examples (with and without customer linking), expected output blocks, and error behaviour description |
 | Command Summary table | Updated with all implemented commands |
 
 ---
@@ -83,7 +83,7 @@ Implemented an additive restock command that tops up an existing medication's st
 ### Contributions to Team-Based Tasks
 
 - Maintained `DispenseCommand.java` as the feature evolved across multiple iterations, keeping Javadoc consistent with team conventions.
-- Ensured backward compatibility of the `dispense` command so existing behaviour and existing tests were unaffected by the new `c/` flag.
+- Ensured backward compatibility of the `dispense` command so existing behaviour and existing tests were unaffected by the new `/c` flag.
 
 ### Review / Mentoring Contributions
 
@@ -160,12 +160,12 @@ The `restock` command **additively** increases the stock of an existing medicati
 
 Extends the existing `dispense` command with an optional `/c CUSTOMER_INDEX` flag. When the flag is provided, the dispensed medication is recorded in that customer's dispensing history. Omitting `/c` retains the original behaviour exactly.
 
-**Format:** `dispense INDEX q/QUANTITY [/c CUSTOMER_INDEX]`
+**Format:** `dispense INDEX /q QUANTITY [/c CUSTOMER_INDEX]`
 
 #### How it works
 
-1. The user enters `dispense 1 q/20 /c 1`.
-2. `Parser.parse()` extracts the medication index, `q/` quantity, and optional `c/` customer index.
+1. The user enters `dispense 1 /q 20 /c 1`.
+2. `Parser.parse()` extracts the medication index, `/q` quantity, and optional `/c` customer index.
 3. A `DispenseCommand` is constructed via the 3-arg constructor; the 2-arg constructor delegates to it with `NO_CUSTOMER = -1`.
 4. `execute()` validates medication index → stock sufficiency → customer index, in that order. No state is modified until all three pass.
 5. Stock is decremented, then the dispense record is appended to the customer's history.
@@ -192,7 +192,7 @@ The list feature provides a summary view of the entire inventory, allowing users
 
 1. `Parser.parse()` identifies the list command word and returns a `ListCommand` object.
 2. `ListCommand.execute()` retrieves all medications from the `Inventory`.
-3. The command iterates through the collection, appending `[LOW STOCK]` if quantity ≤ 10.
+3. The command iterates through the collection, appending `[LOW STOCK]` if quantity < 20.
 4. The formatted list is passed to the `Ui` for display, followed by a total medication count.
 
 #### Design Considerations
@@ -215,7 +215,7 @@ Displays a high-level summary of all medications currently stored in the system.
 
 **Features:**
 - Displays a numbered list including name, dosage, current quantity, and expiry date.
-- Items with quantity 10 or less are flagged `[LOW STOCK]`.
+- Items with quantity less than 20 are flagged `[LOW STOCK]`.
 
 **Example:**
 
@@ -290,7 +290,7 @@ Medication: Amoxicillin | Added: 100 units | Updated Stock: 120 units.
 
 Reduces the stock of a medication by the specified quantity. Optionally links the dispense event to a registered customer, recording it in their dispensing history.
 
-**Format:** `dispense INDEX q/QUANTITY [/c CUSTOMER_INDEX]`
+**Format:** `dispense INDEX /q QUANTITY [/c CUSTOMER_INDEX]`
 
 **Behaviour:**
 - Dispensing fails if the requested quantity exceeds current stock.
@@ -299,7 +299,7 @@ Reduces the stock of a medication by the specified quantity. Optionally links th
 
 **Example without customer linking:**
 
-Command: `dispense 2 q/10`
+Command: `dispense 2 /q 10`
 
 ```text
 Dispensing successfully!
@@ -310,7 +310,7 @@ Updated Stock: 40 units
 
 **Example with customer linking:**
 
-Command: `dispense 1 q/20 /c 1`
+Command: `dispense 1 /q 20 /c 1`
 
 ```text
 Dispensing successfully!

@@ -17,7 +17,7 @@ public class ListCommand extends Command {
 
     public static final String COMMAND_WORD = "list";
 
-    private static final int LOW_STOCK_THRESHOLD = 10;
+    private static final int LOW_STOCK_THRESHOLD = 20;
     private static final String DIVIDER = "------------------------------------------------------";
 
     private static final Logger logger = Logger.getLogger(ListCommand.class.getName());
@@ -63,7 +63,7 @@ public class ListCommand extends Command {
                 continue;
             }
 
-            boolean isLowStock = med.getQuantity() <= LOW_STOCK_THRESHOLD;
+            boolean isLowStock = med.getQuantity() < LOW_STOCK_THRESHOLD;
             String lowStockFlag = isLowStock ? " [LOW STOCK]" : "";
 
             if (isLowStock) {
