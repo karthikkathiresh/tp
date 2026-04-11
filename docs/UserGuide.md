@@ -137,7 +137,8 @@ Displays a high-level summary of all medications currently stored in the system.
 **Format**: `list`
 
 * Shows a numbered list of all medication records currently in the inventory.
-* Each entry displays the name, dosage, current quantity, and expiry date.
+* Each entry displays labels in this format: `Name: ... | Dosage: ... | Qty: ... | Exp: ...`.
+* Optional fields (e.g. `Tag`, `Dosage Form`, `Manufacturer`, `Directions`, `Frequency`, `Route`, `Maximum Daily Dosage`) are shown inline when present.
 * Medications with a quantity of **less than 20** are automatically flagged with `[LOW STOCK]` (consistent with the default threshold for the `lowstock` command).
 * This list provides the **INDEX** values required for other commands such as `delete`, `view`, and `dispense`.
 
@@ -147,11 +148,12 @@ Displays a high-level summary of all medications currently stored in the system.
 **Expected Output**:
 ```
 PharmaTracker Inventory:
-1. Amoxicillin | 250mg | Qty: 50  | Expiry: 01/06/2025
-2. Ibuprofen   | 200mg | Qty: 5   | Expiry: 15/06/2026 [LOW STOCK]
-3. Paracetamol | 500mg | Qty: 150 | Expiry: 31/12/2026
+1. Name: Amoxicillin | Dosage: 250mg | Qty: 50 | Exp: 2025-06-01 | Tag: antibiotic
+2. Name: Ibuprofen | Dosage: 200mg | Qty: 5 | Exp: 2026-06-15 | Tag: painkiller [LOW STOCK]
+3. Name: Paracetamol | Dosage: 500mg | Qty: 150 | Exp: 2026-12-31 | Tag: painkiller
 ------------------------------------------------------
 Total Medications: 3
+Low Stock Alerts: 1 medication(s) need restocking.
 ```
 ---
 
