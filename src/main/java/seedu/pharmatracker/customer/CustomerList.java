@@ -78,4 +78,24 @@ public class CustomerList {
     public int size() {
         return customers.size();
     }
+
+    /**
+     * Checks if a customer with the specified ID already exists in the list.
+     *
+     * @param customerId The ID to check (case-insensitive).
+     * @return true if the ID already exists, false otherwise.
+     */
+    public boolean containsCustomerId(String customerId) {
+        if (customerId == null) {
+            return false;
+        }
+
+        for (Customer customer : customers) {
+            if (customer.getCustomerId().equalsIgnoreCase(customerId.trim())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

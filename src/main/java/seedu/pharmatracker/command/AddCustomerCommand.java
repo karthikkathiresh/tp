@@ -64,6 +64,12 @@ public class AddCustomerCommand extends Command {
 
         logger.log(Level.INFO, "Starting execution of AddCustomerCommand for customer: " + name);
 
+        if (customerList.containsCustomerId(customerId)) {
+            ui.printMessage("Failed to add customer: A customer with ID '" + customerId + "' already exists.");
+            logger.log(Level.WARNING, "Attempted to add duplicate customer ID: " + customerId);
+            return;
+        }
+
         Customer customer = new Customer(customerId, name, phone, address);
         customer.setAllergies(allergies);
         customerList.addCustomer(customer);
