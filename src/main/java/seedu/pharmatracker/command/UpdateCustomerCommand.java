@@ -73,7 +73,7 @@ public class UpdateCustomerCommand extends Command {
         }
 
         if (name == null && phone == null && address == null && allergies == null) {
-            System.out.println("No fields provided to update! Use /n, /p, /a, or /allergy flags.");
+            System.out.println("No fields provided to update! Use /n, /p, /addr, or /allergy flags.");
             return;
         }
 

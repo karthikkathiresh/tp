@@ -461,7 +461,7 @@ No dispense events recorded for 2026-04-09.
 
 Registers a new customer into the pharmacy's database.
 
-**Format:** `add-customer /id CUSTOMER_ID /n NAME /p PHONE [/address ADDRESS] [/allergy ALLERGY1,ALLERGY2,...]`
+**Format:** `add-customer /id CUSTOMER_ID /n NAME /p PHONE [/addr ADDRESS] [/allergy ALLERGY1,ALLERGY2,...]`
 
 **Mandatory Parameters:**
 * `/id CUSTOMER_ID`: A unique identifier for the customer (e.g., `C001`).
@@ -469,14 +469,14 @@ Registers a new customer into the pharmacy's database.
 * `/p PHONE`: The customer's contact number.
 
 **Optional Parameters:**
-* `/address ADDRESS`: The customer's residential or mailing address.
+* `/addr ADDRESS`: The customer's residential or mailing address.
 * `/allergy ALLERGY1,ALLERGY2,...`: A comma-separated list of known allergens (e.g. `penicillin,aspirin`). Stored in lowercase and checked against medication names during dispensing.
 
 **Examples:**
 * `add-customer /id C001 /n John Doe /p 98765432`
-* `add-customer /id C002 /n Jane Smith /p 91234567 /address 123 Clementi Road, #04-56`
+* `add-customer /id C002 /n Jane Smith /p 91234567 /addr 123 Clementi Road, #04-56`
 * `add-customer /id C003 /n Alice Tan /p 91234567 /allergy penicillin,aspirin`
-* `add-customer /id C004 /n Bob Lim /p 87654321 /address 10 Orchard Road /allergy sulfonamide`
+* `add-customer /id C004 /n Bob Lim /p 87654321 /addr 10 Orchard Road /allergy sulfonamide`
 
 **Example Output:**
 
@@ -631,15 +631,15 @@ No medications dispensed yet.
 
 Updates one or more fields of an existing customer record. Only the fields you provide are changed; all others remain unchanged.
 
-Format: `update-customer INDEX [/n NAME] [/p PHONE] [/address ADDRESS] [/allergy ALLERGY1,ALLERGY2,...]`
+Format: `update-customer INDEX [/n NAME] [/p PHONE] [/addr ADDRESS] [/allergy ALLERGY1,ALLERGY2,...]`
 
-- At least one of `/n`, `/p`, `/address`, or `/allergy` must be provided.
+- At least one of `/n`, `/p`, `/addr`, or `/allergy` must be provided.
 - `INDEX` is the 1-based position of the customer as shown in `list-customers`.
 - `/allergy` replaces the customer's entire allergy list with the new values provided.
 
 Examples:
 - `update-customer 1 /n Alice Tan` — updates name only
-- `update-customer 2 /p 81234567 /address 99 Clementi Ave` — updates phone and address
+- `update-customer 2 /p 81234567 /addr 99 Clementi Ave` — updates phone and address
 - `update-customer 1 /allergy penicillin,ibuprofen` — sets allergies to penicillin and ibuprofen
 - `update-customer 1 /n Bob /p 98765432 /address 5 Bukit Timah Road` — updates name, phone, and address
 

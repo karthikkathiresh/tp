@@ -175,6 +175,10 @@ public class PharmaTrackerParser {
                 String ucArgs = (ucParts.length > 1) ? ucParts[1] : "";
                 String ucName = CustomerParserUtil.extractCustomerUpdateFlag(ucArgs, "/n");
                 String ucPhone = CustomerParserUtil.extractCustomerUpdateFlag(ucArgs, "/p");
+                if (ucPhone != null && !(ucPhone.startsWith("8") || ucPhone.startsWith("9"))) {
+                    throw new PharmaTrackerException("Customer phone must be a valid Singapore number!\n"
+                            + "Please ensure the number starts with either '8' or '9'");
+                }
                 String ucAddress = CustomerParserUtil.extractCustomerUpdateFlag(ucArgs, "/address");
                 java.util.ArrayList<String> ucAllergies = null;
                 if (ucArgs.contains(CustomerParserUtil.FLAG_ALLERGY)) {

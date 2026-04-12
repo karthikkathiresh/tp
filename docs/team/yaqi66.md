@@ -25,7 +25,7 @@ PharmaTracker is a command-line application for pharmacy staff to manage medicat
 #### 2. Update Customer Command (`updatecustomer`)
 
 - **What it does:** Updates one or more fields (name, phone number, address) of an existing customer record. Only the fields explicitly provided are changed; all others remain unchanged.
-- **Format:** `updatecustomer INDEX [/n NAME] [/p PHONE] [/a ADDRESS]`
+- **Format:** `updatecustomer INDEX [/n NAME] [/p PHONE] [/addr ADDRESS]`
 
 #### 3. Label Command (`label`) — Earlier Contribution
 
@@ -107,15 +107,15 @@ Total: 2 medication(s) low on stock.
 
 Updates one or more fields of an existing customer record. Only the fields you provide are changed; all others remain unchanged.
 
-**Format:** `updatecustomer INDEX [/n NAME] [/p PHONE] [/a ADDRESS]`
+**Format:** `updatecustomer INDEX [/n NAME] [/p PHONE] [/addr ADDRESS]`
 
-- At least one of `/n`, `/p`, or `/a` must be provided.
+- At least one of `/n`, `/p`, or `/addr` must be provided.
 - `INDEX` is the 1-based position as shown in `listcustomers`.
 
 **Examples:**
 - `updatecustomer 1 /n Alice Tan` — updates name only
-- `updatecustomer 2 /p 81234567 /a 99 Clementi Ave` — updates phone and address
-- `updatecustomer 1 /n Bob /p 98765432 /a 5 Bukit Timah Road` — updates all three fields
+- `updatecustomer 2 /p 81234567 /addr 99 Clementi Ave` — updates phone and address
+- `updatecustomer 1 /n Bob /p 98765432 /addr 5 Bukit Timah Road` — updates all three fields
 
 **Expected output:**
 ```

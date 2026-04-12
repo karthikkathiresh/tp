@@ -331,13 +331,13 @@ The `add-customer` command allows users to register a new customer profile in th
 
 #### How it works
 
-1. The user enters the command into the CLI, specifying the customer details (e.g., `add-customer /id C001 /n John Doe /p 91234567 /a 123 Clementi Rd`).
+1. The user enters the command into the CLI, specifying the customer details (e.g., `add-customer /id C001 /n John Doe /p 91234567 /addr 123 Clementi Rd`).
 2. `PharmaTracker.run()` reads the input and passes the raw string to `PharmaTrackerParser.parse()`.
 3. `PharmaTrackerParser` identifies the `add-customer` command word and delegates the remaining argument string to `AddCustomerCommandParser.parse()`.
 4. `AddCustomerCommandParser` extracts the required and optional fields using `CustomerParserUtil`.
 5. The extraction methods (`extractCustomerID()`, `extractCustomerName()`, and `extractCustomerPhone()`) validate that the mandatory flags (`/id`, `/n`, `/p`) are present and in the correct relative order.
 6. The phone number extraction also strictly verifies that the number is a valid Singaporean format (starting with '8' or '9').
-7. `extractCustomerAddress()` attempts to find the `/a` flag; if absent, it safely returns an empty string.
+7. `extractCustomerAddress()` attempts to find the `/addr` flag; if absent, it safely returns an empty string.
 8. The extracted strings are passed into the `AddCustomerCommand` constructor to instantiate the command object.
 9. `PharmaTracker` calls the `execute()` method on the newly created `AddCustomerCommand`.
 10. Inside the `execute()` method, a new `Customer` object is instantiated using the parsed details.
@@ -532,9 +532,9 @@ The feature spans three layers:
 - `FLAG_ALLERGY = "/allergy"` is defined as a named constant.
 - `extractCustomerAllergies(String description)` splits the comma-separated value after the
   `/allergy` flag and returns an `ArrayList<String>`. Returns an empty list if the flag is absent.
-- `FLAG_ADDRESS` was renamed from `/a` to `/address` to eliminate an ambiguity: `/a` is a
+- `FLAG_ADDRESS` was renamed from `/a` to `/addr` to eliminate an ambiguity: `/a` is a
   prefix of `/allergy`, causing `indexOf("/a")` to falsely match inside `/allergy`. Using
-  `/address` removes the collision entirely.
+  `/addr` removes the collision entirely.
 
 **Command (`DispenseCommand.java`)**
 - The allergy check is performed after all index and stock validations, but before
@@ -547,7 +547,7 @@ The feature spans three layers:
 |--------|--------|--------|
 | Substring match over exact match | `contains()` | Medication names often include strength and form (e.g. `Penicillin V 500mg Tablet`); exact match on `penicillin` would fail to block it |
 | Allergens stored lowercase | `toLowerCase()` on input | Normalises at write time; comparison is then a simple `contains()` with no extra lowercasing at read time |
-| `/a` renamed to `/address` | Flag rename | Eliminates prefix collision with `/allergy` without requiring fragile character-lookahead logic |
+| `/a` renamed to `/addr` | Flag rename | Eliminates prefix collision with `/allergy` without requiring fragile character-lookahead logic |
 | Allergy check aborts silently (no partial execution) | Hard abort | Partial execution — e.g. stock decremented but record not written — would leave the system in an inconsistent state |
 | `setAllergies()` replaces rather than appends | Full replacement | Supports corrections; staff can re-declare the full list to remove a previously recorded allergen |
 
@@ -639,15 +639,15 @@ The following sequence diagram shows the full execution flow of the `view-custom
 The `update-customer` command allows pharmacy staff to update one or more fields of an existing customer record.
 Only the fields explicitly provided are changed; all other fields remain unchanged.
 ```
-update-customer INDEX [/n NAME] [/p PHONE] [/address ADDRESS] [/allergy ALLERGY1,ALLERGY2,...]
+update-customer INDEX [/n NAME] [/p PHONE] [/addr ADDRESS] [/allergy ALLERGY1,ALLERGY2,...]
 ```
 
 #### How it works
 
-1. The user enters `update-customer 1 /n Alice /p 91234567 /a 123 Main St`.
+1. The user enters `update-customer 1 /n Alice /p 91234567 /addr 123 Main St`.
 2. `PharmaTracker.run()` passes the input to `Parser.parse()`.
 3. `Parser.parse()` identifies the command word `update-customer`.
-4. The parser splits the description into the 1-based index and a trailing argument string. It then calls `extractCustomerUpdateFlag()` for each of the `/n`, `/p`, and `/address` flags. Flags that are absent return `null`. If the `/allergy` flag is present, `CustomerParserUtil.extractCustomerAllergies()` parses the comma-separated value into an `ArrayList<String>`; if absent, `null` is passed, leaving the existing allergy list unchanged.
+4. The parser splits the description into the 1-based index and a trailing argument string. It then calls `extractCustomerUpdateFlag()` for each of the `/n`, `/p`, and `/addr` flags. Flags that are absent return `null`. If the `/allergy` flag is present, `CustomerParserUtil.extractCustomerAllergies()` parses the comma-separated value into an `ArrayList<String>`; if absent, `null` is passed, leaving the existing allergy list unchanged.
 5. An `UpdateCustomerCommand` is constructed with the index and the four (nullable) field values.
 6. `UpdateCustomerCommand.execute()` validates the index against `CustomerList.size()`. If no flags were supplied (all four are `null`), it prints an error and returns early.
 7. For each non-null field, the corresponding setter (`customer.setName()`, `customer.setPhone()`, `customer.setAddress()`, `customer.setAllergies()`) is called on the retrieved `Customer` object.
@@ -1075,8 +1075,8 @@ Fast, lightweight medication tracking without needing a database or internet con
 
 1. Enter: `update-customer 1 /n Alice Tan /p 91234567`
 2. **Expected:** Confirmation showing updated customer details; address is unchanged.
-3. All fields: `update-customer 1 /n Alice Tan /p 91234567 /a 10 Orchard Road` → all three fields updated.
-4. No flags supplied: `update-customer 1` → error `No fields provided to update! Use /n, /p, or /a flags.`
+3. All fields: `update-customer 1 /n Alice Tan /p 91234567 /addr 10 Orchard Road` → all three fields updated.
+4. No flags supplied: `update-customer 1` → error `No fields provided to update! Use /n, /p, /addr, or /allergy flags.`
 5. Invalid index: `update-customer 99 /n Alice` → error message for out-of-bounds index.
 
 ### Checking low stock
