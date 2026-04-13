@@ -13,7 +13,7 @@ import seedu.pharmatracker.command.RegisterCommand;
 import seedu.pharmatracker.command.SetThresholdCommand;
 import seedu.pharmatracker.exceptions.PharmaTrackerException;
 
-public class ParserTest {
+public class PharmaTrackerParserTest {
 
 
     @Test
