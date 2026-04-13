@@ -484,9 +484,13 @@ public class Ui {
         System.out.println("16. View Alert History       (alert-history)");
         System.out.println("17. Daily Dispense Log       (dispenselog | dispenselog /date YYYY-MM-DD)");
         System.out.println("--- Customer Commands ---");
-        System.out.println("18. Add Customer             (add-customer /n NAME /p PHONE /addr ADDRESS)");
+        System.out.println("18. Add Customer             "
+            + "(add-customer /id CUSTOMER_ID /n NAME /p PHONE [/addr ADDRESS] "
+            + "[/allergy ALLERGY1,ALLERGY2,...])");
         System.out.println("19. Delete Customer          (delete-customer INDEX)");
-        System.out.println("20. Update Customer          (update-customer INDEX /n NAME /p PHONE /addr ADDRESS)");
+        System.out.println("20. Update Customer          "
+            + "(update-customer INDEX [/n NAME] [/p PHONE] [/addr ADDRESS] "
+            + "[/allergy ALLERGY1,ALLERGY2,...])");
         System.out.println("21. List Customers           (list-customers)");
         System.out.println("22. Find Customer            (find-customer KEYWORD)");
         System.out.println("23. View Customer            (view-customer INDEX)");

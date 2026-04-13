@@ -33,9 +33,9 @@ Enter command: Here are the possible features of PharmaTracker:
 16. View Alert History       (alert-history)
 17. Daily Dispense Log       (dispenselog | dispenselog /date YYYY-MM-DD)
 --- Customer Commands ---
-18. Add Customer             (add-customer /n NAME /p PHONE /addr ADDRESS)
+18. Add Customer             (add-customer /id CUSTOMER_ID /n NAME /p PHONE [/addr ADDRESS] [/allergy ALLERGY1,ALLERGY2,...])
 19. Delete Customer          (delete-customer INDEX)
-20. Update Customer          (update-customer INDEX /n NAME /p PHONE /addr ADDRESS)
+20. Update Customer          (update-customer INDEX [/n NAME] [/p PHONE] [/addr ADDRESS] [/allergy ALLERGY1,ALLERGY2,...])
 21. List Customers           (list-customers)
 22. Find Customer            (find-customer KEYWORD)
 23. View Customer            (view-customer INDEX)
