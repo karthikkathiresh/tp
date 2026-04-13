@@ -214,11 +214,28 @@ public class PharmaTrackerParser {
                 break;
             }
             try {
-                String[] restockParts = description.trim().split("/q");
+                String[] restockParts = description.trim().split("/q", 2);
+                if (restockParts.length != 2) {
+                    System.out.println("Invalid format. Use: restock INDEX /q QUANTITY");
+                    break;
+                }
+
                 int restockIndex = Integer.parseInt(restockParts[0].trim());
-                int restockQuantity = Integer.parseInt(restockParts[1].trim());
+                String restockQuantityRaw = restockParts[1].trim();
+                if (!restockQuantityRaw.matches("-?\\d+")) {
+                    System.out.println("Invalid format. Use: restock INDEX /q QUANTITY");
+                    break;
+                }
+
+                int restockQuantity;
+                try {
+                    restockQuantity = Integer.parseInt(restockQuantityRaw);
+                } catch (NumberFormatException e) {
+                    System.out.println("Quantity to restock must be between 1 and 100000.");
+                    break;
+                }
                 return new RestockCommand(restockIndex, restockQuantity);
-            } catch (Exception e) {
+            } catch (NumberFormatException e) {
                 System.out.println("Invalid format. Use: restock INDEX /q QUANTITY");
                 break;
             }
