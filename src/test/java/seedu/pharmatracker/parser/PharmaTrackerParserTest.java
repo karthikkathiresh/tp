@@ -58,6 +58,17 @@ public class PharmaTrackerParserTest {
     }
 
     @Test
+    public void parser_restockOverflowQuantity_returnsNull() throws PharmaTrackerException {
+        Command c = PharmaTrackerParser.parse("restock 1 /q 2222222222222222222");
+        assertNull(c);
+    }
+
+    @Test
+    public void parser_restockNonNumericQuantity_returnsNull() throws PharmaTrackerException {
+        Command c = PharmaTrackerParser.parse("restock 1 /q abc");
+    }
+  
+    @Test
     public void parser_dispenseNegativeCustomerIndex_returnsNull() throws PharmaTrackerException {
         Command c = PharmaTrackerParser.parse("dispense 1 /q 10 /c -1");
         assertNull(c);
