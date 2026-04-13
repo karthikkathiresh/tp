@@ -2,8 +2,6 @@ package seedu.pharmatracker.data;
 
 import java.util.ArrayList;
 
-import seedu.pharmatracker.customer.Customer;
-
 /**
  * Represents the inventory of medications in the PharmaTracker application.
  * Manages the storage, addition, removal and retrieval of {@link Medication} objects.
