@@ -76,7 +76,8 @@ Adds a new medication to the inventory.
 **Mandatory Parameters:**
 * `/n NAME`: The name of the medication. 
 * `/d DOSAGE`: The strength or dosage (e.g., 500mg).
-* `/q QUANTITY`: The number of units in stock. **Must be a positive integer**.
+* `/q QUANTITY`: The number of units in stock. **Must be a non-negative integer** (0 or above).
+   A quantity of 0 is valid for registering a medication profile before the first shipment arrives.
 * `/e EXPIRY`: The expiration date. **Must be in `DD/MM/YYYY` or `DD-MM-YYYY` or `YYYY-MM-DD` format**.
 
 **Optional Parameters:**
@@ -329,7 +330,6 @@ Edits the details of an existing medication in the inventory.
 * **Updating quantities:** While you *can* use this command to overwrite the quantity (`/q`), it is highly recommended to use the `restock` and `dispense` commands for everyday inventory management, as they safely add to or subtract from the current stock.
 * **Replacing lists (Warnings/Tags):** When updating fields that can have multiple values (like `/warn` or `/t`), the existing values are **completely replaced** by the new ones.
   * *Example:* If a medication has the warnings "Drowsiness" and "Take with food", typing `update 1 /warn Avoid alcohol` will remove the first two warnings and leave *only* "Avoid alcohol".
-* **Clearing lists:** *(Optional depending on your implementation)* To clear all warnings or tags from a medication without adding new ones, type the parameter without any text after it (e.g., `update 1 /warn`).
 
 **Example Output:**
 
@@ -362,6 +362,7 @@ Format: `expiring [/days DAYS]`
 Examples:
 - `expiring`
 - `expiring /days 14`
+- `expiring /days 0` — lists only medications expiring exactly today
 
 Expected output:
 ```
@@ -483,7 +484,7 @@ Registers a new customer into the pharmacy's database.
 ```
 ____________________________________________________________
 You have added the following customer:
-  [C002] Jane Smith | Phone: 91234567 /a 123 Clementi Road, #04-56
+  [C002] Jane Smith | Phone: 91234567 | Address: 123 Clementi Road, #04-56
 You now have 9 customers in your database!
 ____________________________________________________________
 ```
@@ -532,7 +533,7 @@ PharmaTracker Customers:
 3. [C003] David Ng | Phone: 93456789 | Allergies: penicillin
 4. [C004] El Primo | Phone: 64363459 | Address: 10 Orchard Road | Allergies: penicillin
 ------------------------------------------------------
-Total Customers: 3.
+Total Customers: 4.
 ```
 
 **Example — no customers registered:**
@@ -555,7 +556,7 @@ The search is case-insensitive and supports partial matches.
 * `KEYWORD` is matched against each customer's name using a case-insensitive partial match.
 * A keyword like `tan` will return all customers whose name contains "tan" (e.g., `John Tan`, `Mary Tan`).
 * If no customers match, a message is shown and no list is displayed.
-* `KEYWORD` cannot be empty.
+* `KEYWORD` cannot be empty. Entering `find-customer` with no keyword will display an error message and no search is performed.
 
 **Examples:**
 * `find-customer John`
@@ -641,7 +642,7 @@ Examples:
 - `update-customer 1 /n Alice Tan` — updates name only
 - `update-customer 2 /p 81234567 /addr 99 Clementi Ave` — updates phone and address
 - `update-customer 1 /allergy penicillin,ibuprofen` — sets allergies to penicillin and ibuprofen
-- `update-customer 1 /n Bob /p 98765432 /address 5 Bukit Timah Road` — updates name, phone, and address
+- `update-customer 1 /n Bob /p 98765432 /addr 5 Bukit Timah Road` — updates name, phone, and address
 
 Expected output:
 ```
@@ -753,7 +754,16 @@ Format: `exit`
 
 **Q: How do I transfer my data to another computer?**
 
-A: Copy the `data/pharmatracker.txt` file from your current machine to the same relative path on the new machine before launching the application.
+A: Copy the entire `data/` folder from your current machine to the same relative path on the
+new machine before launching the application. The folder contains all persistent data files:
+
+- `data/pharmatracker.txt` — medication inventory
+- `data/customers.txt` — customer profiles and dispensing histories
+- `data/dispense_log.txt` — daily dispense log records
+- `data/users.txt` — registered user accounts
+
+Copying only `data/pharmatracker.txt` will result in the loss of all customer records,
+dispense logs, and user accounts.
 
 **Q: What date format does PharmaTracker use for expiry dates?**
 
@@ -782,11 +792,11 @@ A: PharmaTracker will display an error message and leave the inventory or custom
 | Check low stock     | `lowstock [/threshold NUMBER]` |
 | Print label         | `label INDEX` |
 | Daily dispense log  | `dispenselog [/date YYYY-MM-DD]` |
-| Add customer        | `add-customer /id ID /n NAME /p PHONE [/address ADDRESS] [/allergy ALLERGY,...]` |
+| Add customer        | `add-customer /id ID /n NAME /p PHONE [/addr ADDRESS] [/allergy ALLERGY,...]` |
 | List customers      | `list-customers` |
 | Find customer       | `find-customer KEYWORD` |
 | View customer       | `view-customer INDEX` |
-| Update customer     | `update-customer INDEX [/n NAME] [/p PHONE] [/address ADDRESS] [/allergy ALLERGY,...]` |
+| Update customer     | `update-customer INDEX [/n NAME] [/p PHONE] [/addr ADDRESS] [/allergy ALLERGY,...]` |
 | Delete customer     | `delete-customer INDEX`     |
 | Register            | `register USERNAME /p PASSWORD` |
 | Login               | `login USERNAME /p PASSWORD` |

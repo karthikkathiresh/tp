@@ -112,8 +112,8 @@ The `Command` component follows the Command pattern. Every command implements th
 The `Storage` component handles the persistence of both medications and patient records.
 * **Medication Data**: Serialized to `data/pharmatracker.txt`.
 * **Customer Data**: Serialized to `data/customers.txt`.
-  
-The system uses a pipe-delimited format for high-level attributes. For patient dispensing history, which can contain multiple entries, the data is collapsed into a single string segment using a semicolon separator (`;`) to prevent line-break corruption in the text file. Customer allergies are stored as a comma-separated string in the sixth column (e.g. `penicillin,aspirin`). Files saved before the allergy feature was introduced contain only five columns and load cleanly with an empty allergy list, ensuring backward compatibility.
+
+The system uses a pipe-delimited format for medication data. Customer data uses a tab-delimited format to prevent column corruption: dispensing history entries contain ` | ` separators internally, so a different column delimiter is required. For patient dispensing history, which can contain multiple entries, the individual records are joined using a semicolon separator (`;`) within the history column. Customer allergies are stored as a comma-separated string in the sixth tab-delimited column (e.g. `penicillin,aspirin`). Files saved before the allergy feature was introduced contain only five columns and load cleanly with an empty allergy list, ensuring backward compatibility.
 
 ### UI Component
 
@@ -566,8 +566,8 @@ find-customer KEYWORD
 1. The user enters `find-customer alice`.
 2. `PharmaTracker.run()` reads the user input and passes the raw string to `Parser.parse()`.
 3. `Parser.parse()` identifies the command word `find-customer` and extracts the remainder of
-   the input as the search keyword. If the keyword is empty, an error message is printed and
-   no command is returned.
+   the input as the search keyword. If the keyword is empty, a `PharmaTrackerException` is
+   thrown with an error message and no command object is created.
 4. A new `FindCustomerCommand(keyword)` object is constructed with the extracted keyword.
 5. `PharmaTracker.run()` calls `FindCustomerCommand.execute()`, which retrieves all customers
    from `CustomerList`.
@@ -590,7 +590,7 @@ The following sequence diagram shows the full execution flow of the `find-custom
 | Case-insensitive matching | `toLowerCase()` on both sides | Reduces user friction; staff should not need to remember the exact capitalisation of a customer's name |
 | Partial match via `contains()` | Yes | A keyword like `Ali` usefully returns `Alice`; exact-match would be too restrictive for quick lookups |
 | Search on name only | Name field | Names are the primary lookup key in a pharmacy context; searching across all fields (e.g. phone, address) would produce unintuitive results |
-| Empty keyword handled in `Parser` | `Parser` | Fails fast before a command object is created; consistent with how other commands with mandatory arguments are validated |
+| Empty keyword handled in `Parser` | `Parser` | Fails fast before a command object is created; throws `PharmaTrackerException` consistent with how other mandatory-argument commands (e.g. `view`, `find`) signal invalid input |
 
 ---
 
@@ -748,7 +748,9 @@ expiring [/days DAYS]
    - If `/days` is **absent**, a default `ExpiringCommand` is constructed using the no-argument
      constructor, which sets the window to `DEFAULT_DAYS` (30).
    - If `/days` is **present**, the parser calls `parseInt()` on the extracted value to obtain the
-     number of days, then constructs `ExpiringCommand(days)` with that value.
+     number of days. If the value is negative, a `PharmaTrackerException` is thrown. Otherwise,
+     `ExpiringCommand(days)` is constructed with that value. A value of `0` is valid and lists
+     only medications expiring exactly today.
 4. `PharmaTracker.run()` calls `ExpiringCommand.execute()`, which calls
    `Inventory.getMedications()` to obtain the full medication list.
 5. The command iterates over every `Medication`. For each one, `getExpiryDate()` is called:
@@ -772,7 +774,7 @@ The following sequence diagram shows the full execution flow of the `expiring` c
 | Skip medications with unparseable expiry | Silent skip | Prevents a single bad record from crashing the entire scan; logged for debugging |
 | Two separate result lists (`expiredMeds`, `expiringMeds`) | Yes | Allows the `Ui` to present expired and soon-to-expire items in clearly labelled sections, giving staff immediately actionable information |
 | Display delegated to `Ui.showExpiringMedications()` | `Ui` | Consistent with SRP; the command handles filtering logic only and hands display responsibility to `Ui` |
-
+| Zero-days window accepted | `days >= 0` | `expiring /days 0` is a valid query meaning "expiring today"; the UG specifies DAYS must be a non-negative integer, so 0 is explicitly permitted |
 ---
 
 ### Label Feature
@@ -1017,15 +1019,102 @@ Fast, lightweight medication tracking without needing a database or internet con
 
 ## Non-Functional Requirements
 
-{Give non-functional requirements}
+1. **Platform compatibility:** The application must run on any mainstream operating system
+   (Windows, macOS, Linux) that has Java 17 or above installed.
+
+2. **No external dependencies:** The application must function without an internet connection
+   and must not require any third-party libraries, databases, or external services beyond the
+   Java Standard Library.
+
+3. **Data persistence:** All data (medications, customers, dispense logs, user accounts, and
+   alert history) must be automatically saved to local text files after every command and
+   restored correctly on the next startup, with no manual save step required from the user.
+
+4. **Usability:** A pharmacist or pharmacy technician who is comfortable with CLI applications
+   should be able to learn the full command set within 30 minutes of using the `help` command
+   and the User Guide.
+
+5. **Data integrity:** The application must not corrupt existing records when a command fails
+   (e.g. invalid index, insufficient stock, allergy conflict). Any failed command must leave
+   all data in its pre-command state.
+
+6. **Security:** User passwords must not be stored in plaintext. All sensitive operations
+   (inventory management, customer records, dispensing) must require an authenticated session.
+
+7. **Recoverability:** If a single line in any data file is malformed or corrupted, the
+   application must skip that entry and continue loading the rest of the file, rather than
+   crashing or refusing to start.
+
+8. **Auditability:** Every successful dispense event must be automatically logged with a
+   timestamp, medication name, dosage, quantity, and patient name (if linked), and this log
+   must persist across sessions.
+
+9. **Maintainability:** The codebase must follow the coding standard enforced by the project's
+    Checkstyle configuration, and all new commands must follow the existing Command pattern so
+    that features can be added without modifying the core execution loop.
 
 ## Glossary
 
-* *glossary item* - Definition
+* **Allergen** - A substance that a customer has a recorded sensitivity to. Stored in lowercase
+  as part of a customer's profile and checked against medication names during every dispense
+  operation that is linked to a customer.
+
+* **Authentication** - The process of verifying a user's identity via a registered username and
+  password before granting access to pharmacy operations. Managed by `AuthService`.
+
+* **CLI (Command-Line Interface)** - The text-based interface through which users interact with
+  PharmaTracker by typing commands and reading printed output in a terminal window.
+
+* **Command** - An action entered by the user (e.g. `add`, `dispense`, `view-customer`). Each
+  command is represented internally as a subclass of the abstract `Command` class and executed
+  via its `execute(Inventory, Ui, CustomerList)` method.
+
+* **Customer** - A registered patient or pharmacy client whose profile includes a unique ID,
+  name, phone number, optional address, known allergies, and a dispensing history. Stored in
+  `data/customers.txt`.
+
+* **Customer ID** - A user-defined unique alphanumeric identifier for a customer (e.g. `C001`).
+  Must be unique across all registered customers; duplicate IDs are rejected at registration.
+
+* **Dispense** - The act of issuing a quantity of medication from the inventory, reducing its
+  stock count. Can optionally be linked to a customer to record the event in their dispensing
+  history.
+
+* **Dispense Log** - A time-stamped record of all successful dispense events for a given date.
+  Persisted to `data/dispense_log.txt` and viewable via the `dispenselog` command.
+
+* **Dispensing History** - A per-customer list of medication records showing what has been
+  dispensed to that customer over time. Each entry contains the medication name, dosage, and
+  quantity dispensed.
+
+* **Dosage** - The strength or concentration of a medication (e.g. `500mg`, `15mg/5ml`).
+  Stored as a free-text string alongside the medication name.
+
+* **Dosage Form** - The physical presentation of a medication (e.g. `Tablet`, `Capsule`,
+  `Syrup`, `Ointment`). An optional field on a medication record.
+
+* **Expiry Date** - The date after which a medication is considered expired and cannot be
+  dispensed. Accepted in `DD/MM/YYYY`, `DD-MM-YYYY`, or `YYYY-MM-DD` format at input; stored
+  internally as `YYYY-MM-DD`.
+
+* **Flag** - A prefix token used in command arguments to identify a specific parameter
+  (e.g. `/n` for name, `/q` for quantity, `/allergy` for allergens). Flags are parsed by
+  `PharmaTrackerParser` and its associated utility classes.
+
+* **Index** - The 1-based position of a medication or customer as displayed in a list command.
+  Used to target a specific record for operations such as `view`, `delete`, `dispense`, and
+  `update`.
+
+* **Inventory** - The in-memory collection of all `Medication` records currently tracked by
+  the system. Persisted to `data/pharmatracker.txt`.
+
+* **Low Stock** - A state where a medication's current quantity falls strictly below its
+  configured minimum stock threshold. Triggers a `[LOW STOCK]` flag in `list` and an automatic
+  alert via `RestockAlertService`.
+
+* **Medication** - A drug record in
 
 ## Instructions for manual testing
-
-{Give instructions on how to do a manual product testing e.g., how to load sample data to be used for testing}
 
 ### Launching the application
 
