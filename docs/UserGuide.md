@@ -352,7 +352,7 @@ Useful when a new shipment of medication arrives.
 
 Edits the details of an existing medication in the inventory.
 
-**Format:** `update INDEX [/n NAME] [/d DOSAGE] [/q QUANTITY] [/e EXPIRY] [/t TAG] [/df DOSAGE_FORM] [/mfr MANUFACTURER] [/dir DIRECTIONS] [/freq FREQUENCY] [/route ROUTE] [/max MAX_DAILY_DOSE] [/warn WARNING]...`
+**Format:** `update INDEX [/n NAME] [/d DOSAGE] [/q QUANTITY] [/e EXPIRY] [/t TAG] [/df DOSAGE_FORM] [/mfr MANUFACTURER] [/dir DIRECTIONS] [/freq FREQUENCY] [/route ROUTE] [/max MAX_DAILY_DOSE] [/warn WARNING]`
 
 **Rules & Constraints:**
 * Updates the medication at the specified `INDEX`.
@@ -818,7 +818,7 @@ dispense logs, and user accounts.
 
 **Q: What date format does PharmaTracker use for expiry dates?**
 
-A: Expiry dates must be entered in `dd/MM/yyyy` format (e.g. `31/12/2026`).
+A: Expiry dates must be entered in `DD/MM/YYYY`, `DD-MM-YYYY`, or `YYYY-MM-DD` format (e.g., `31/12/2026`, `31-12-2026`, or `2026-12-31`). Please note that the system will reject dates that are in the past or more than 10 years into the future.
 
 **Q: What happens if I enter an invalid index?**
 
@@ -830,8 +830,8 @@ A: PharmaTracker will display an error message and leave the inventory or custom
 
 | Command             | Format |
 |---------------------|--------|
-| Add medication      | `add /n NAME /d DOSAGE /q QUANTITY /e EXPIRY [/t TAG] [...]` |
-| Update medication   | `update INDEX [/n NAME] [/d DOSAGE] [/q QUANTITY] [/e EXPIRY]...` |
+| Add medication      | `add /n NAME /d DOSAGE /q QUANTITY /e EXPIRY [/t TAG] [/df DOSAGE_FORM] [/mfr MANUFACTURER] [/dir DIRECTIONS] [/freq FREQUENCY] [/route ROUTE] [/max MAX_DAILY_DOSE] [/warn WARNING]` |
+| Update medication   | `update INDEX [/n NAME] [/d DOSAGE] [/q QUANTITY] [/e EXPIRY] [/t TAG] [/df DOSAGE_FORM] [/mfr MANUFACTURER] [/dir DIRECTIONS] [/freq FREQUENCY] [/route ROUTE] [/max MAX_DAILY_DOSE] [/warn WARNING]` |
 | List medications    | `list` |
 | Find medication     | `find KEYWORD` |
 | View medication     | `view INDEX` |

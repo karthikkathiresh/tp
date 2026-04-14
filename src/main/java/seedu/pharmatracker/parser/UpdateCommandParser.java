@@ -38,7 +38,7 @@ public class UpdateCommandParser implements Parser<UpdateCommand> {
             String uName = ParserUtil.extractOptionalFlag(updateArgs, MedicationParserUtil.FLAG_NAME);
             String uDosage = ParserUtil.extractOptionalFlag(updateArgs, MedicationParserUtil.FLAG_DOSAGE);
             Integer uQuantity = MedicationParserUtil.extractOptionalQuantity(updateArgs);
-            String uExpiry = ParserUtil.extractOptionalFlag(updateArgs, MedicationParserUtil.FLAG_EXPIRY_DATE);
+            String uExpiry = MedicationParserUtil.extractOptionalExpiryDate(updateArgs);
             String uTag = ParserUtil.extractOptionalFlag(updateArgs, MedicationParserUtil.FLAG_TAG);
             String uDosageForm = ParserUtil.extractOptionalFlag(updateArgs, MedicationParserUtil.FLAG_DOSAGE_FORM);
             String uManufacturer = ParserUtil.extractOptionalFlag(updateArgs, MedicationParserUtil.FLAG_MANUFACTURER);
