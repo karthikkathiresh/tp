@@ -25,7 +25,7 @@ Extended the existing `dispense` command with an optional `/c CUSTOMER_INDEX` fl
 
 **Technical Implementation:**
 - Added an overloaded constructor to `DispenseCommand` using a sentinel value (`NO_CUSTOMER = -1`) to distinguish linked and unlinked dispenses without nullable primitives or autoboxing overhead.
-- Implemented a pre-decrement validation sequence: medication index → stock sufficiency → customer index. This ordering ensures no state is modified if any validation fails, preserving atomicity between the stock update and the customer history write.
+- Implemented a pre-decrement validation guard sequence (quantity, inventory state, medication index, expiry, stock sufficiency, customer index, and allergy conflict). This ordering ensures no state is modified if any validation fails, preserving atomicity between the stock update and the customer history write.
 - Updated `Parser` to detect and extract the optional `/c` flag.
 - Wrote 4 new JUnit tests covering customer linking, confirmation output, invalid customer index rollback, and the no-customer baseline (10 tests total, all passing).
 
@@ -66,6 +66,47 @@ Implemented two critical bug fixes to ensure the auto restock alert feature beha
   - Builds a list of orphaned alert keys and removes them atomically.
   - Preserves deleted alert data in the alert history for audit purposes.
 
+#### 6. Help and Exit Command Implementation (`help`, `exit`)
+
+Implemented and refined `help` and `exit` command behavior, including follow-up fixes and consistency updates with command handling and output flow.
+
+**Scope:**
+- Added and updated command logic for help/exit workflows.
+- Synced command behavior with documentation and sequence diagrams (`HelpCommandSequence.puml`, `ExitCommandSequence.puml`).
+
+#### 7. Storage Integration and Refactoring (Partial)
+
+Contributed to storage integration work (partial ownership), including package-level refactoring and reliability updates tied to load/save operations.
+
+**Scope:**
+- Contributed to storage structure updates and related fixes.
+- Documented lifecycle interactions across inventory, customers, auth/session, alerts, and dispense log via `StorageSequence.puml`.
+
+#### 8. Authentication Flow and Access-Control Hardening
+
+Improved authentication behavior by tightening command access control and ensuring protected-command checks are enforced earlier in the command pipeline.
+
+**Scope:**
+- Strengthened auth-gating behavior for protected commands.
+- Added/updated documentation and sequence flow coverage (`AuthenticationSequence.puml`).
+
+#### 9. Dispense and Parser Robustness Improvements
+
+Extended follow-up robustness work for dispense-related parsing and execution beyond the initial `/c` feature.
+
+**Scope:**
+- Standardized flag behavior (`/q`, `/c`) and added parser regression coverage.
+- Rejected non-positive customer indices in parser validation.
+- Added safeguards such as blocking dispense of expired medication and improved dispense history output details.
+
+#### 10. Restock and Inventory Consistency Fixes
+
+Improved restock and inventory consistency behavior through defensive checks and cross-command alignment fixes.
+
+**Scope:**
+- Added boundary handling for restock quantity overflow.
+- Aligned low-stock threshold behavior consistently across relevant commands.
+
 ---
 
 ### Contributions to the User Guide
@@ -76,6 +117,10 @@ Implemented two critical bug fixes to ensure the auto restock alert feature beha
 | `list-customers` command | Format, both examples (with and without customers), and expected output blocks |
 | `restock` command | Format, both examples, and expected output blocks |
 | `dispense` command | Extended format with optional `/c` flag, both examples (with and without customer linking), expected output blocks, and error behaviour description |
+| Authentication commands | Updated UG content for `register`, `login`, and `logout` flows and command usage consistency |
+| Auto restock alert commands | Added and refined UG documentation for `alerts`, `ack-alert`, and `alert-history` command behavior |
+| Help and command-reference fixes | Corrected syntax/help references and aligned command naming/flags with runtime behavior |
+| Output-format alignment updates | Synced UG examples for `list` and `list-customers` with actual displayed output fields/format |
 | Command Summary table | Updated with all implemented commands |
 
 ---
@@ -88,8 +133,12 @@ Implemented two critical bug fixes to ensure the auto restock alert feature beha
 | **List Customers** | Full "How It Works" walkthrough, sequence diagram (`ListCustomersCommandSequence.puml`), and Design Considerations table |
 | **Restock Medication** | Full "How It Works" walkthrough, sequence diagram (`RestockCommandSequence.puml`), and Design Considerations table |
 | **Dispense with Customer Linking** | Full "How It Works" walkthrough, sequence diagram (`DispenseCommandSequence.puml`), and Design Considerations table (5 entries covering flag design, sentinel value rationale, pre-decrement guard, record storage location, and constructor overloading strategy) |
+| **Authentication** | Documented register/login/logout execution flow and added sequence diagram (`AuthenticationSequence.puml`) |
+| **Auto Restock Alerts** | Documented alert lifecycle edge cases (empty-inventory suppression + orphaned-alert cleanup) and added sequence diagram (`AutoRestockAlertSequence.puml`) |
+| **Help and Exit** | Added sequence diagrams for `help` and `exit` flows (`HelpCommandSequence.puml`, `ExitCommandSequence.puml`) |
+| **Storage (Partial)** | Contributed partial storage integration/refactoring work and documented the load/save lifecycle interactions across inventory, customers, auth/session, alerts, and dispense log (`StorageSequence.puml`) |
 
-**UML Sequence Diagrams Added:**
+**UML Sequence Diagrams Added/Updated:**
 - `ListCommandSequence.puml`
 - `ListCustomersCommandSequence.puml`
 - `RestockCommandSequence.puml`
@@ -106,6 +155,7 @@ Implemented two critical bug fixes to ensure the auto restock alert feature beha
 
 - Maintained `DispenseCommand.java` as the feature evolved across multiple iterations, keeping Javadoc consistent with team conventions.
 - Ensured backward compatibility of the `dispense` command so existing behaviour and existing tests were unaffected by the new `/c` flag.
+- Contributed implementation and follow-up hardening work for help/exit, partial storage integration, authentication gating, dispense/parser robustness, and restock boundary handling; also produced supporting DG/UG/diagram updates.
 
 ### Review / Mentoring Contributions
 
@@ -127,9 +177,9 @@ The `list-customers` command retrieves and displays all registered customers wit
 1. The user enters `list-customers`.
 2. `PharmaTracker.run()` reads the input and passes it to `Parser.parse()`.
 3. `Parser.parse()` identifies the command word `list-customers` and returns a new `ListCustomersCommand` object — no arguments are required.
-4. `PharmaTracker.run()` calls `ListCustomersCommand.execute()`, which calls `CustomerList.getAllCustomers()` to retrieve the full customer list.
-5. The result is handled via an `alt` branch:
-   - If the list is empty, `"No customers registered yet."` is printed and the command returns early.
+4. `PharmaTracker.run()` calls `ListCustomersCommand.execute()`, which delegates display to `Ui.printCustomerList(customerList)`.
+5. `Ui.printCustomerList(...)` retrieves customers and handles both paths:
+   - If the list is empty, `"No customers registered yet."` is printed.
    - Otherwise, each `Customer` is printed with a 1-based index, their customer ID, name, and phone number, followed by a total count.
 
 ![Sequence diagram showing the execution flow of the List Customers Command](../images/ListCustomersCommandSequence.png)
@@ -318,6 +368,8 @@ Reduces the stock of a medication by the specified quantity. Optionally links th
 - Dispensing fails if the requested quantity exceeds current stock.
 - `/c CUSTOMER_INDEX` is optional. If omitted, no customer record is updated.
 - If `/c CUSTOMER_INDEX` is out of range, an error is shown and stock is unchanged.
+
+Note: The following output snippets are simplified excerpts. Actual CLI output may include divider lines added by `Ui.printMessage(...)`.
 
 **Example without customer linking:**
 
