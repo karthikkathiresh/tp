@@ -52,14 +52,20 @@ activate CustParserUtil
 CustParserUtil --> AddCustParser : address
 deactivate CustParserUtil
 
+AddCustParser -> CustParserUtil : extractCustomerAllergies(description)
+activate CustParserUtil
+CustParserUtil --> AddCustParser : allergies
+deactivate CustParserUtil
+
 create AddCustCmd
-AddCustParser -> AddCustCmd : new AddCustomerCommand(id, name, phone, address)
+AddCustParser -> AddCustCmd : new AddCustomerCommand(id, name, phone, address, allergies)
 activate AddCustCmd
 AddCustCmd --> AddCustParser : c
 deactivate AddCustCmd
 
 AddCustParser --> PTP : c
 deactivate AddCustParser
+destroy AddCustParser
 
 PTP --> PharmaTracker : c
 deactivate PTP
@@ -67,26 +73,40 @@ deactivate PTP
 PharmaTracker -> AddCustCmd : execute(inv, ui, customerList)
 activate AddCustCmd
 
-create Customer
-AddCustCmd -> Customer : new Customer(id, name, phone, address)
-activate Customer
-Customer --> AddCustCmd : customer
-deactivate Customer
-
-AddCustCmd -> CustomerList : addCustomer(customer)
+AddCustCmd -> CustomerList : containsCustomerId(id)
 activate CustomerList
-CustomerList --> AddCustCmd
+CustomerList --> AddCustCmd : isDuplicate
 deactivate CustomerList
 
-AddCustCmd -> Ui : printAddedCustomerMessage(customer, customerList)
-activate Ui
-Ui --> AddCustCmd
-deactivate Ui
+alt [isDuplicate == true]
+    AddCustCmd -> AddCustCmd : throw PharmaTrackerException
+else [valid new customer]
+    create Customer
+    AddCustCmd -> Customer : new Customer(id, name, phone, address)
+    activate Customer
+    Customer --> AddCustCmd : customer
+    deactivate Customer
+
+    AddCustCmd -> Customer : setAllergies(allergies)
+    activate Customer
+    Customer --> AddCustCmd
+    deactivate Customer
+
+    AddCustCmd -> CustomerList : addCustomer(customer)
+    activate CustomerList
+    CustomerList --> AddCustCmd
+    deactivate CustomerList
+
+    AddCustCmd -> Ui : printAddedCustomerMessage(customer, customerList)
+    activate Ui
+    Ui --> AddCustCmd
+    deactivate Ui
+end
 
 AddCustCmd --> PharmaTracker
 deactivate AddCustCmd
-AddCustCmd -[hidden]-> AddCustParser
 destroy AddCustCmd
 
+PharmaTracker --> User : output
 deactivate PharmaTracker
 @enduml
