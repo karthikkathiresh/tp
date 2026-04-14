@@ -29,12 +29,12 @@ activate UpdateParser
 UpdateParser --> PTP : parser
 deactivate UpdateParser
 
-PTP -> UpdateParser : parse(description)
+PTP -> UpdateParser : parse("1 /q 50")
 activate UpdateParser
 
-UpdateParser -> MedParserUtil : extractOptionalQuantity(description)
+UpdateParser -> MedParserUtil : extractOptionalQuantity("1 /q 50")
 activate MedParserUtil
-MedParserUtil --> UpdateParser : quantity
+MedParserUtil --> UpdateParser : quantity = 50
 deactivate MedParserUtil
 
 note right of UpdateParser
@@ -51,6 +51,7 @@ deactivate UpdateCommand
 
 UpdateParser --> PTP : u
 deactivate UpdateParser
+destroy UpdateParser
 
 PTP --> PharmaTracker : u
 deactivate PTP
@@ -63,7 +64,7 @@ activate Inventory
 Inventory --> UpdateCommand : med
 deactivate Inventory
 
-opt if quantity != null
+opt [quantity != null]
     UpdateCommand -> Medication : setQuantity(50)
     activate Medication
     Medication --> UpdateCommand
@@ -83,8 +84,8 @@ deactivate Ui
 
 UpdateCommand --> PharmaTracker
 deactivate UpdateCommand
-UpdateCommand -[hidden]-> UpdateParser
 destroy UpdateCommand
 
+PharmaTracker --> User : output
 deactivate PharmaTracker
 @enduml

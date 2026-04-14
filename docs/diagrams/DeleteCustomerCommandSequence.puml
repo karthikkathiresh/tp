@@ -5,7 +5,7 @@ skinparam maxMessageSize 100
 actor User
 participant ":PharmaTracker" as PharmaTracker
 participant ":Ui" as Ui
-participant ":PharmaTrackerParser" as PTP
+participant "<<class>>\nPharmaTrackerParser" as PTP
 participant "d:DeleteCustomerCommand" as DeleteCustCmd
 participant "customerList:CustomerList" as CustomerList
 
@@ -37,31 +37,34 @@ deactivate PTP
 PharmaTracker -> DeleteCustCmd : execute(inv, ui, customerList)
 activate DeleteCustCmd
 
-note right of DeleteCustCmd
-  The string description "1" is parsed
-  into an integer here. If invalid, an
-  error is printed and execution stops.
-end note
-
-DeleteCustCmd -> CustomerList : getCustomer(0)
+DeleteCustCmd -> CustomerList : getCustomerCount()
 activate CustomerList
-CustomerList --> DeleteCustCmd : customer
+CustomerList --> DeleteCustCmd : count
 deactivate CustomerList
 
-DeleteCustCmd -> CustomerList : removeCustomer(customer)
-activate CustomerList
-CustomerList --> DeleteCustCmd
-deactivate CustomerList
+alt [count == 0 or invalid index]
+    DeleteCustCmd -> DeleteCustCmd : throw PharmaTrackerException
+else [valid index]
+    DeleteCustCmd -> CustomerList : getCustomer(0)
+    activate CustomerList
+    CustomerList --> DeleteCustCmd : customer
+    deactivate CustomerList
 
-DeleteCustCmd -> Ui : printDeletedCustomerMessage(customer, customerList)
-activate Ui
-Ui --> DeleteCustCmd
-deactivate Ui
+    DeleteCustCmd -> CustomerList : removeCustomer(customer)
+    activate CustomerList
+    CustomerList --> DeleteCustCmd
+    deactivate CustomerList
+
+    DeleteCustCmd -> Ui : printDeletedCustomerMessage(customer, customerList)
+    activate Ui
+    Ui --> DeleteCustCmd
+    deactivate Ui
+end
 
 DeleteCustCmd --> PharmaTracker
 deactivate DeleteCustCmd
-DeleteCustCmd -[hidden]-> PTP
 destroy DeleteCustCmd
 
+PharmaTracker --> User : output
 deactivate PharmaTracker
 @enduml

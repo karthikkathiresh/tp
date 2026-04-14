@@ -92,15 +92,29 @@ opt if optional attributes present
     end note
 end
 
-AddCommand -> Inventory : addMedication(med)
+' --- NEW LOGIC: Duplicate Check ---
+AddCommand -> Inventory : containsMedication(med)
 activate Inventory
-Inventory --> AddCommand
+Inventory --> AddCommand : isDuplicate
 deactivate Inventory
 
-AddCommand -> Ui : printAddedMessage(med, inv)
-activate Ui
-Ui --> AddCommand
-deactivate Ui
+alt isDuplicate == true
+    AddCommand -> Ui : showError("Medication already exists!")
+    activate Ui
+    Ui --> AddCommand
+    deactivate Ui
+else isDuplicate == false
+    AddCommand -> Inventory : addMedication(med)
+    activate Inventory
+    Inventory --> AddCommand
+    deactivate Inventory
+
+    AddCommand -> Ui : printAddedMessage(med, inv)
+    activate Ui
+    Ui --> AddCommand
+    deactivate Ui
+end
+' ----------------------------------
 
 AddCommand --> PharmaTracker
 deactivate AddCommand

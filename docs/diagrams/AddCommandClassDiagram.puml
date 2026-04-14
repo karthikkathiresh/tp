@@ -1,4 +1,7 @@
 @startuml
+skinparam defaultFontSize 15
+skinparam nodesep 50
+skinparam ranksep 50
 skinparam classAttributeIconSize 0
 skinparam ArrowFontStyle plain
 hide empty members
@@ -14,32 +17,26 @@ class AddCommand {
     - dosage: String
     - quantity: int
     - expiryDate: String
-    - tag: String
-    - dosageForm: String
-    - manufacturer: String
-    - directions: String
-    - frequency: String
-    - route: String
-    - maxDailyDose: String
-    - warnings: ArrayList<String>
+    .. optional fields omitted ..
 
     + AddCommand(...)
     + execute(inventory: Inventory, ui: Ui, customerList: CustomerList)
 }
 
 class Medication {
-    + Medication(name: String, dosage: String, quantity: int, expiryDate: String, tag: String)
-    + setDosageForm(dosageForm: String)
-    + setManufacturer(manufacturer: String)
-    + addWarning(warning: String)
-    ' ... other setters
+    - name: String
+    - dosage: String
+    - quantity: int
+    - expiryDate: String
+
+    + Medication(...)
 }
 
 class Inventory {
     - medications: ArrayList<Medication>
-    - medicationCount: int
+
+    + containsMedication(newMed: Medication): boolean
     + addMedication(medication: Medication)
-    + getMedicationCount(): int
 }
 
 class Ui {
@@ -48,12 +45,11 @@ class Ui {
 
 class CustomerList {
     - customers: ArrayList<Customer>
-    - customerCount: int
 }
 
 Command <|-- AddCommand : inherits
 AddCommand ..> Medication : creates >
-AddCommand ..> Inventory : adds to >
+AddCommand ..> Inventory : checks / adds to >
 AddCommand ..> Ui : updates >
 AddCommand ..> CustomerList : receives >
 

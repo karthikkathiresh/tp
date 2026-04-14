@@ -1,56 +1,90 @@
 @startuml
 skinparam ArrowFontStyle plain
+skinparam maxMessageSize 100
 
 actor User
 participant ":PharmaTracker" as PharmaTracker
 participant ":Ui" as Ui
-participant "<<class>>\nParser" as Parser
+participant ":PharmaTrackerParser" as PTP
+participant "parser:DeleteCommandParser" as DeleteParser
 participant "d:DeleteCommand" as DeleteCommand
 participant ":Inventory" as Inventory
 participant ":Storage" as Storage
 
-User -> Ui : input commandString
+User -> PharmaTracker : "delete 5"
+activate PharmaTracker
+
+PharmaTracker -> Ui : readCommand()
 activate Ui
 Ui --> PharmaTracker : fullCommand
 deactivate Ui
 
-PharmaTracker -> Parser : parse(fullCommand)
-activate Parser
+PharmaTracker -> PTP : parse(fullCommand)
+activate PTP
+
+create DeleteParser
+PTP -> DeleteParser : new DeleteCommandParser()
+activate DeleteParser
+DeleteParser --> PTP : parser
+deactivate DeleteParser
+
+PTP -> DeleteParser : parse("5")
+activate DeleteParser
+
+note right of DeleteParser
+  Parses string to integer
+  and converts to 0-based index
+end note
 
 create DeleteCommand
-Parser -> DeleteCommand : new DeleteCommand(targetIndexString)
+DeleteParser -> DeleteCommand : new DeleteCommand(targetIndex)
 activate DeleteCommand
-DeleteCommand --> Parser : d
+DeleteCommand --> DeleteParser : d
 deactivate DeleteCommand
 
-Parser --> PharmaTracker : d
-deactivate Parser
+DeleteParser --> PTP : d
+deactivate DeleteParser
+
+PTP --> PharmaTracker : d
+deactivate PTP
 
 PharmaTracker -> DeleteCommand : execute(inventory, ui, customerList)
 activate DeleteCommand
 
-DeleteCommand -> Inventory : getMedication(zeroBasedIndex)
-activate Inventory
-Inventory --> DeleteCommand : med
-deactivate Inventory
+' --- NEW LOGIC: Validation Check ---
+alt isValidIndex (index >= 0 && index < size)
+    DeleteCommand -> Inventory : getMedication(targetIndex)
+    activate Inventory
+    Inventory --> DeleteCommand : med
+    deactivate Inventory
 
-DeleteCommand -> Inventory : removeMedication(med)
-activate Inventory
-Inventory --> DeleteCommand
-deactivate Inventory
+    DeleteCommand -> Inventory : removeMedication(med)
+    activate Inventory
+    Inventory --> DeleteCommand
+    deactivate Inventory
 
-DeleteCommand -> Ui : printDeletedMessage(med, inventory)
-activate Ui
-Ui --> DeleteCommand
-deactivate Ui
+    DeleteCommand -> Ui : printDeletedMessage(med, inventory)
+    activate Ui
+    Ui --> DeleteCommand
+    deactivate Ui
+else isInvalidIndex
+    DeleteCommand -> Ui : showError("Invalid index!")
+    activate Ui
+    Ui --> DeleteCommand
+    deactivate Ui
+end
+' -----------------------------------
 
 DeleteCommand --> PharmaTracker
 deactivate DeleteCommand
+DeleteCommand -[hidden]-> DeleteParser
 destroy DeleteCommand
 
+' Saving to Storage
 PharmaTracker -> Storage : save(inventory)
 activate Storage
 Storage --> PharmaTracker
 deactivate Storage
 
+deactivate PharmaTracker
 @enduml
