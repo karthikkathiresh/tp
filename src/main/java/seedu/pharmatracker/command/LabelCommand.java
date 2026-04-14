@@ -43,30 +43,32 @@ public class LabelCommand extends Command {
 
         if (inventory.getMedications().isEmpty()) {
             logger.log(Level.WARNING, "Attempted to print label from empty inventory.");
-            System.out.println("Inventory is empty.");
+            ui.printMessage("Inventory is empty.");
             return;
         }
         if (index < 1 || index > inventory.getMedications().size()) {
             logger.log(Level.WARNING, "Invalid index provided: " + index
                 + ". Valid range: 1 to " + inventory.getMedications().size());
-            System.out.println("Invalid index. Please enter a number between 1 and "
+            ui.printMessage("Invalid index. Please enter a number between 1 and "
                     + inventory.getMedications().size() + ".");
             return;
         }
 
         Medication med = inventory.getMedication(index - 1);
 
-        System.out.println(DIVIDER);
-        System.out.println("Medication Label " + index);
-        System.out.println(DIVIDER);
-        System.out.println("Name   : " + med.getName());
-        System.out.println("Dosage : " + med.getDosage());
-        System.out.println("Expiry : " + med.getExpiryDate());
+        StringBuilder label = new StringBuilder();
+        label.append(DIVIDER).append("\n");
+        label.append("Medication Label ").append(index).append("\n");
+        label.append(DIVIDER).append("\n");
+        label.append("Name   : ").append(med.getName()).append("\n");
+        label.append("Dosage : ").append(med.getDosage()).append("\n");
+        label.append("Expiry : ").append(med.getExpiryDate());
         String tag = med.getTag();
         if (tag != null && !tag.isEmpty()) {
-            System.out.println("Tag    : " + tag);
+            label.append("\nTag    : ").append(tag);
         }
-        System.out.println(DIVIDER);
+        label.append("\n").append(DIVIDER);
+        ui.printMessage(label.toString());
 
         logger.log(Level.INFO, "Successfully executed LabelCommand.");
     }

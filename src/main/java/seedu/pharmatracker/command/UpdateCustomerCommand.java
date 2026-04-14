@@ -67,13 +67,13 @@ public class UpdateCustomerCommand extends Command {
         logger.log(Level.INFO, "Starting execution of UpdateCustomerCommand for index: " + index);
 
         if (index < 1 || index > customerList.size()) {
-            System.out.println("Invalid index. Please enter a number between 1 and "
+            ui.printMessage("Invalid index. Please enter a number between 1 and "
                     + customerList.size() + ".");
             return;
         }
 
         if (name == null && phone == null && address == null && allergies == null) {
-            System.out.println("No fields provided to update! Use /n, /p, /addr, or /allergy flags.");
+            ui.printMessage("No fields provided to update! Use /n, /p, /addr, or /allergy flags.");
             return;
         }
 

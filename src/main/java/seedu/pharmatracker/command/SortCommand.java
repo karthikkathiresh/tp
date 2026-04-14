@@ -44,7 +44,7 @@ public class SortCommand extends Command {
         // Check if inventory is empty
         if (medicationList.isEmpty()) {
             logger.log(Level.INFO, "Inventory is empty");
-            System.out.println("Inventory is empty.");
+            ui.printMessage("Inventory is empty.");
             return;
         }
 
@@ -70,11 +70,12 @@ public class SortCommand extends Command {
         logger.log(Level.INFO, "Medications sorted successfully");
 
         // Display sorted medications
-        System.out.println("Medications sorted by expiry date:");
+        StringBuilder sorted = new StringBuilder("Medications sorted by expiry date:");
         for (int i = 0; i < medicationList.size(); i++) {
             Medication medication = medicationList.get(i);
             assert medication != null : "Medication should not be null in display loop";
-            System.out.println((i + 1) + ". " + medication.toString());
+            sorted.append("\n").append(i + 1).append(". ").append(medication.toString());
         }
+        ui.printMessage(sorted.toString());
     }
 }
