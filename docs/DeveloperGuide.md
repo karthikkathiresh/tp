@@ -299,6 +299,8 @@ update INDEX [/n NAME] [/d DOSAGE] [/q QUANTITY] [/e EXPIRY] [/t TAG] [/df DOSAG
 10. Finally, `Ui.printUpdatedMedicationMessage()` is called with the updated `Medication` and the `changes` list to generate a dynamic success message showing exactly what was modified.
 
 
+![Sequence diagram showing the execution flow of the Update Command](images/UpdateCommandSequence.png)
+
 ---
 ### List Medication Feature
 
