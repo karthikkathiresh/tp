@@ -47,12 +47,11 @@ PharmaTracker is a command-line application for pharmacy staff to manage medicat
 
 ## Quick Start
 1. Ensure Java 17 or above is installed on your computer.
-2. Download the latest `pharmatracker.jar` from the releases page.
-3. Open a terminal in the folder containing the jar file.
-4. Run `java -jar pharmatracker.jar` to start the application.
-5. Type a command and press Enter to execute it. Type `help` to see available commands.
-
-> **Note for developers:** Run `.\gradlew run` (Windows) or `./gradlew run` (macOS/Linux) from the project root to launch the app.
+2. Download the latest `PharmaTracker.jar` from the [GitHub releases pages](https://github.com/AY2526S2-CS2113-T10-3/tp/releases).
+3. Open a terminal in the folder containing the Jar file.
+4. Run `java -jar PharmaTracker.jar` to start the application.
+5. You should be able to view the welcome message. 
+6. Type a command and press Enter to execute it. Type `help` to see available commands.
 
 ---
 
@@ -73,35 +72,57 @@ Adds a new medication to the inventory.
 
 **Format:** `add /n NAME /d DOSAGE /q QUANTITY /e EXPIRY [/t TAG] [/df DOSAGE_FORM] [/mfr MANUFACTURER] [/dir DIRECTIONS] [/freq FREQUENCY] [/route ROUTE] [/max MAX_DAILY_DOSE] [/warn WARNING]`
 
+**Important Notes on Command Format:**
+- **Strict Mandatory Order:** The mandatory flags (`/n`, `/d`, `/q`, `/e`) **must** be entered in the exact order shown in the format above. 
+- **Flexible Optional Order:** Any optional flags you choose to include can be entered in any order, as long as they are placed _after_ the mandatory fields. 
+- **Duplicate Medications:** The system prevents the entry of exact duplicates. A medication is only flagged as a duplicate if **all** fields (including the expiry date) match an existing record exactly. If you add the same medication with a _different_ expiry date, the system will successfully accept it as a new, separate batch.
+
 **Mandatory Parameters:**
-* `/n NAME`: The name of the medication. 
-* `/d DOSAGE`: The strength or dosage (e.g., 500mg).
-* `/q QUANTITY`: The number of units in stock. **Must be a non-negative integer** (0 or above).
-   A quantity of 0 is valid for registering a medication profile before the first shipment arrives.
-* `/e EXPIRY`: The expiration date. **Must be in `DD/MM/YYYY` or `DD-MM-YYYY` or `YYYY-MM-DD` format**.
+- `/n NAME`: The name of the medication. 
+- `/d DOSAGE`: The strength or dosage (e.g., 500mg).
+- `/q QUANTITY`: The number of units in stock. **Must be a non-negative integer** (0 or above).
+- `/e EXPIRY`: The expiration date. **Must be in `DD/MM/YYYY` or `DD-MM-YYYY` or `YYYY-MM-DD` format**. The date **cannot be in the past** and must be **within 10 years** from the current date.
 
 **Optional Parameters:**
-* `/t TAG`: A category to group the medication (e.g., `antibiotic`, `painkiller`).
-* `/df DOSAGE_FORM`: The physical form of the medication (e.g., `Tablet`, `Syrup`, `Ointment`).
-* `/mfr MANUFACTURER`: The company that produces the medication (e.g., `Pfizer`, `GSK`).
-* `/dir DIRECTIONS`: Specific instructions for consumption (e.g., `Take after meals`, `Dissolve in water`).
-* `/freq FREQUENCY`: How often the medication should be taken (e.g., `Twice a day`, `Every 8 hours`).
-* `/route ROUTE`: The method of administration (e.g., `Oral`, `Topical`, `Intravenous`).
-* `/max MAX_DAILY_DOSE`: The maximum safe limit to consume within 24 hours (e.g., `4000mg`, `4 tablets`).
-* `/warn WARNING`: Important safety warnings or side effects. This parameter can be repeated to add multiple warnings (e.g., `/warn Drowsiness /warn Avoid alcohol`).
+- `/t TAG`: A category to group the medication (e.g., `antibiotic`, `painkiller`).
+- `/df DOSAGE_FORM`: The physical form of the medication (e.g., `Tablet`, `Syrup`, `Ointment`).
+- `/mfr MANUFACTURER`: The company that produces the medication (e.g., `Pfizer`, `GSK`).
+- `/dir DIRECTIONS`: Specific instructions for consumption (e.g., `Take after meals`, `Dissolve in water`).
+- `/freq FREQUENCY`: How often the medication should be taken (e.g., `Twice a day`, `Every 8 hours`).
+- `/route ROUTE`: The method of administration (e.g., `Oral`, `Topical`, `Intravenous`).
+- `/max MAX_DAILY_DOSE`: The maximum safe limit to consume within 24 hours (e.g., `4000mg`, `4 tablets`).
+- `/warn WARNING`: Important safety warnings or side effects. This parameter can be repeated to add multiple warnings (e.g., `/warn Drowsiness /warn Avoid alcohol`).
 
 **Examples:**
-* `add /n Paracetamol /d 500mg /q 100 /e 31/12/2026 /t painkiller`
-* `add /n Amoxicillin /d 250mg /q 50 /e 01/06/2026 /t antibiotic /df Capsule /mfr Pfizer /warn May cause allergic reactions`
-* `add /n Cough Syrup /d 15mg/5ml /q 20 /e 15/10/2025 /df Syrup /dir Shake well before use /freq Every 6 hours /route Oral`
+- `add /n Paracetamol /d 500mg /q 100 /e 31/12/2026 /t painkiller`
+- `add /n Amoxicillin /d 250mg /q 50 /e 01/06/2026 /t antibiotic /df Capsule /mfr Pfizer /warn May cause allergic reactions`
+- `add /n Cough Syrup /d 15mg/5ml /q 20 /e 15/10/2027 /df Syrup /dir Shake well before use /freq Every 6 hours /route Oral`
 
 **Expected Output:**
 
 ```
 ____________________________________________________________
 You have added the following medication:
-  Name: Paracetamol | Dosage: 500mg | Qty: 100 | Exp: 2026-12-31 | Tag: painkiller
-You now have 4 medications in your inventory!
+========================================
+MEDICATION DETAILS
+========================================
+Drug Name:           Cough Syrup
+Strength:            15mg/5ml
+Dosage Form:         Syrup
+Manufacturer:        N/A
+----------------------------------------
+DOSAGE & ADMINISTRATION
+----------------------------------------
+Directions:          Shake well before use
+Frequency:           Every 6 hours
+Route:               Oral
+Max Daily Dose:      N/A
+----------------------------------------
+WARNINGS & PRECAUTIONS
+----------------------------------------
+None
+========================================
+You now have 2 medications in your inventory!
 ____________________________________________________________
 ```
 ---
@@ -113,7 +134,7 @@ Removes a medication from the inventory.
 **Format:** `delete INDEX`
 
 - Deletes the medication at the specified `INDEX`. 
-- The `INDEX` refers to the index number shown in the **most recently displayed** medication list.
+- The `INDEX` refers to the index number shown in the **most recently displayed** medication list (i.e. after running the `list` command).
 - The index **must be a positive integer**, and must not exceed the number of medications currently in the list.
 
 **Examples:**
@@ -124,8 +145,26 @@ Removes a medication from the inventory.
 ```
 ____________________________________________________________
 You have deleted the following medication:
-  Name: Paracetamol | Dosage: 500mg | Qty: 100 | Exp: 2026-12-31 | Tag: painkiller
-You now have 6 medications in your inventory!
+========================================
+MEDICATION DETAILS
+========================================
+Drug Name:           Cough Syrup
+Strength:            15mg/5ml
+Dosage Form:         Syrup
+Manufacturer:        N/A
+----------------------------------------
+DOSAGE & ADMINISTRATION
+----------------------------------------
+Directions:          Shake well before use
+Frequency:           Every 6 hours
+Route:               Oral
+Max Daily Dose:      N/A
+----------------------------------------
+WARNINGS & PRECAUTIONS
+----------------------------------------
+None
+========================================
+You now have 1 medications in your inventory!
 ____________________________________________________________
 ```
 
@@ -313,7 +352,7 @@ Useful when a new shipment of medication arrives.
 
 Edits the details of an existing medication in the inventory.
 
-**Format:** `update INDEX [/n NAME] [/d DOSAGE] [/q QUANTITY] [/e EXPIRY] [/t TAG] [/df DOSAGE_FORM] [/mfr MANUFACTURER] [/dir DIRECTIONS] [/freq FREQUENCY] [/route ROUTE] [/max MAX_DAILY_DOSE] [/warn WARNING]...`
+**Format:** `update INDEX [/n NAME] [/d DOSAGE] [/q QUANTITY] [/e EXPIRY] [/t TAG] [/df DOSAGE_FORM] [/mfr MANUFACTURER] [/dir DIRECTIONS] [/freq FREQUENCY] [/route ROUTE] [/max MAX_DAILY_DOSE] [/warn WARNING]`
 
 **Rules & Constraints:**
 * Updates the medication at the specified `INDEX`.
@@ -476,10 +515,15 @@ Registers a new customer into the pharmacy's database.
 
 **Format:** `add-customer /id CUSTOMER_ID /n NAME /p PHONE [/addr ADDRESS] [/allergy ALLERGY1,ALLERGY2,...]`
 
+**Important notes on Command Format:**
+- **Strict Mandatory Order:** The mandatory flags (`/id`, `/n`, `/p`) must be entered in the exact order shown in the format above. 
+- **Flexible Optional Order:** Any optional flags you choose to include (`/addr`, `/allergy`) can be entered in any order, as long as they are placed after the mandatory fields. 
+- **Unique Customer IDs:** The system strictly prevents duplicate IDs. The `CUSTOMER_ID` must be unique. 
+
 **Mandatory Parameters:**
 * `/id CUSTOMER_ID`: A unique identifier for the customer (e.g., `C001`).
 * `/n NAME`: The full name of the customer.
-* `/p PHONE`: The customer's contact number.
+* `/p PHONE`: The customer's contact number. **Must start with '8' or '9'** (following standard Singapore phone number format).
 
 **Optional Parameters:**
 * `/addr ADDRESS`: The customer's residential or mailing address.
@@ -511,7 +555,7 @@ Removes an existing customer from the pharmacy's database.
 
 **Rules & Constraints:**
 * Deletes the customer at the specified `INDEX`.
-* The `INDEX` refers to the index number shown in the **most recently displayed** customer list (e.g., after running a `list-customers` or `find-customer` command).
+* The `INDEX` refers to the index number shown in the **most recently displayed** customer list (e.g., after running `list-customers` command).
 * The index **must be a positive integer** and must not exceed the total number of customers currently in the list.
 
 **Examples:**
@@ -779,7 +823,7 @@ dispense logs, and user accounts.
 
 **Q: What date format does PharmaTracker use for expiry dates?**
 
-A: Expiry dates must be entered in `dd/MM/yyyy` format (e.g. `31/12/2026`).
+A: Expiry dates must be entered in `DD/MM/YYYY`, `DD-MM-YYYY`, or `YYYY-MM-DD` format (e.g., `31/12/2026`, `31-12-2026`, or `2026-12-31`). Please note that the system will reject dates that are in the past or more than 10 years into the future.
 
 **Q: What happens if I enter an invalid index?**
 
@@ -791,8 +835,8 @@ A: PharmaTracker will display an error message and leave the inventory or custom
 
 | Command             | Format |
 |---------------------|--------|
-| Add medication      | `add /n NAME /d DOSAGE /q QUANTITY /e EXPIRY [/t TAG] [...]` |
-| Update medication   | `update INDEX [/n NAME] [/d DOSAGE] [/q QUANTITY] [/e EXPIRY]...` |
+| Add medication      | `add /n NAME /d DOSAGE /q QUANTITY /e EXPIRY [/t TAG] [/df DOSAGE_FORM] [/mfr MANUFACTURER] [/dir DIRECTIONS] [/freq FREQUENCY] [/route ROUTE] [/max MAX_DAILY_DOSE] [/warn WARNING]` |
+| Update medication   | `update INDEX [/n NAME] [/d DOSAGE] [/q QUANTITY] [/e EXPIRY] [/t TAG] [/df DOSAGE_FORM] [/mfr MANUFACTURER] [/dir DIRECTIONS] [/freq FREQUENCY] [/route ROUTE] [/max MAX_DAILY_DOSE] [/warn WARNING]` |
 | List medications    | `list` |
 | Find medication     | `find KEYWORD` |
 | View medication     | `view INDEX` |

@@ -101,7 +101,7 @@ public class MedicationParserUtil {
 
         try {
             int quantity = Integer.parseInt(quantityString);
-            if (quantity <= 0) {
+            if (quantity < 0) {
                 throw new PharmaTrackerException("Quantity cannot be negative or zero!");
             }
             return quantity;
@@ -136,17 +136,57 @@ public class MedicationParserUtil {
             throw new PharmaTrackerException("Invalid date format! Supported formats: yyyy-MM-dd, d/M/yyyy, d-M-yyyy");
         }
 
+        validateExpiryDateRules(parsedDate);
+
+        return parsedDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    }
+
+    /**
+     * Extracts an optional expiry date for commands that modify existing entries.
+     * @param description The raw string containing command arguments.
+     * @return The extracted and formatted date string, or null if the flag is not present.
+     * @throws PharmaTrackerException If the format is invalid or the date violates business rules.
+     */
+    public static String extractOptionalExpiryDate(String description) throws PharmaTrackerException {
+        int expiryIndex = description.indexOf(FLAG_EXPIRY_DATE);
+        if (expiryIndex == -1) {
+            return null;
+        }
+
+        int valueStart = expiryIndex + 2;
+        int valueEnd = ParserUtil.findNextFlagIndex(description, valueStart);
+
+        String rawExpiryDate = description.substring(valueStart, valueEnd).trim();
+        if (rawExpiryDate.isEmpty()) {
+            throw new PharmaTrackerException("Expiry date cannot be empty if the '/e' flag is provided!");
+        }
+
+        LocalDate parsedDate = parseDate(rawExpiryDate);
+        if (parsedDate == null) {
+            throw new PharmaTrackerException("Invalid date format! Supported formats: yyyy-MM-dd, d/M/yyyy, d-M-yyyy");
+        }
+
+        validateExpiryDateRules(parsedDate);
+
+        return parsedDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    }
+
+    /**
+     * Validates a parsed date against the pharmacy's business rules.
+     *
+     * @param parsedDate The LocalDate to validate.
+     * @throws PharmaTrackerException If the date is in the past or exceeds the 10-year limit.
+     */
+    private static void validateExpiryDateRules(LocalDate parsedDate) throws PharmaTrackerException {
         LocalDate today = LocalDate.now();
 
         if (parsedDate.isBefore(today)) {
-            throw new PharmaTrackerException("Invalid expiry date! Expired medications cannot be added.");
+            throw new PharmaTrackerException("Invalid expiry date! Expired medications cannot be added or updated.");
         }
 
         if (parsedDate.isAfter(today.plusYears(10))) {
             throw new PharmaTrackerException("Invalid expiry date! Expiry dates at least 10 years away are not valid.");
         }
-
-        return parsedDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 
     /**

@@ -97,7 +97,7 @@ public class AddCommand extends Command {
             med.addWarning(warning);
         }
 
-        if (inventory.containsMedication(name, dosage, quantity, expiryDate)) {
+        if (inventory.containsMedication(med)) {
             throw new PharmaTrackerException("Failed to add medication.\n" +
                     "Use the update command to update the medication as required.");
         }

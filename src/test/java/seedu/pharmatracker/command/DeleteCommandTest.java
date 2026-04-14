@@ -79,7 +79,7 @@ public class DeleteCommandTest {
         PharmaTrackerException thrown = assertThrows(PharmaTrackerException.class,
                 () -> deleteCommand.execute(inventory, ui, customerList));
 
-        assertEquals("Invalid index. Please enter a number between 1 and 1.", thrown.getMessage());
+        assertEquals("Invalid index. Please enter an integer between 1 and 1.", thrown.getMessage());
     }
 
     @Test
@@ -94,7 +94,7 @@ public class DeleteCommandTest {
         PharmaTrackerException thrown = assertThrows(PharmaTrackerException.class,
                 () -> deleteCommand.execute(inventory, ui, customerList));
 
-        assertEquals("Invalid index. Please enter a number between 1 and 1.", thrown.getMessage());
+        assertEquals("Invalid index. Please enter an integer between 1 and 1.", thrown.getMessage());
     }
 
     @Test
@@ -109,7 +109,7 @@ public class DeleteCommandTest {
         PharmaTrackerException thrown = assertThrows(PharmaTrackerException.class,
                 () -> deleteCommand.execute(inventory, ui, customerList));
 
-        assertEquals("Invalid format. Please provide a valid number for the index.", thrown.getMessage());
+        assertEquals("Invalid format. Please provide a valid integer for the index.", thrown.getMessage());
     }
 
     @Test
@@ -125,7 +125,7 @@ public class DeleteCommandTest {
         PharmaTrackerException thrown = assertThrows(PharmaTrackerException.class,
                 () -> deleteCommand.execute(inventory, ui, customerList));
 
-        assertEquals("Invalid index. Please enter a number between 1 and 1.", thrown.getMessage());
+        assertEquals("Invalid index. Please enter an integer between 1 and 1.", thrown.getMessage());
     }
 
     @Test

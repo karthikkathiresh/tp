@@ -116,30 +116,23 @@ public class Inventory {
     }
 
     /**
-     * Checks if a medication already exists in the list.
-     * Note that a medication is not considered a duplicate if it has the same details but a different expiry date.
+     * Checks if a medication (representing the exact same batch) already exists in the inventory.
+     * Quantity is ignored when checking for duplicates.
      *
-     * @param name       The name of the medication.
-     * @param dosage     The strength or dosage of the medication.
-     * @param expiryDate The expiration date in YYYY-MM-DD format.
-     * @return true if the medication already exists, false otherwise.
+     * @param newMed The Medication object to check against the inventory.
+     * @return true if an identical medication batch already exists, false otherwise.
      */
-    public boolean containsMedication(String name, String dosage, int quantity, String expiryDate) {
-        if (name == null || dosage == null || expiryDate == null) {
+    public boolean containsMedication(Medication newMed) {
+        if (newMed == null) {
             return false;
         }
 
-        for (Medication med : medications) {
-            if (name.equalsIgnoreCase(med.getName()) &&
-                    med.getDosage().equalsIgnoreCase(dosage) &&
-                    med.getQuantity() == quantity &&
-                    med.getExpiryDate().equalsIgnoreCase(expiryDate)) {
+        for (Medication med: medications) {
+            if (med.equals(newMed)) {
                 return true;
             }
         }
-
         return false;
-
     }
 
 }

@@ -52,7 +52,7 @@ public class DeleteCustomerCommand extends Command {
         try {
             int index = Integer.parseInt(description.trim());
             if (index < 1 || index > customerList.getCustomerCount()) {
-                throw new PharmaTrackerException("Invalid index. Please enter a number between 1 and "
+                throw new PharmaTrackerException("Invalid index. Please enter an integer between 1 and "
                         + customerCount + ".");
             }
             int zeroBasedIndex = index - 1;
@@ -63,10 +63,11 @@ public class DeleteCustomerCommand extends Command {
         } catch (NumberFormatException e) {
             logger.log(Level.WARNING, "Failed to parse index in DeleteCustomerCommand: " + description);
             if (description.trim().matches("-?\\d+")) {
-                throw new PharmaTrackerException("Invalid index. Please enter a number between 1 and "
+                throw new PharmaTrackerException("Invalid index. Please enter an integer between 1 and "
                         + customerCount + ".");
             } else {
-                throw new PharmaTrackerException("Invalid format! Please enter a valid number for the customer index.");
+                throw new PharmaTrackerException("Invalid format! " +
+                        "Please enter a valid integer for the customer index.");
             }
         }
     }

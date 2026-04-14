@@ -239,4 +239,37 @@ public class Medication {
 
         return s;
     }
+
+    /**
+     * Compares this medication to another object to determine if they represent the exact same batch.
+     * Two medications are considered equal if all their descriptive fields (name, dosage, expiry date,
+     * manufacturer, warnings, etc.) match exactly.
+     *
+     * @param obj The object to compare with this medication.
+     * @return true if the specified object is a Medication with identical details (ignoring quantity), false otherwise.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        Medication other = (Medication) obj;
+
+        return this.name.equalsIgnoreCase(other.name) &&
+                this.dosage.equalsIgnoreCase(other.dosage) &&
+                this.expiryDate.equals(other.expiryDate) &&
+                this.dosageForm.equalsIgnoreCase(other.dosageForm) &&
+                this.manufacturer.equalsIgnoreCase(other.manufacturer) &&
+                this.tag.equalsIgnoreCase(other.tag) &&
+                this.directions.equalsIgnoreCase(other.directions) &&
+                this.frequency.equalsIgnoreCase(other.frequency) &&
+                this.route.equalsIgnoreCase(other.route) &&
+                this.maxDailyDose.equalsIgnoreCase(other.maxDailyDose) &&
+                this.warnings.equals(other.warnings);
+    }
 }
